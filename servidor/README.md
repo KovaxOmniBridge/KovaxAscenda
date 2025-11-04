@@ -1,14 +1,60 @@
-# Servidor API - Ascenda
+# 🚀 Servidor API - Ascenda
 
-Servidor Node.js com Express e TypeScript para gerenciamento de empresas.
+Servidor Node.js com Express e TypeScript para gerenciamento de empresas, produtos, serviços e sites customizados.
 
-## 🚀 Tecnologias
+## � Tecnologias
 
 - **Node.js** - Runtime JavaScript
 - **Express** - Framework web
 - **TypeScript** - Tipagem estática
 - **SQLite (better-sqlite3)** - Banco de dados local otimizado
 - **CORS** - Habilitação de requisições cross-origin
+
+## 📦 Comandos Disponíveis
+
+### Desenvolvimento
+```bash
+# Iniciar servidor em modo desenvolvimento (com hot-reload)
+npm run dev
+
+# Porta padrão: http://localhost:3001
+```
+
+### Produção
+```bash
+# Compilar TypeScript para JavaScript
+npm run build
+
+# Iniciar servidor em produção
+npm start
+
+# Ou fazer tudo de uma vez
+npm run start:prod
+```
+
+### Manutenção
+```bash
+# Limpar pasta dist/
+npm run clean
+
+# Limpar e recompilar
+npm run rebuild
+
+# Executar migrations
+npm run migrate
+
+# Popular banco com dados
+npm run seed
+```
+
+## 🔧 Estrutura de Scripts
+
+| Comando | Descrição | Quando usar |
+|---------|-----------|-------------|
+| `npm run dev` | Desenvolvimento com hot-reload | **Durante desenvolvimento** ✅ |
+| `npm run build` | Compila TS → JS | Antes de produção |
+| `npm start` | Inicia servidor compilado | **Em produção** ✅ |
+| `npm run start:prod` | Build + Start | Deploy automático |
 
 ## 💾 Banco de Dados
 
