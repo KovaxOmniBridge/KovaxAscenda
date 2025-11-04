@@ -1,0 +1,2 @@
+# Ascenda - Sistema de Organização Empresarial
+# Requirements for the project
