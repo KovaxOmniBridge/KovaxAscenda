@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import companyRoutes from './routes/companyRoutes';
+import productRoutes from './routes/productRoutes';
+import serviceRoutes from './routes/serviceRoutes';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -12,6 +14,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // Rotas
 app.use('/api', companyRoutes);
+app.use('/api', productRoutes);
+app.use('/api', serviceRoutes);
 
 // Rota de health check
 app.get('/health', (req, res) => {

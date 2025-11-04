@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Produtos - Ascenda</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>📦 Gerenciamento de Produtos e Serviços</h1>
+            <p class="subtitle">Organize produtos e serviços por empresa</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Seção de Empresas -->
+        <section class="companies-section">
+            <div class="section-header">
+                <h2>Empresas Cadastradas</h2>
+                <div class="search-box">
+                    <input type="text" id="searchCompany" placeholder="🔍 Buscar empresa...">
+                </div>
+            </div>
+            <div id="companiesList" class="companies-grid"></div>
+        </section>
+
+        <!-- Modal de Produtos da Empresa -->
+        <div id="productsModal" class="modal">
+            <div class="modal-content large">
+                <div class="modal-header">
+                    <div>
+                        <h2 id="modalCompanyName"></h2>
+                        <p id="modalCompanyInfo" class="company-info"></p>
+                    </div>
+                    <span class="close">&times;</span>
+                </div>
+                
+                <div class="modal-body">
+                    <!-- Tabs -->
+                    <div class="tabs">
+                        <button class="tab-button active" data-tab="products">Produtos</button>
+                        <button class="tab-button" data-tab="services">Serviços</button>
+                    </div>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content">
+                        <!-- Produtos Tab -->
+                        <div id="products-tab" class="tab-panel active">
+                            <div class="action-bar">
+                                <button id="btnAddProduct" class="btn btn-primary">+ Novo Produto</button>
+                                <input type="text" id="searchProduct" placeholder="🔍 Buscar produto...">
+                            </div>
+                            <div id="productsList" class="items-list"></div>
+                        </div>
+
+                        <!-- Serviços Tab -->
+                        <div id="services-tab" class="tab-panel">
+                            <div class="action-bar">
+                                <button id="btnAddService" class="btn btn-primary">+ Novo Serviço</button>
+                                <input type="text" id="searchService" placeholder="🔍 Buscar serviço...">
+                            </div>
+                            <div id="servicesList" class="items-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Cadastro/Edição de Produto -->
+        <div id="productFormModal" class="modal">
+            <div class="modal-content medium">
+                <div class="modal-header">
+                    <h2 id="productFormTitle">Novo Produto</h2>
+                    <span class="close">&times;</span>
+                </div>
+                <form id="productForm">
+                    <input type="hidden" id="productId">
+                    <input type="hidden" id="productCompanyId">
+
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="productName">Nome do Produto *</label>
+                            <input type="text" id="productName" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productCode">Código/SKU</label>
+                            <input type="text" id="productCode">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productCategory">Categoria *</label>
+                            <select id="productCategory" required>
+                                <option value="">Selecione...</option>
+                                <option value="ELETRONICOS">Eletrônicos</option>
+                                <option value="ALIMENTOS">Alimentos</option>
+                                <option value="VESTUARIO">Vestuário</option>
+                                <option value="MOVEIS">Móveis</option>
+                                <option value="COSMETICOS">Cosméticos</option>
+                                <option value="LIVROS">Livros</option>
+                                <option value="OUTROS">Outros</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="productDescription">Descrição</label>
+                            <textarea id="productDescription" rows="3"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productPrice">Preço (R$) *</label>
+                            <input type="number" id="productPrice" step="0.01" min="0" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productCost">Custo (R$)</label>
+                            <input type="number" id="productCost" step="0.01" min="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productStock">Estoque *</label>
+                            <input type="number" id="productStock" min="0" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productMinStock">Estoque Mínimo</label>
+                            <input type="number" id="productMinStock" min="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productUnit">Unidade *</label>
+                            <select id="productUnit" required>
+                                <option value="UN">Unidade</option>
+                                <option value="KG">Quilograma</option>
+                                <option value="L">Litro</option>
+                                <option value="M">Metro</option>
+                                <option value="CX">Caixa</option>
+                                <option value="PC">Pacote</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productStatus">Status *</label>
+                            <select id="productStatus" required>
+                                <option value="ATIVO">Ativo</option>
+                                <option value="INATIVO">Inativo</option>
+                                <option value="DESCONTINUADO">Descontinuado</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="btnCancelProduct">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar Produto</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal de Cadastro/Edição de Serviço -->
+        <div id="serviceFormModal" class="modal">
+            <div class="modal-content medium">
+                <div class="modal-header">
+                    <h2 id="serviceFormTitle">Novo Serviço</h2>
+                    <span class="close">&times;</span>
+                </div>
+                <form id="serviceForm">
+                    <input type="hidden" id="serviceId">
+                    <input type="hidden" id="serviceCompanyId">
+
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="serviceName">Nome do Serviço *</label>
+                            <input type="text" id="serviceName" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="serviceCode">Código</label>
+                            <input type="text" id="serviceCode">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="serviceCategory">Categoria *</label>
+                            <select id="serviceCategory" required>
+                                <option value="">Selecione...</option>
+                                <option value="CONSULTORIA">Consultoria</option>
+                                <option value="MANUTENCAO">Manutenção</option>
+                                <option value="INSTALACAO">Instalação</option>
+                                <option value="TREINAMENTO">Treinamento</option>
+                                <option value="SUPORTE">Suporte</option>
+                                <option value="DESIGN">Design</option>
+                                <option value="OUTROS">Outros</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="serviceDescription">Descrição</label>
+                            <textarea id="serviceDescription" rows="3"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="servicePrice">Preço (R$) *</label>
+                            <input type="number" id="servicePrice" step="0.01" min="0" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="serviceDuration">Duração (horas)</label>
+                            <input type="number" id="serviceDuration" step="0.5" min="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="serviceStatus">Status *</label>
+                            <select id="serviceStatus" required>
+                                <option value="ATIVO">Ativo</option>
+                                <option value="INATIVO">Inativo</option>
+                                <option value="DESCONTINUADO">Descontinuado</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="btnCancelService">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar Serviço</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="scripts/api.js"></script>
+    <script src="scripts/main.js"></script>
+</body>
+</html>
