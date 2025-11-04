@@ -8,6 +8,9 @@ let currentProducts = [];
 let currentServices = [];
 let editingProduct = null;
 let editingService = null;
+let productTags = [];
+let productImages = [];
+let currentScannerType = null;
 
 // ============================================
 // INITIALIZATION
@@ -45,6 +48,32 @@ function setupEventListeners() {
     document.getElementById('btnAddService').addEventListener('click', () => openServiceForm());
     document.getElementById('btnCancelProduct').addEventListener('click', closeProductForm);
     document.getElementById('btnCancelService').addEventListener('click', closeServiceForm);
+    
+    // Tags
+    document.getElementById('productTags').addEventListener('keydown', handleTagInput);
+    
+    // Images
+    document.getElementById('btnSelectImages').addEventListener('click', () => {
+        document.getElementById('productImages').click();
+    });
+    document.getElementById('productImages').addEventListener('change', handleImageSelect);
+    
+    // Drag and drop images
+    const uploadArea = document.querySelector('.images-upload-area');
+    uploadArea.addEventListener('dragover', handleDragOver);
+    uploadArea.addEventListener('dragleave', handleDragLeave);
+    uploadArea.addEventListener('drop', handleDrop);
+    
+    // Codes - Barcode
+    document.getElementById('btnScanBarcode').addEventListener('click', () => scanCode('barcode'));
+    document.getElementById('btnGenerateBarcode').addEventListener('click', handleGenerateBarcode);
+    
+    // Codes - QR Code
+    document.getElementById('btnScanQrcode').addEventListener('click', () => scanCode('qrcode'));
+    document.getElementById('btnGenerateQrcode').addEventListener('click', handleGenerateQrcode);
+    
+    // Scanner
+    document.getElementById('btnCancelScanner').addEventListener('click', stopScanner);
 }
 
 function setupModalListeners() {
@@ -189,12 +218,19 @@ function renderProducts(products) {
     }
 
     productsList.innerHTML = products.map(product => {
-        const stockClass = product.stock <= (product.minStock || 0) ? 'low-stock' : '';
-        const stockIcon = product.stock <= (product.minStock || 0) ? '⚠️' : '✓';
+        const firstImage = product.images && product.images.length > 0 ? product.images[0] : null;
+        const tagsHtml = product.tags && product.tags.length > 0 
+            ? product.tags.map(tag => `<span class="item-category">${tag}</span>`).join(' ')
+            : '';
         
         return `
             <div class="item-card">
-                <div class="item-info">
+                ${firstImage ? `
+                    <div style="width: 100px; height: 100px; margin-right: 1rem; flex-shrink: 0;">
+                        <img src="${firstImage}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+                    </div>
+                ` : ''}
+                <div class="item-info" style="flex: 1;">
                     <div class="item-header">
                         <span class="item-name">${product.name}</span>
                         ${product.code ? `<span class="item-code">SKU: ${product.code}</span>` : ''}
@@ -202,25 +238,22 @@ function renderProducts(products) {
                         <span class="item-status ${product.status === 'ATIVO' ? 'active' : 'inactive'}">${product.status}</span>
                     </div>
                     ${product.description ? `<p class="item-description">${product.description}</p>` : ''}
+                    ${tagsHtml ? `<div style="margin: 0.5rem 0;">${tagsHtml}</div>` : ''}
                     <div class="item-details">
                         <div class="item-detail">
                             <span class="item-detail-label">Preço</span>
                             <span class="item-detail-value price">R$ ${parseFloat(product.price).toFixed(2)}</span>
                         </div>
+                        ${product.barcode ? `
                         <div class="item-detail">
-                            <span class="item-detail-label">Estoque</span>
-                            <span class="item-detail-value ${stockClass}">${stockIcon} ${product.stock} ${product.unit}</span>
-                        </div>
-                        ${product.cost ? `
-                        <div class="item-detail">
-                            <span class="item-detail-label">Custo</span>
-                            <span class="item-detail-value">R$ ${parseFloat(product.cost).toFixed(2)}</span>
+                            <span class="item-detail-label">Código de Barras</span>
+                            <span class="item-detail-value">${product.barcode}</span>
                         </div>
                         ` : ''}
-                        ${product.cost && product.price ? `
+                        ${product.images ? `
                         <div class="item-detail">
-                            <span class="item-detail-label">Margem</span>
-                            <span class="item-detail-value">${calculateMargin(product.cost, product.price)}%</span>
+                            <span class="item-detail-label">Imagens</span>
+                            <span class="item-detail-value">📸 ${product.images.length}</span>
                         </div>
                         ` : ''}
                     </div>
@@ -234,17 +267,13 @@ function renderProducts(products) {
     }).join('');
 }
 
-function calculateMargin(cost, price) {
-    const margin = ((price - cost) / price) * 100;
-    return margin.toFixed(1);
-}
-
 function handleProductSearch(e) {
     const searchTerm = e.target.value.toLowerCase();
     const filtered = currentProducts.filter(product => 
         product.name?.toLowerCase().includes(searchTerm) ||
         product.code?.toLowerCase().includes(searchTerm) ||
-        product.category?.toLowerCase().includes(searchTerm)
+        product.category?.toLowerCase().includes(searchTerm) ||
+        product.tags?.some(tag => tag.toLowerCase().includes(searchTerm))
     );
     renderProducts(filtered);
 }
@@ -335,23 +364,45 @@ function openProductForm(product = null) {
     const form = document.getElementById('productForm');
     const title = document.getElementById('productFormTitle');
 
+    // Reset states
+    productTags = [];
+    productImages = [];
+
     if (product) {
         title.textContent = 'Editar Produto';
         document.getElementById('productId').value = product.id;
         document.getElementById('productName').value = product.name;
+        document.getElementById('productDescription').value = product.description || '';
         document.getElementById('productCode').value = product.code || '';
         document.getElementById('productCategory').value = product.category;
-        document.getElementById('productDescription').value = product.description || '';
-        document.getElementById('productPrice').value = product.price;
-        document.getElementById('productCost').value = product.cost || '';
-        document.getElementById('productStock').value = product.stock;
-        document.getElementById('productMinStock').value = product.minStock || '';
-        document.getElementById('productUnit').value = product.unit;
         document.getElementById('productStatus').value = product.status;
+        document.getElementById('productPrice').value = product.price;
+        document.getElementById('productBarcode').value = product.barcode || '';
+        document.getElementById('productQrcode').value = product.qrcode || '';
+        
+        // Load tags
+        productTags = product.tags || [];
+        renderTags();
+        
+        // Load images
+        productImages = product.images || [];
+        renderImages();
+        
+        // Preview codes if exist
+        if (product.barcode) {
+            generateBarcode(product.barcode, 'barcodePreview');
+        }
+        if (product.qrcode) {
+            generateQRCode(product.qrcode, 'qrcodePreview');
+        }
     } else {
         title.textContent = 'Novo Produto';
         form.reset();
         document.getElementById('productStatus').value = 'ATIVO';
+        document.getElementById('tagsContainer').innerHTML = '';
+        document.getElementById('imagesPreview').innerHTML = '';
+        document.getElementById('barcodePreview').innerHTML = '';
+        document.getElementById('qrcodePreview').innerHTML = '';
     }
 
     document.getElementById('productCompanyId').value = currentCompany.id;
@@ -362,6 +413,8 @@ function closeProductForm() {
     closeModal(document.getElementById('productFormModal'));
     document.getElementById('productForm').reset();
     editingProduct = null;
+    productTags = [];
+    productImages = [];
 }
 
 async function handleProductSubmit(e) {
@@ -369,30 +422,30 @@ async function handleProductSubmit(e) {
 
     const productData = {
         name: document.getElementById('productName').value,
-        code: document.getElementById('productCode').value || null,
-        category: document.getElementById('productCategory').value,
         description: document.getElementById('productDescription').value || null,
+        code: document.getElementById('productCode').value || null,
+        barcode: document.getElementById('productBarcode').value || null,
+        qrcode: document.getElementById('productQrcode').value || null,
+        category: document.getElementById('productCategory').value,
+        tags: productTags.length > 0 ? productTags : null,
         price: parseFloat(document.getElementById('productPrice').value),
-        cost: parseFloat(document.getElementById('productCost').value) || null,
-        stock: parseInt(document.getElementById('productStock').value),
-        minStock: parseInt(document.getElementById('productMinStock').value) || null,
-        unit: document.getElementById('productUnit').value,
-        status: document.getElementById('productStatus').value
+        status: document.getElementById('productStatus').value,
+        images: productImages.length > 0 ? productImages : null
     };
 
     try {
         if (editingProduct) {
             await updateProduct(currentCompany.id, editingProduct.id, productData);
-            alert('Produto atualizado com sucesso!');
+            alert('✅ Produto atualizado com sucesso!');
         } else {
             await createProduct(currentCompany.id, productData);
-            alert('Produto criado com sucesso!');
+            alert('✅ Produto criado com sucesso!');
         }
 
         closeProductForm();
         await loadProducts(currentCompany.id);
     } catch (error) {
-        alert('Erro: ' + error.message);
+        alert('❌ Erro: ' + error.message);
     }
 }
 
@@ -526,4 +579,166 @@ function openModal(modal) {
 function closeModal(modal) {
     modal.classList.remove('active');
     document.body.style.overflow = '';
+}
+
+// ============================================
+// TAGS MANAGEMENT
+// ============================================
+
+function handleTagInput(e) {
+    if (e.key === 'Enter' || e.key === ',') {
+        e.preventDefault();
+        addTag(e.target.value.trim());
+        e.target.value = '';
+    }
+}
+
+function addTag(tagText) {
+    if (!tagText || tagText === '' || tagText === ',') return;
+    
+    // Remover vírgula se existir
+    tagText = tagText.replace(',', '').trim();
+    
+    if (productTags.includes(tagText)) {
+        alert('Tag já adicionada');
+        return;
+    }
+    
+    productTags.push(tagText);
+    renderTags();
+}
+
+function removeTag(tagText) {
+    productTags = productTags.filter(t => t !== tagText);
+    renderTags();
+}
+
+function renderTags() {
+    const container = document.getElementById('tagsContainer');
+    container.innerHTML = productTags.map(tag => `
+        <span class="tag">
+            ${tag}
+            <span class="tag-remove" onclick="removeTag('${tag}')">×</span>
+        </span>
+    `).join('');
+}
+
+// ============================================
+// IMAGES MANAGEMENT
+// ============================================
+
+function handleImageSelect(e) {
+    const files = Array.from(e.target.files);
+    addImages(files);
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+    e.currentTarget.classList.add('dragover');
+}
+
+function handleDragLeave(e) {
+    e.currentTarget.classList.remove('dragover');
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('dragover');
+    
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+    addImages(files);
+}
+
+function addImages(files) {
+    if (productImages.length + files.length > 10) {
+        alert('Máximo de 10 imagens permitidas');
+        return;
+    }
+    
+    files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            productImages.push(e.target.result);
+            renderImages();
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+function removeImage(index) {
+    productImages.splice(index, 1);
+    renderImages();
+}
+
+function setMainImage(index) {
+    const image = productImages[index];
+    productImages.splice(index, 1);
+    productImages.unshift(image);
+    renderImages();
+}
+
+function renderImages() {
+    const container = document.getElementById('imagesPreview');
+    
+    if (productImages.length === 0) {
+        container.innerHTML = '';
+        return;
+    }
+    
+    container.innerHTML = productImages.map((img, index) => `
+        <div class="image-preview-item ${index === 0 ? 'image-preview-main' : ''}" 
+             onclick="setMainImage(${index})" 
+             title="${index === 0 ? 'Imagem principal' : 'Clique para definir como principal'}">
+            <img src="${img}" alt="Imagem ${index + 1}">
+            <button type="button" class="image-preview-remove" onclick="event.stopPropagation(); removeImage(${index})">
+                ×
+            </button>
+        </div>
+    `).join('');
+}
+
+// ============================================
+// CODES MANAGEMENT
+// ============================================
+
+function handleGenerateBarcode() {
+    const input = document.getElementById('productBarcode');
+    const code = generateBarcode(input.value || '', 'barcodePreview');
+    
+    if (code) {
+        input.value = code;
+    }
+}
+
+function handleGenerateQrcode() {
+    const input = document.getElementById('productQrcode');
+    const productName = document.getElementById('productName').value;
+    const code = document.getElementById('productCode').value;
+    
+    // Gerar QR Code com informações do produto
+    const qrData = JSON.stringify({
+        name: productName,
+        code: code,
+        timestamp: new Date().toISOString()
+    });
+    
+    const generatedCode = generateQRCode(qrData, 'qrcodePreview');
+    
+    if (generatedCode) {
+        input.value = generatedCode;
+    }
+}
+
+function scanCode(type) {
+    currentScannerType = type;
+    
+    startScanner(type, (scannedCode) => {
+        if (type === 'barcode') {
+            document.getElementById('productBarcode').value = scannedCode;
+            generateBarcode(scannedCode, 'barcodePreview');
+        } else {
+            document.getElementById('productQrcode').value = scannedCode;
+            generateQRCode(scannedCode, 'qrcodePreview');
+        }
+    });
 }

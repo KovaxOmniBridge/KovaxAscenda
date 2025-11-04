@@ -18,8 +18,8 @@ export class ProductService {
             throw new Error('Preço deve ser maior que zero');
         }
 
-        if (data.stock < 0) {
-            throw new Error('Estoque não pode ser negativo');
+        if (data.images && data.images.length > 10) {
+            throw new Error('Máximo de 10 imagens permitidas');
         }
 
         return this.productRepository.create(companyId, data);
@@ -56,8 +56,8 @@ export class ProductService {
             throw new Error('Preço deve ser maior que zero');
         }
 
-        if (data.stock !== undefined && data.stock < 0) {
-            throw new Error('Estoque não pode ser negativo');
+        if (data.images && data.images.length > 10) {
+            throw new Error('Máximo de 10 imagens permitidas');
         }
 
         const product = this.productRepository.update(companyId, id, data);

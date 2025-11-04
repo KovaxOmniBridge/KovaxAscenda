@@ -70,7 +70,7 @@
 
         <!-- Modal de Cadastro/Edição de Produto -->
         <div id="productFormModal" class="modal">
-            <div class="modal-content medium">
+            <div class="modal-content extra-large">
                 <div class="modal-header">
                     <h2 id="productFormTitle">Novo Produto</h2>
                     <span class="close">&times;</span>
@@ -79,83 +79,146 @@
                     <input type="hidden" id="productId">
                     <input type="hidden" id="productCompanyId">
 
-                    <div class="form-grid">
-                        <div class="form-group full-width">
-                            <label for="productName">Nome do Produto *</label>
-                            <input type="text" id="productName" required>
+                    <div class="form-container">
+                        <!-- Seção: Informações Básicas -->
+                        <div class="form-section">
+                            <h3 class="section-title">📋 Informações Básicas</h3>
+                            <div class="form-grid">
+                                <div class="form-group full-width">
+                                    <label for="productName">Nome do Produto *</label>
+                                    <input type="text" id="productName" required placeholder="Digite o nome do produto">
+                                </div>
+
+                                <div class="form-group full-width">
+                                    <label for="productDescription">Descrição</label>
+                                    <textarea id="productDescription" rows="3" placeholder="Descreva o produto detalhadamente"></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="productCategory">Categoria *</label>
+                                    <select id="productCategory" required>
+                                        <option value="">Selecione...</option>
+                                        <option value="ELETRONICOS">Eletrônicos</option>
+                                        <option value="ALIMENTOS">Alimentos</option>
+                                        <option value="VESTUARIO">Vestuário</option>
+                                        <option value="MOVEIS">Móveis</option>
+                                        <option value="COSMETICOS">Cosméticos</option>
+                                        <option value="LIVROS">Livros</option>
+                                        <option value="OUTROS">Outros</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="productStatus">Status *</label>
+                                    <select id="productStatus" required>
+                                        <option value="ATIVO">Ativo</option>
+                                        <option value="INATIVO">Inativo</option>
+                                        <option value="DESCONTINUADO">Descontinuado</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group full-width">
+                                    <label for="productTags">Tags</label>
+                                    <input type="text" id="productTags" placeholder="Separe tags por vírgula (ex: novo, promoção, destaque)">
+                                    <small>Pressione Enter ou vírgula para adicionar tags</small>
+                                    <div id="tagsContainer" class="tags-container"></div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="productCode">Código/SKU</label>
-                            <input type="text" id="productCode">
+                        <!-- Seção: Preço -->
+                        <div class="form-section">
+                            <h3 class="section-title">💰 Preço</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="productPrice">Preço de Venda (R$) *</label>
+                                    <input type="number" id="productPrice" step="0.01" min="0" required placeholder="0,00">
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="productCategory">Categoria *</label>
-                            <select id="productCategory" required>
-                                <option value="">Selecione...</option>
-                                <option value="ELETRONICOS">Eletrônicos</option>
-                                <option value="ALIMENTOS">Alimentos</option>
-                                <option value="VESTUARIO">Vestuário</option>
-                                <option value="MOVEIS">Móveis</option>
-                                <option value="COSMETICOS">Cosméticos</option>
-                                <option value="LIVROS">Livros</option>
-                                <option value="OUTROS">Outros</option>
-                            </select>
+                        <!-- Seção: Códigos -->
+                        <div class="form-section">
+                            <h3 class="section-title">🔢 Códigos de Identificação</h3>
+                            <div class="form-grid">
+                                <div class="form-group full-width">
+                                    <label for="productCode">Código/SKU</label>
+                                    <input type="text" id="productCode" placeholder="Código interno do produto">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="productBarcode">Código de Barras</label>
+                                    <div class="input-group">
+                                        <input type="text" id="productBarcode" placeholder="Digite ou escaneie">
+                                        <button type="button" class="btn btn-secondary btn-icon" id="btnScanBarcode" title="Escanear código de barras">
+                                            📷
+                                        </button>
+                                        <button type="button" class="btn btn-secondary btn-icon" id="btnGenerateBarcode" title="Gerar código de barras">
+                                            ✨
+                                        </button>
+                                    </div>
+                                    <div id="barcodePreview" class="code-preview"></div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="productQrcode">QR Code</label>
+                                    <div class="input-group">
+                                        <input type="text" id="productQrcode" placeholder="Digite ou escaneie">
+                                        <button type="button" class="btn btn-secondary btn-icon" id="btnScanQrcode" title="Escanear QR Code">
+                                            📷
+                                        </button>
+                                        <button type="button" class="btn btn-secondary btn-icon" id="btnGenerateQrcode" title="Gerar QR Code">
+                                            ✨
+                                        </button>
+                                    </div>
+                                    <div id="qrcodePreview" class="code-preview"></div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-group full-width">
-                            <label for="productDescription">Descrição</label>
-                            <textarea id="productDescription" rows="3"></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="productPrice">Preço (R$) *</label>
-                            <input type="number" id="productPrice" step="0.01" min="0" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="productCost">Custo (R$)</label>
-                            <input type="number" id="productCost" step="0.01" min="0">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="productStock">Estoque *</label>
-                            <input type="number" id="productStock" min="0" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="productMinStock">Estoque Mínimo</label>
-                            <input type="number" id="productMinStock" min="0">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="productUnit">Unidade *</label>
-                            <select id="productUnit" required>
-                                <option value="UN">Unidade</option>
-                                <option value="KG">Quilograma</option>
-                                <option value="L">Litro</option>
-                                <option value="M">Metro</option>
-                                <option value="CX">Caixa</option>
-                                <option value="PC">Pacote</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="productStatus">Status *</label>
-                            <select id="productStatus" required>
-                                <option value="ATIVO">Ativo</option>
-                                <option value="INATIVO">Inativo</option>
-                                <option value="DESCONTINUADO">Descontinuado</option>
-                            </select>
+                        <!-- Seção: Imagens -->
+                        <div class="form-section">
+                            <h3 class="section-title">🖼️ Imagens do Produto</h3>
+                            <div class="images-upload-area">
+                                <div class="upload-instructions">
+                                    <p>📸 Adicione até 10 imagens do produto</p>
+                                    <small>Clique ou arraste arquivos aqui</small>
+                                </div>
+                                <input type="file" id="productImages" accept="image/*" multiple style="display: none;">
+                                <button type="button" class="btn btn-secondary" id="btnSelectImages">
+                                    Selecionar Imagens
+                                </button>
+                                <div id="imagesPreview" class="images-preview"></div>
+                            </div>
                         </div>
                     </div>
 
                     <div class="form-actions">
                         <button type="button" class="btn btn-secondary" id="btnCancelProduct">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Salvar Produto</button>
+                        <button type="submit" class="btn btn-primary">💾 Salvar Produto</button>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <!-- Modal de Scanner -->
+        <div id="scannerModal" class="modal">
+            <div class="modal-content medium">
+                <div class="modal-header">
+                    <h2 id="scannerTitle">Escanear Código</h2>
+                    <span class="close">&times;</span>
+                </div>
+                <div class="scanner-container">
+                    <video id="scannerVideo" autoplay></video>
+                    <canvas id="scannerCanvas" style="display: none;"></canvas>
+                    <div class="scanner-overlay">
+                        <div class="scanner-frame"></div>
+                    </div>
+                    <p class="scanner-instructions">Posicione o código dentro do quadro</p>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="btnCancelScanner">Cancelar</button>
+                </div>
             </div>
         </div>
 
@@ -229,6 +292,7 @@
         </div>
     </main>
 
+    <script src="scripts/codes.js"></script>
     <script src="scripts/api.js"></script>
     <script src="scripts/main.js"></script>
 </body>
