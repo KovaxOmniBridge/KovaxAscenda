@@ -113,10 +113,10 @@ function createCompanyCard(company) {
             </div>
         </div>
         <div class="company-actions">
-            <button class="btn-action btn-site" onclick="event.stopPropagation(); openSiteEditor(${company.id})" title="Editar Site">
+            <button class="btn-action btn-site" onclick="event.stopPropagation(); openSiteEditor('${company.id}')" title="Editar Site">
                 🌐 Meu Site
             </button>
-            <button class="btn-action btn-edit" onclick="event.stopPropagation(); editCompany(${company.id})" title="Editar Empresa">
+            <button class="btn-action btn-edit" onclick="event.stopPropagation(); editCompany('${company.id}')" title="Editar Empresa">
                 ✏️ Editar
             </button>
         </div>
@@ -352,5 +352,9 @@ function showToast(message, type = 'info') {
     }, 3000);
 }
 
-// Expor toast globalmente
+// Expor funções globalmente para uso em HTML inline
 window.showToast = showToast;
+window.openSiteEditor = openSiteEditor;
+window.editCompany = editCompany;
+window.openModal = openModal;
+window.closeModal = closeModal;
