@@ -4,6 +4,9 @@ import { ProductController } from '../controllers/ProductController';
 const router = Router();
 const productController = new ProductController();
 
+// Rota para buscar TODOS os produtos (para o GeneralMarket)
+router.get('/products', productController.index);
+
 // Rotas de produtos por empresa
 router.get('/companies/:companyId/products', productController.index);
 router.get('/companies/:companyId/products/:id', productController.show);

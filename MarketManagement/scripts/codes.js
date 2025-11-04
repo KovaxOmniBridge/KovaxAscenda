@@ -52,40 +52,76 @@ function generateQRCode(text, containerId) {
 
 function generateBarcode(text, containerId) {
     const container = document.getElementById(containerId);
-    container.innerHTML = ''; // Limpar conteúdo anterior
-
-    if (!text || text.trim() === '') {
-        container.innerHTML = '<p style="color: #64748b;">Digite um valor para gerar o código de barras</p>';
+    if (!container) {
+        console.error('Container não encontrado:', containerId);
         return null;
     }
+    
+    container.innerHTML = ''; // Limpar conteúdo anterior
 
     try {
         // Validar formato EAN-13 (13 dígitos)
-        let barcodeText = text.replace(/\D/g, ''); // Remover não-dígitos
+        let barcodeText = '';
         
-        // Se não tiver 13 dígitos, gerar um número aleatório
-        if (barcodeText.length !== 13) {
+        if (!text || text.trim() === '') {
+            // Se não houver valor, gerar um código EAN-13 automaticamente
             barcodeText = generateEAN13();
+            console.log('Código gerado automaticamente:', barcodeText);
+        } else {
+            // Remover não-dígitos
+            barcodeText = text.replace(/\D/g, '');
+            
+            // Se não tiver 13 dígitos, gerar um número aleatório
+            if (barcodeText.length !== 13) {
+                barcodeText = generateEAN13();
+                console.log('Código gerado (formato inválido):', barcodeText);
+            }
         }
 
-        // Criar SVG do código de barras
+        // Criar SVG do código de barras melhorado
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.setAttribute('width', '100%');
-        svg.setAttribute('height', '80');
-        svg.setAttribute('viewBox', '0 0 300 80');
+        svg.setAttribute('height', '100');
+        svg.setAttribute('viewBox', '0 0 400 100');
+        svg.style.maxWidth = '300px';
 
-        // Simular barras (simplificado)
-        const bars = barcodeText.split('').map((digit, index) => {
-            const x = index * 20 + 10;
-            return `<rect x="${x}" y="10" width="${parseInt(digit) + 2}" height="50" fill="black"/>`;
-        }).join('');
+        // Padrão de barras mais realista
+        let bars = '';
+        let x = 20;
+        
+        // Barras iniciais (guard pattern)
+        bars += `<rect x="${x}" y="15" width="2" height="60" fill="black"/>`;
+        x += 4;
+        bars += `<rect x="${x}" y="15" width="2" height="60" fill="black"/>`;
+        x += 6;
+        
+        // Barras para cada dígito
+        for (let i = 0; i < barcodeText.length; i++) {
+            const digit = parseInt(barcodeText[i]);
+            const width = (digit % 3) + 2;
+            bars += `<rect x="${x}" y="15" width="${width}" height="60" fill="black"/>`;
+            x += width + 3;
+            
+            if (i === 5) { // Barra central
+                x += 4;
+                bars += `<rect x="${x}" y="15" width="2" height="60" fill="black"/>`;
+                x += 4;
+            }
+        }
+        
+        // Barras finais
+        bars += `<rect x="${x}" y="15" width="2" height="60" fill="black"/>`;
+        x += 4;
+        bars += `<rect x="${x}" y="15" width="2" height="60" fill="black"/>`;
 
         svg.innerHTML = `
+            <rect width="400" height="100" fill="white"/>
             ${bars}
-            <text x="150" y="75" text-anchor="middle" font-size="12" font-family="monospace">${barcodeText}</text>
+            <text x="200" y="90" text-anchor="middle" font-size="14" font-family="monospace" fill="black">${barcodeText}</text>
         `;
 
         container.appendChild(svg);
+        console.log('Código de barras gerado com sucesso:', barcodeText);
 
         return barcodeText;
     } catch (error) {

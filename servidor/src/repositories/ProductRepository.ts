@@ -94,6 +94,16 @@ export class ProductRepository {
         return rows.map(row => this.mapRowToProduct(row));
     }
 
+    findAllGlobal(): IProduct[] {
+        const stmt = this.db.prepare(`
+            SELECT * FROM products 
+            ORDER BY createdAt DESC
+        `);
+
+        const rows = stmt.all() as any[];
+        return rows.map(row => this.mapRowToProduct(row));
+    }
+
     findByCategory(companyId: string, category: string): IProduct[] {
         const stmt = this.db.prepare(`
             SELECT * FROM products 

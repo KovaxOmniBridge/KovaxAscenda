@@ -39,6 +39,10 @@ export class ServiceService {
         return this.serviceRepository.findAll(companyId);
     }
 
+    async getAllServicesGlobal(): Promise<IService[]> {
+        return this.serviceRepository.findAllGlobal();
+    }
+
     async getServicesByCategory(companyId: string, category: string): Promise<IService[]> {
         return this.serviceRepository.findByCategory(companyId, category);
     }

@@ -86,6 +86,16 @@ export class ServiceRepository {
         return rows.map(row => this.mapRowToService(row));
     }
 
+    findAllGlobal(): IService[] {
+        const stmt = this.db.prepare(`
+            SELECT * FROM services 
+            ORDER BY createdAt DESC
+        `);
+
+        const rows = stmt.all() as any[];
+        return rows.map(row => this.mapRowToService(row));
+    }
+
     findByCategory(companyId: string, category: string): IService[] {
         const stmt = this.db.prepare(`
             SELECT * FROM services 

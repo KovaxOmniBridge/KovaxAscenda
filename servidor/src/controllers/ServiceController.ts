@@ -15,6 +15,14 @@ export class ServiceController {
 
             let services;
 
+            // Se não houver companyId, buscar TODOS os serviços (para GeneralMarket)
+            if (!companyId) {
+                services = await this.serviceService.getAllServicesGlobal();
+                res.json(services);
+                return;
+            }
+
+            // Buscar serviços de uma empresa específica
             if (category) {
                 services = await this.serviceService.getServicesByCategory(companyId, category as string);
             } else if (status) {

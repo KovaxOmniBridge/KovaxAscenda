@@ -77,3 +77,22 @@ const API = {
         }
     }
 };
+
+// Funções auxiliares para o site editor
+async function getCompanyById(id) {
+    return API.getCompanyById(id);
+}
+
+async function getCompanySettings(companyId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/companies/${companyId}/site`);
+        if (!response.ok) {
+            if (response.status === 404) return null;
+            throw new Error('Erro ao buscar configurações');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Erro:', error);
+        throw error;
+    }
+}

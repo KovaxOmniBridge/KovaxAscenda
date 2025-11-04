@@ -11,6 +11,9 @@ const companyForm = document.getElementById('companyForm');
 const modalTitle = document.getElementById('modalTitle');
 const searchInput = document.getElementById('searchInput');
 const btnNovaEmpresa = document.getElementById('btnNovaEmpresa');
+const btnCloseModal = document.getElementById('btnCloseModal');
+const btnCancelModal = document.getElementById('btnCancelModal');
+const btnEmptyState = document.getElementById('btnEmptyState');
 
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
@@ -22,12 +25,24 @@ document.addEventListener('DOMContentLoaded', () => {
 // Configurar event listeners
 function setupEventListeners() {
     btnNovaEmpresa.addEventListener('click', () => openModal());
+    btnCloseModal.addEventListener('click', closeModal);
+    btnCancelModal.addEventListener('click', closeModal);
+    if (btnEmptyState) {
+        btnEmptyState.addEventListener('click', () => openModal());
+    }
     companyForm.addEventListener('submit', handleFormSubmit);
     searchInput.addEventListener('input', handleSearch);
     
     // Fechar modal ao clicar fora
     window.addEventListener('click', (e) => {
         if (e.target === companyModal) {
+            closeModal();
+        }
+    });
+    
+    // Fechar modal com ESC
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && companyModal.classList.contains('active')) {
             closeModal();
         }
     });
@@ -41,7 +56,7 @@ async function loadCompanies() {
         renderCompanies(companies);
     } catch (error) {
         console.error('Erro ao carregar empresas:', error);
-        alert('Erro ao carregar empresas. Verifique se o servidor está rodando.');
+        showToast('Erro ao carregar empresas. Verifique se o servidor está rodando.', 'error');
     } finally {
         showLoading(false);
     }
@@ -68,7 +83,6 @@ function renderCompanies(companiesToRender) {
 function createCompanyCard(company) {
     const card = document.createElement('div');
     card.className = 'company-card';
-    card.onclick = () => editCompany(company.id);
     
     const statusClass = `status-${company.situacaoCadastral.toLowerCase()}`;
     
@@ -97,6 +111,14 @@ function createCompanyCard(company) {
                 <span class="info-label">Cidade:</span>
                 <span class="info-value">${company.endereco.cidade}/${company.endereco.estado}</span>
             </div>
+        </div>
+        <div class="company-actions">
+            <button class="btn-action btn-site" onclick="event.stopPropagation(); openSiteEditor(${company.id})" title="Editar Site">
+                🌐 Meu Site
+            </button>
+            <button class="btn-action btn-edit" onclick="event.stopPropagation(); editCompany(${company.id})" title="Editar Empresa">
+                ✏️ Editar
+            </button>
         </div>
     `;
     
@@ -130,14 +152,24 @@ function openModal(company = null) {
     }
     
     companyModal.style.display = 'block';
+    setTimeout(() => {
+        companyModal.classList.add('active');
+    }, 10);
 }
 
 // Fechar modal
 function closeModal() {
-    companyModal.style.display = 'none';
-    companyForm.reset();
-    editingCompanyId = null;
+    companyModal.classList.remove('active');
+    setTimeout(() => {
+        companyModal.style.display = 'none';
+        companyForm.reset();
+        editingCompanyId = null;
+    }, 300);
 }
+
+// Expor funções globalmente para uso em HTML inline (se necessário)
+window.openModal = openModal;
+window.closeModal = closeModal;
 
 // Preencher formulário com dados da empresa
 function fillForm(company) {
@@ -165,8 +197,13 @@ async function editCompany(id) {
         openModal(company);
     } catch (error) {
         console.error('Erro ao buscar empresa:', error);
-        alert('Erro ao carregar dados da empresa.');
+        showToast('Erro ao carregar dados da empresa.', 'error');
     }
+}
+
+// Abrir editor de site
+function openSiteEditor(companyId) {
+    window.location.href = `site-editor.html?company=${companyId}`;
 }
 
 // Submeter formulário
@@ -196,17 +233,17 @@ async function handleFormSubmit(e) {
     try {
         if (editingCompanyId) {
             await API.updateCompany(editingCompanyId, companyData);
-            alert('Empresa atualizada com sucesso!');
+            showToast('Empresa atualizada com sucesso!', 'success');
         } else {
             await API.createCompany(companyData);
-            alert('Empresa cadastrada com sucesso!');
+            showToast('Empresa cadastrada com sucesso!', 'success');
         }
         
         closeModal();
         loadCompanies();
     } catch (error) {
         console.error('Erro ao salvar empresa:', error);
-        alert('Erro ao salvar empresa. Verifique os dados e tente novamente.');
+        showToast('Erro ao salvar empresa. Verifique os dados e tente novamente.', 'error');
     }
 }
 
@@ -270,10 +307,50 @@ async function buscarCEP(cep) {
             document.getElementById('bairro').value = data.bairro || '';
             document.getElementById('cidade').value = data.localidade || '';
             document.getElementById('estado').value = data.uf || '';
+            showToast('CEP encontrado com sucesso!', 'success');
         } else {
-            alert('CEP não encontrado.');
+            showToast('CEP não encontrado.', 'error');
         }
     } catch (error) {
         console.error('Erro ao buscar CEP:', error);
+        showToast('Erro ao buscar CEP.', 'error');
     }
 }
+
+// Toast Notification
+function showToast(message, type = 'info') {
+    // Remove toast anterior se existir
+    const existingToast = document.querySelector('.toast');
+    if (existingToast) {
+        existingToast.remove();
+    }
+
+    // Criar novo toast
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    
+    const icons = {
+        success: '✅',
+        error: '❌',
+        info: 'ℹ️'
+    };
+    
+    toast.innerHTML = `
+        <span class="toast-icon">${icons[type] || icons.info}</span>
+        <span class="toast-message">${message}</span>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Mostrar toast
+    setTimeout(() => toast.classList.add('show'), 10);
+    
+    // Remover após 3 segundos
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// Expor toast globalmente
+window.showToast = showToast;

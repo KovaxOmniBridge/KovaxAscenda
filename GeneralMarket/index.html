@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mercado Geral - Ascenda</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>🛍️ Ascenda Market</h1>
+                    <p class="tagline">Todos os produtos e serviços em um só lugar</p>
+                </div>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <input type="text" id="globalSearch" placeholder="Buscar produtos, serviços ou empresas...">
+                        <button id="btnSearch">🔍</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- FILTERS -->
+    <section class="filters-section">
+        <div class="container">
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Tipo:</label>
+                    <select id="filterType">
+                        <option value="">Todos</option>
+                        <option value="product">Produtos</option>
+                        <option value="service">Serviços</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Categoria:</label>
+                    <select id="filterCategory">
+                        <option value="">Todas</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Ordenar por:</label>
+                    <select id="sortBy">
+                        <option value="newest">Mais recentes</option>
+                        <option value="oldest">Mais antigos</option>
+                        <option value="price-asc">Menor preço</option>
+                        <option value="price-desc">Maior preço</option>
+                        <option value="name">Nome A-Z</option>
+                    </select>
+                </div>
+                <button id="btnClearFilters" class="btn-clear">Limpar filtros</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATISTICS -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-info">
+                        <h3 id="totalProducts">0</h3>
+                        <p>Produtos</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🛠️</div>
+                    <div class="stat-info">
+                        <h3 id="totalServices">0</h3>
+                        <p>Serviços</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🏢</div>
+                    <div class="stat-info">
+                        <h3 id="totalCompanies">0</h3>
+                        <p>Empresas</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📂</div>
+                    <div class="stat-info">
+                        <h3 id="totalCategories">0</h3>
+                        <p>Categorias</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Companies Section -->
+            <section class="companies-section">
+                <h2>🏢 Empresas Parceiras</h2>
+                <div id="companiesList" class="companies-grid">
+                    <!-- Companies will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Products Section -->
+            <section class="items-section">
+                <h2>📦 Produtos e Serviços</h2>
+                <div id="itemsList" class="items-grid">
+                    <!-- Items will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Loading -->
+            <div id="loading" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>Carregando...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <div class="empty-icon">🔍</div>
+                <h3>Nenhum item encontrado</h3>
+                <p>Tente ajustar os filtros ou fazer uma nova busca</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Ascenda Market. Todos os direitos reservados.</p>
+            <div class="footer-links">
+                <a href="#about">Sobre</a>
+                <a href="#terms">Termos</a>
+                <a href="#privacy">Privacidade</a>
+                <a href="#contact">Contato</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="scripts/api.js"></script>
+    <script src="scripts/main.js"></script>
+</body>
+</html>

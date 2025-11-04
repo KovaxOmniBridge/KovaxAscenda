@@ -15,6 +15,14 @@ export class ProductController {
 
             let products;
 
+            // Se não houver companyId, buscar TODOS os produtos (para GeneralMarket)
+            if (!companyId) {
+                products = await this.productService.getAllProductsGlobal();
+                res.json(products);
+                return;
+            }
+
+            // Buscar produtos de uma empresa específica
             if (lowStock === 'true') {
                 products = await this.productService.getLowStockProducts(companyId);
             } else if (category) {

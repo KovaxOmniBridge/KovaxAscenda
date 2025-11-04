@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Site - Editor</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/site-editor.css">
+</head>
+<body>
+    <div class="editor-container">
+        <!-- SIDEBAR -->
+        <aside class="editor-sidebar">
+            <div class="sidebar-header">
+                <h2>🎨 Editor do Site</h2>
+                <p class="company-name" id="editorCompanyName">Carregando...</p>
+            </div>
+
+            <nav class="editor-nav">
+                <button class="nav-tab active" data-tab="theme">🎨 Tema & Cores</button>
+                <button class="nav-tab" data-tab="images">📷 Logo & Imagens</button>
+                <button class="nav-tab" data-tab="content">✏️ Conteúdo</button>
+                <button class="nav-tab" data-tab="layout">🏗️ Layout</button>
+                <button class="nav-tab" data-tab="sections">📋 Seções</button>
+                <button class="nav-tab" data-tab="social">🌐 Redes Sociais</button>
+                <button class="nav-tab" data-tab="advanced">💻 Avançado</button>
+            </nav>
+
+            <div class="sidebar-actions">
+                <button class="btn-preview" id="btnPreview">👁️ Preview</button>
+                <button class="btn-reset" id="btnReset">🔄 Resetar</button>
+                <button class="btn-back" id="btnBack">← Voltar</button>
+            </div>
+        </aside>
+
+        <!-- MAIN EDITOR -->
+        <main class="editor-main">
+            <!-- TAB: TEMA & CORES -->
+            <div class="editor-tab active" id="tab-theme">
+                <h2>🎨 Tema & Cores</h2>
+
+                <div class="section-card">
+                    <h3>Escolha um Tema Pré-definido</h3>
+                    <div class="theme-grid">
+                        <button class="theme-btn" data-theme="blue">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #3b82f6, #8b5cf6)"></div>
+                            <span>Azul</span>
+                        </button>
+                        <button class="theme-btn" data-theme="green">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #10b981, #059669)"></div>
+                            <span>Verde</span>
+                        </button>
+                        <button class="theme-btn" data-theme="purple">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed)"></div>
+                            <span>Roxo</span>
+                        </button>
+                        <button class="theme-btn" data-theme="red">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #ef4444, #dc2626)"></div>
+                            <span>Vermelho</span>
+                        </button>
+                        <button class="theme-btn" data-theme="orange">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #f97316, #ea580c)"></div>
+                            <span>Laranja</span>
+                        </button>
+                        <button class="theme-btn" data-theme="pink">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #ec4899, #db2777)"></div>
+                            <span>Rosa</span>
+                        </button>
+                        <button class="theme-btn" data-theme="teal">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #14b8a6, #0d9488)"></div>
+                            <span>Turquesa</span>
+                        </button>
+                        <button class="theme-btn" data-theme="indigo">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #6366f1, #4f46e5)"></div>
+                            <span>Índigo</span>
+                        </button>
+                        <button class="theme-btn" data-theme="yellow">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #f59e0b, #d97706)"></div>
+                            <span>Amarelo</span>
+                        </button>
+                        <button class="theme-btn" data-theme="dark">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #1e293b, #0f172a)"></div>
+                            <span>Escuro</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h3>Ou Personalize as Cores</h3>
+                    <div class="color-grid">
+                        <div class="color-picker-group">
+                            <label for="primaryColor">Cor Primária</label>
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="primaryColor" value="#3b82f6">
+                                <input type="text" id="primaryColorText" value="#3b82f6" maxlength="7">
+                            </div>
+                        </div>
+                        <div class="color-picker-group">
+                            <label for="secondaryColor">Cor Secundária</label>
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="secondaryColor" value="#8b5cf6">
+                                <input type="text" id="secondaryColorText" value="#8b5cf6" maxlength="7">
+                            </div>
+                        </div>
+                        <div class="color-picker-group">
+                            <label for="accentColor">Cor de Destaque</label>
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="accentColor" value="#f59e0b">
+                                <input type="text" id="accentColorText" value="#f59e0b" maxlength="7">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h3>Gradiente do Hero</h3>
+                    <div class="gradient-grid">
+                        <button class="gradient-btn" data-gradient="hero-gradient-1">
+                            <div class="gradient-preview" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)"></div>
+                        </button>
+                        <button class="gradient-btn" data-gradient="hero-gradient-2">
+                            <div class="gradient-preview" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"></div>
+                        </button>
+                        <button class="gradient-btn" data-gradient="hero-gradient-3">
+                            <div class="gradient-preview" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"></div>
+                        </button>
+                        <button class="gradient-btn" data-gradient="hero-gradient-4">
+                            <div class="gradient-preview" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)"></div>
+                        </button>
+                        <button class="gradient-btn" data-gradient="hero-gradient-5">
+                            <div class="gradient-preview" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%)"></div>
+                        </button>
+                        <button class="gradient-btn" data-gradient="hero-gradient-6">
+                            <div class="gradient-preview" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%)"></div>
+                        </button>
+                        <button class="gradient-btn" data-gradient="hero-gradient-7">
+                            <div class="gradient-preview" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)"></div>
+                        </button>
+                        <button class="gradient-btn" data-gradient="hero-gradient-8">
+                            <div class="gradient-preview" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)"></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: LOGO & IMAGENS -->
+            <div class="editor-tab" id="tab-images">
+                <h2>📷 Logo & Imagens</h2>
+
+                <div class="section-card">
+                    <h3>Logo da Empresa</h3>
+                    <p class="help-text">Recomendado: 200x200px, PNG com fundo transparente</p>
+                    <div class="image-upload-area">
+                        <div class="image-preview" id="logoPreview">
+                            <span class="preview-placeholder">🏢</span>
+                        </div>
+                        <div class="upload-actions">
+                            <button class="btn-upload" onclick="document.getElementById('logoInput').click()">📤 Upload Logo</button>
+                            <button class="btn-remove" id="btnRemoveLogo">🗑️ Remover</button>
+                        </div>
+                        <input type="file" id="logoInput" accept="image/*" style="display: none;">
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h3>Banner do Hero</h3>
+                    <p class="help-text">Recomendado: 1920x600px, JPG ou PNG</p>
+                    <div class="image-upload-area">
+                        <div class="image-preview banner-preview" id="bannerPreview">
+                            <span class="preview-placeholder">🖼️</span>
+                        </div>
+                        <div class="upload-actions">
+                            <button class="btn-upload" onclick="document.getElementById('bannerInput').click()">📤 Upload Banner</button>
+                            <button class="btn-remove" id="btnRemoveBanner">🗑️ Remover</button>
+                        </div>
+                        <input type="file" id="bannerInput" accept="image/*" style="display: none;">
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h3>Favicon</h3>
+                    <p class="help-text">Recomendado: 32x32px ou 64x64px, PNG ou ICO</p>
+                    <div class="image-upload-area">
+                        <div class="image-preview favicon-preview" id="faviconPreview">
+                            <span class="preview-placeholder">⭐</span>
+                        </div>
+                        <div class="upload-actions">
+                            <button class="btn-upload" onclick="document.getElementById('faviconInput').click()">📤 Upload Favicon</button>
+                            <button class="btn-remove" id="btnRemoveFavicon">🗑️ Remover</button>
+                        </div>
+                        <input type="file" id="faviconInput" accept="image/*" style="display: none;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: CONTEÚDO -->
+            <div class="editor-tab" id="tab-content">
+                <h2>✏️ Conteúdo do Site</h2>
+
+                <div class="section-card">
+                    <h3>Seção Hero (Principal)</h3>
+                    <div class="form-group">
+                        <label for="heroTitle">Título do Hero</label>
+                        <input type="text" id="heroTitle" placeholder="Bem-vindo à nossa empresa!">
+                    </div>
+                    <div class="form-group">
+                        <label for="heroDescription">Descrição do Hero</label>
+                        <textarea id="heroDescription" rows="3" placeholder="Conheça nossos produtos e serviços de qualidade..."></textarea>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h3>Seção Sobre</h3>
+                    <div class="form-group">
+                        <label for="aboutText">Texto Sobre a Empresa</label>
+                        <textarea id="aboutText" rows="6" placeholder="Conte a história da sua empresa, missão, visão e valores..."></textarea>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h3>Slug da URL</h3>
+                    <p class="help-text">URL amigável para acessar seu site: ascenda.com/loja/seu-slug</p>
+                    <div class="form-group">
+                        <label for="slug">Slug (apenas letras minúsculas, números e hífens)</label>
+                        <input type="text" id="slug" placeholder="minha-empresa" pattern="[a-z0-9-]+">
+                        <small class="slug-preview">Seu site será: <strong id="slugPreview">ascenda.com/loja/minha-empresa</strong></small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: LAYOUT -->
+            <div class="editor-tab" id="tab-layout">
+                <h2>🏗️ Layout & Estilo</h2>
+
+                <div class="section-card">
+                    <h3>Estilo do Layout</h3>
+                    <div class="layout-grid">
+                        <div class="layout-option">
+                            <input type="radio" id="layoutModern" name="layout" value="modern" checked>
+                            <label for="layoutModern">
+                                <div class="layout-preview">
+                                    <div class="layout-mockup modern"></div>
+                                </div>
+                                <span>Moderno</span>
+                            </label>
+                        </div>
+                        <div class="layout-option">
+                            <input type="radio" id="layoutClassic" name="layout" value="classic">
+                            <label for="layoutClassic">
+                                <div class="layout-preview">
+                                    <div class="layout-mockup classic"></div>
+                                </div>
+                                <span>Clássico</span>
+                            </label>
+                        </div>
+                        <div class="layout-option">
+                            <input type="radio" id="layoutMinimal" name="layout" value="minimal">
+                            <label for="layoutMinimal">
+                                <div class="layout-preview">
+                                    <div class="layout-mockup minimal"></div>
+                                </div>
+                                <span>Minimalista</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h3>Tipografia</h3>
+                    <div class="font-grid">
+                        <div class="font-option">
+                            <input type="radio" id="fontModern" name="font" value="modern" checked>
+                            <label for="fontModern">
+                                <span style="font-family: 'Segoe UI', sans-serif;">Moderna</span>
+                            </label>
+                        </div>
+                        <div class="font-option">
+                            <input type="radio" id="fontClassic" name="font" value="classic">
+                            <label for="fontClassic">
+                                <span style="font-family: Georgia, serif;">Clássica</span>
+                            </label>
+                        </div>
+                        <div class="font-option">
+                            <input type="radio" id="fontPlayful" name="font" value="playful">
+                            <label for="fontPlayful">
+                                <span style="font-family: 'Comic Sans MS', cursive;">Divertida</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: SEÇÕES -->
+            <div class="editor-tab" id="tab-sections">
+                <h2>📋 Gerenciar Seções</h2>
+                <p class="help-text">Arraste para reordenar ou clique no olho para ocultar/mostrar</p>
+
+                <div class="section-card">
+                    <div class="sections-list" id="sectionsList">
+                        <!-- Will be populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: REDES SOCIAIS -->
+            <div class="editor-tab" id="tab-social">
+                <h2>🌐 Redes Sociais</h2>
+
+                <div class="section-card">
+                    <div class="form-group">
+                        <label for="facebook">📘 Facebook</label>
+                        <input type="url" id="facebook" placeholder="https://facebook.com/sua-pagina">
+                    </div>
+                    <div class="form-group">
+                        <label for="instagram">📷 Instagram</label>
+                        <input type="url" id="instagram" placeholder="https://instagram.com/seu-perfil">
+                    </div>
+                    <div class="form-group">
+                        <label for="whatsapp">💬 WhatsApp</label>
+                        <input type="tel" id="whatsapp" placeholder="5511999999999">
+                        <small>Apenas números, com código do país (ex: 5511999999999)</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="linkedin">💼 LinkedIn</label>
+                        <input type="url" id="linkedin" placeholder="https://linkedin.com/company/sua-empresa">
+                    </div>
+                    <div class="form-group">
+                        <label for="twitter">🐦 Twitter / X</label>
+                        <input type="url" id="twitter" placeholder="https://twitter.com/seu-perfil">
+                    </div>
+                    <div class="form-group">
+                        <label for="youtube">📺 YouTube</label>
+                        <input type="url" id="youtube" placeholder="https://youtube.com/@seu-canal">
+                    </div>
+                    <div class="form-group">
+                        <label for="tiktok">🎵 TikTok</label>
+                        <input type="url" id="tiktok" placeholder="https://tiktok.com/@seu-perfil">
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: AVANÇADO -->
+            <div class="editor-tab" id="tab-advanced">
+                <h2>💻 Configurações Avançadas</h2>
+
+                <div class="section-card">
+                    <h3>CSS Personalizado</h3>
+                    <p class="help-text">⚠️ Use com cuidado! CSS inválido pode quebrar o layout do site.</p>
+                    <div class="form-group">
+                        <textarea id="customCSS" rows="15" placeholder=".custom-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 25px;
+    padding: 1rem 2rem;
+}
+
+.hero-title {
+    font-size: 3rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}"></textarea>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h3>Status do Site</h3>
+                    <div class="form-group">
+                        <label class="switch">
+                            <input type="checkbox" id="isActive" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <label for="isActive">Site Ativo (visível publicamente)</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SAVE BAR -->
+            <div class="save-bar">
+                <div class="save-status" id="saveStatus">
+                    <span class="status-icon">💾</span>
+                    <span class="status-text">Não salvo</span>
+                </div>
+                <button class="btn-save" id="btnSave">💾 Salvar Configurações</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Loading -->
+    <div id="loading" class="loading" style="display: none;">
+        <div class="spinner"></div>
+        <p>Carregando configurações...</p>
+    </div>
+
+    <script src="../IndividualMarket/scripts/api.js"></script>
+    <script src="scripts/api.js"></script>
+    <script src="scripts/site-editor.js"></script>
+</body>
+</html>

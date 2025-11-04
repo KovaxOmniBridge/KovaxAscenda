@@ -39,6 +39,10 @@ export class ProductService {
         return this.productRepository.findAll(companyId);
     }
 
+    async getAllProductsGlobal(): Promise<IProduct[]> {
+        return this.productRepository.findAllGlobal();
+    }
+
     async getProductsByCategory(companyId: string, category: string): Promise<IProduct[]> {
         return this.productRepository.findByCategory(companyId, category);
     }
