@@ -1,3 +1,3 @@
 # Ascenda
 
-Uma empresa voltada para servir outras empresas
+Uma empresa voltada para servir outras empresasc
