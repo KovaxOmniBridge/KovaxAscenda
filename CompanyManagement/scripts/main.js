@@ -201,9 +201,9 @@ async function editCompany(id) {
     }
 }
 
-// Abrir editor de site
+// Abrir editor de site - redireciona para seleção de modo
 function openSiteEditor(companyId) {
-    window.location.href = `site-editor.html?company=${companyId}`;
+    window.location.href = `site-editor-selector.html?company=${companyId}`;
 }
 
 // Submeter formulário

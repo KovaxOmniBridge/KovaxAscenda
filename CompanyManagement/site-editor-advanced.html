@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor Avançado - Ascenda</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/site-editor-advanced.css">
+</head>
+<body>
+    <div class="advanced-editor">
+        <!-- TOP TOOLBAR -->
+        <header class="editor-toolbar">
+            <div class="toolbar-left">
+                <button class="btn-toolbar" id="btnBackAdvanced" title="Voltar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Voltar
+                </button>
+                <div class="mode-indicator">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="3" width="20" height="14" rx="2"/>
+                        <path d="M6 8h4v4H6z"/>
+                    </svg>
+                    <span>Modo Avançado</span>
+                </div>
+                <div class="company-info">
+                    <span id="advancedCompanyName">Carregando...</span>
+                </div>
+            </div>
+
+            <div class="toolbar-center">
+                <div class="device-selector">
+                    <button class="device-btn active" data-device="desktop" title="Desktop">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="3" width="20" height="14" rx="2"/>
+                            <line x1="8" y1="21" x2="16" y2="21"/>
+                            <line x1="12" y1="17" x2="12" y2="21"/>
+                        </svg>
+                    </button>
+                    <button class="device-btn" data-device="tablet" title="Tablet">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="5" y="2" width="14" height="20" rx="2"/>
+                            <line x1="12" y1="18" x2="12.01" y2="18"/>
+                        </svg>
+                    </button>
+                    <button class="device-btn" data-device="mobile" title="Mobile">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="7" y="2" width="10" height="20" rx="2"/>
+                            <line x1="12" y1="18" x2="12.01" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="toolbar-right">
+                <button class="btn-toolbar btn-undo" id="btnUndo" title="Desfazer" disabled>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 7v6h6"/>
+                        <path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13"/>
+                    </svg>
+                </button>
+                <button class="btn-toolbar btn-redo" id="btnRedo" title="Refazer" disabled>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 7v6h-6"/>
+                        <path d="M3 17a9 9 0 019-9 9 9 0 016 2.3l3 2.7"/>
+                    </svg>
+                </button>
+                <div class="toolbar-divider"></div>
+                <button class="btn-toolbar btn-preview" id="btnPreviewAdvanced" title="Visualizar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    Preview
+                </button>
+                <button class="btn-toolbar btn-save-primary" id="btnSaveAdvanced" title="Salvar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                        <polyline points="17 21 17 13 7 13 7 21"/>
+                        <polyline points="7 3 7 8 15 8"/>
+                    </svg>
+                    Salvar
+                </button>
+            </div>
+        </header>
+
+        <!-- MAIN LAYOUT -->
+        <div class="editor-layout">
+            <!-- LEFT SIDEBAR - Components -->
+            <aside class="components-panel">
+                <div class="panel-header">
+                    <h3>📦 Componentes</h3>
+                    <input type="search" class="component-search" placeholder="Buscar componente..." id="componentSearch">
+                </div>
+
+                <div class="components-list">
+                    <div class="component-category">
+                        <h4 class="category-title">📐 Estrutura</h4>
+                        <div class="category-items">
+                            <div class="component-item" draggable="true" data-component="container">
+                                <div class="component-icon">📦</div>
+                                <span>Container</span>
+                            </div>
+                            <div class="component-item" draggable="true" data-component="section">
+                                <div class="component-icon">📄</div>
+                                <span>Seção</span>
+                            </div>
+                            <div class="component-item" draggable="true" data-component="columns">
+                                <div class="component-icon">⚏</div>
+                                <span>Colunas</span>
+                            </div>
+                            <div class="component-item" draggable="true" data-component="grid">
+                                <div class="component-icon">▦</div>
+                                <span>Grid</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-category">
+                        <h4 class="category-title">✏️ Conteúdo</h4>
+                        <div class="category-items">
+                            <div class="component-item" draggable="true" data-component="heading">
+                                <div class="component-icon">H</div>
+                                <span>Título</span>
+                            </div>
+                            <div class="component-item" draggable="true" data-component="text">
+                                <div class="component-icon">T</div>
+                                <span>Texto</span>
+                            </div>
+                            <div class="component-item" draggable="true" data-component="button">
+                                <div class="component-icon">🔘</div>
+                                <span>Botão</span>
+                            </div>
+                            <div class="component-item" draggable="true" data-component="image">
+                                <div class="component-icon">🖼️</div>
+                                <span>Imagem</span>
+                            </div>
+                            <div class="component-item" draggable="true" data-component="video">
+                                <div class="component-icon">🎥</div>
+                                <span>Vídeo</span>
+                            </div>
+                            <div class="component-item" draggable="true" data-component="icon">
+                                <div class="component-icon">⭐</div>
+                                <span>Ícone</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-category">
+                        <h4 class="category-title">🎨 Blocos Prontos</h4>
+                        <div class="category-items">
+                            <div class="component-item" draggable="true" data-component="hero">
+                                <div class="component-icon">🎯</div>
+                                <span>Hero Banner</span>
+                            </div>
+                            <div class="component-item" draggable="true" data-component="header">
+                                <div class="component-icon">🔝</div>
+                                <span>Cabeçalho</span>
+                            </div>
+                            <div class="component-item" draggable="true" data-component="navbar">
+                                <div class="component-icon">📍</div>
+                                <span>Menu</span>
+                            </div>
+                            <div class="component-item" draggable="true" data-component="features">
+                                <div class="component-icon">✨</div>
+                                <span>Features</span>
+                            </div>
+                            <div class="component-item" draggable="true" data-component="testimonials">
+                                <div class="component-icon">💬</div>
+                                <span>Depoimentos</span>
+                            </div>
+                            <div class="component-item" draggable="true" data-component="pricing">
+                                <div class="component-icon">💰</div>
+                                <span>Preços</span>
+                            </div>
+                            <div class="component-item" draggable="true" data-component="cta">
+                                <div class="component-icon">📢</div>
+                                <span>Call-to-Action</span>
+                            </div>
+                            <div class="component-item" draggable="true" data-component="footer">
+                                <div class="component-icon">🔚</div>
+                                <span>Rodapé</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-category">
+                        <h4 class="category-title">📋 Formulários</h4>
+                        <div class="category-items">
+                            <div class="component-item" draggable="true" data-component="form">
+                                <div class="component-icon">📝</div>
+                                <span>Formulário</span>
+                            </div>
+                            <div class="component-item" draggable="true" data-component="input">
+                                <div class="component-icon">✍️</div>
+                                <span>Campo Input</span>
+                            </div>
+                            <div class="component-item" draggable="true" data-component="textarea">
+                                <div class="component-icon">📃</div>
+                                <span>Área de Texto</span>
+                            </div>
+                            <div class="component-item" draggable="true" data-component="select">
+                                <div class="component-icon">⬇️</div>
+                                <span>Select</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- CENTER - Canvas -->
+            <main class="canvas-area">
+                <div class="canvas-container" id="pageCanvas">
+                    <div class="canvas-empty-state">
+                        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M8 12h8M12 8v8"/>
+                        </svg>
+                        <h3>Comece a criar seu site</h3>
+                        <p>Arraste componentes da barra lateral para começar</p>
+                    </div>
+                </div>
+            </main>
+
+            <!-- RIGHT SIDEBAR - Properties -->
+            <aside class="properties-panel">
+                <div class="panel-header">
+                    <h3>⚙️ Propriedades</h3>
+                </div>
+
+                <div class="properties-content" id="propertiesContent">
+                    <div class="no-selection">
+                        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M12 2v20M2 12h20"/>
+                        </svg>
+                        <p>Selecione um componente<br>para editar suas propriedades</p>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="scripts/api.js"></script>
+    <script src="scripts/site-editor-advanced.js"></script>
+</body>
+</html>

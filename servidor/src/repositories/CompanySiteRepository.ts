@@ -17,6 +17,7 @@ export class CompanySiteRepository {
             CREATE TABLE IF NOT EXISTS company_sites (
                 id TEXT PRIMARY KEY,
                 companyId TEXT UNIQUE NOT NULL,
+                editorType TEXT NOT NULL DEFAULT 'simple',
                 theme TEXT NOT NULL DEFAULT 'blue',
                 primaryColor TEXT,
                 secondaryColor TEXT,
@@ -31,6 +32,7 @@ export class CompanySiteRepository {
                 heroDescription TEXT,
                 aboutText TEXT,
                 customCSS TEXT,
+                customLayout TEXT,
                 socialLinks TEXT,
                 sections TEXT,
                 slug TEXT UNIQUE,
@@ -64,16 +66,17 @@ export class CompanySiteRepository {
 
         const stmt = this.db.prepare(`
             INSERT INTO company_sites (
-                id, companyId, theme, primaryColor, secondaryColor, accentColor,
+                id, companyId, editorType, theme, primaryColor, secondaryColor, accentColor,
                 heroGradient, layout, font, logo, banner, favicon,
-                heroTitle, heroDescription, aboutText, customCSS,
+                heroTitle, heroDescription, aboutText, customCSS, customLayout,
                 socialLinks, sections, slug, isActive, createdAt, updatedAt
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `);
 
         stmt.run(
             id,
             companyId,
+            data.editorType || 'simple',
             data.theme || 'blue',
             data.primaryColor || null,
             data.secondaryColor || null,
@@ -88,6 +91,7 @@ export class CompanySiteRepository {
             data.heroDescription || null,
             data.aboutText || null,
             data.customCSS || null,
+            data.customLayout || null,
             data.socialLinks ? JSON.stringify(data.socialLinks) : null,
             data.sections ? JSON.stringify(data.sections) : JSON.stringify(defaultSections),
             data.slug || null,
@@ -158,6 +162,10 @@ export class CompanySiteRepository {
             updates.push('accentColor = ?');
             values.push(data.accentColor);
         }
+        if (data.editorType !== undefined) {
+            updates.push('editorType = ?');
+            values.push(data.editorType);
+        }
         if (data.heroGradient !== undefined) {
             updates.push('heroGradient = ?');
             values.push(data.heroGradient);
@@ -197,6 +205,10 @@ export class CompanySiteRepository {
         if (data.customCSS !== undefined) {
             updates.push('customCSS = ?');
             values.push(data.customCSS);
+        }
+        if (data.customLayout !== undefined) {
+            updates.push('customLayout = ?');
+            values.push(data.customLayout);
         }
         if (data.socialLinks !== undefined) {
             updates.push('socialLinks = ?');
@@ -239,6 +251,7 @@ export class CompanySiteRepository {
         return {
             id: row.id,
             companyId: row.companyId,
+            editorType: row.editorType || 'simple',
             theme: row.theme,
             primaryColor: row.primaryColor,
             secondaryColor: row.secondaryColor,
@@ -253,6 +266,7 @@ export class CompanySiteRepository {
             heroDescription: row.heroDescription,
             aboutText: row.aboutText,
             customCSS: row.customCSS,
+            customLayout: row.customLayout,
             socialLinks: row.socialLinks ? JSON.parse(row.socialLinks) : undefined,
             sections: row.sections ? JSON.parse(row.sections) : undefined,
             slug: row.slug,

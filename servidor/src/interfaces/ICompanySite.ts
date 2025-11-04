@@ -23,6 +23,9 @@ export interface ICompanySite {
     id: string;
     companyId: string;
     
+    // Editor Mode
+    editorType: 'simple' | 'advanced'; // Tipo de editor usado
+    
     // Theme & Colors
     theme: string; // 'blue', 'green', 'purple', etc.
     primaryColor?: string; // Custom hex color
@@ -46,6 +49,7 @@ export interface ICompanySite {
     
     // Advanced
     customCSS?: string;
+    customLayout?: string; // HTML customizado para modo avançado
     
     // Social & Structure
     socialLinks?: ISocialLinks;
@@ -63,6 +67,7 @@ export interface ICompanySite {
 }
 
 export interface ICreateCompanySite {
+    editorType?: 'simple' | 'advanced';
     theme?: string;
     primaryColor?: string;
     secondaryColor?: string;
@@ -77,6 +82,7 @@ export interface ICreateCompanySite {
     heroDescription?: string;
     aboutText?: string;
     customCSS?: string;
+    customLayout?: string;
     socialLinks?: ISocialLinks;
     sections?: ISection[];
     slug?: string;
