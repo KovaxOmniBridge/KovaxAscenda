@@ -90,20 +90,14 @@ async function loadCompanyData(companyId) {
         companyProducts = products;
         companyServices = services;
 
-        // Apply site configuration
-        if (siteConfig) {
-            applySiteConfiguration(siteConfig);
+        // Check editor type and render accordingly
+        if (siteConfig && siteConfig.editorType === 'advanced' && siteConfig.customLayout) {
+            // Render advanced custom layout
+            renderAdvancedLayout(siteConfig);
         } else {
-            // Apply default theme
-            applyDefaultConfiguration();
+            // Render simple template-based layout
+            renderSimpleLayout(siteConfig);
         }
-
-        // Update UI
-        updateCompanyInfo(siteConfig);
-        updateStatistics();
-        renderProducts();
-        renderServices();
-        combineAndRenderAll();
 
         showLoading(false);
 
@@ -112,6 +106,74 @@ async function loadCompanyData(companyId) {
         showLoading(false);
         showError('Empresa não encontrada');
     }
+}
+
+// Render simple template-based layout (original)
+function renderSimpleLayout(siteConfig) {
+    // Apply site configuration
+    if (siteConfig) {
+        applySiteConfiguration(siteConfig);
+    } else {
+        // Apply default theme
+        applyDefaultConfiguration();
+    }
+
+    // Update UI
+    updateCompanyInfo(siteConfig);
+    updateStatistics();
+    renderProducts();
+    renderServices();
+    combineAndRenderAll();
+}
+
+// Render advanced custom layout (low-code editor)
+function renderAdvancedLayout(siteConfig) {
+    console.log('🎨 Renderizando layout customizado do modo avançado');
+    
+    // Hide default structure
+    const mainContent = document.querySelector('.main-content');
+    if (mainContent) {
+        mainContent.style.display = 'none';
+    }
+
+    // Create container for custom layout
+    let customContainer = document.getElementById('customLayoutContainer');
+    if (!customContainer) {
+        customContainer = document.createElement('div');
+        customContainer.id = 'customLayoutContainer';
+        customContainer.style.cssText = 'width: 100%; min-height: 100vh;';
+        document.body.appendChild(customContainer);
+    }
+
+    // Inject custom HTML
+    customContainer.innerHTML = siteConfig.customLayout;
+
+    // Apply custom CSS if available
+    if (siteConfig.customCSS) {
+        let customStyle = document.getElementById('customStyleTag');
+        if (!customStyle) {
+            customStyle = document.createElement('style');
+            customStyle.id = 'customStyleTag';
+            document.head.appendChild(customStyle);
+        }
+        customStyle.textContent = siteConfig.customCSS;
+    }
+
+    // Apply theme colors
+    if (siteConfig.primaryColor) {
+        document.documentElement.style.setProperty('--primary-color', siteConfig.primaryColor);
+    }
+    if (siteConfig.secondaryColor) {
+        document.documentElement.style.setProperty('--secondary-color', siteConfig.secondaryColor);
+    }
+    if (siteConfig.accentColor) {
+        document.documentElement.style.setProperty('--accent-color', siteConfig.accentColor);
+    }
+
+    // Update document title
+    document.getElementById('pageTitle').textContent = `${currentCompany.name} - Ascenda`;
+
+    console.log('✅ Layout customizado renderizado com sucesso!');
 }
 
 function updateCompanyInfo(siteConfig) {
