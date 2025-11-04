@@ -76,12 +76,42 @@ class DatabaseService {
         `);
 
         console.log('✅ Banco de dados SQLite inicializado com sucesso!');
+        console.log('💾 Otimizado para milhares de registros');
     }
 
     static close(): void {
         if (DatabaseService.instance) {
             DatabaseService.instance.close();
+            console.log('🔒 Conexão com banco de dados fechada');
         }
+    }
+
+    // Backup do banco de dados
+    static async backup(backupPath: string): Promise<void> {
+        if (DatabaseService.instance) {
+            try {
+                await DatabaseService.instance.backup(backupPath);
+                console.log(`💾 Backup criado em: ${backupPath}`);
+            } catch (error) {
+                console.error('❌ Erro ao criar backup:', error);
+            }
+        }
+    }
+
+    // Estatísticas do banco
+    static getStats(): any {
+        if (DatabaseService.instance) {
+            const companies = DatabaseService.instance.prepare('SELECT COUNT(*) as total FROM companies').get();
+            const contacts = DatabaseService.instance.prepare('SELECT COUNT(*) as total FROM contacts').get();
+            const partners = DatabaseService.instance.prepare('SELECT COUNT(*) as total FROM partners').get();
+            
+            return {
+                companies: companies,
+                contacts: contacts,
+                partners: partners
+            };
+        }
+        return null;
     }
 }
 

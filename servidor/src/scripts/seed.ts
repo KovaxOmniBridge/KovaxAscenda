@@ -4,19 +4,19 @@ import { ICompany } from '../interfaces';
 
 const seedData: Omit<ICompany, 'id' | 'createdAt' | 'updatedAt'>[] = [
     {
-        cnpj: '12.345.678/0001-90',
-        razaoSocial: 'Tech Solutions Ltda',
-        nomeFantasia: 'TechSol',
+        cnpj: '00.000.000/0001-00',
+        razaoSocial: 'Empresa Exemplo Ltda',
+        nomeFantasia: 'Exemplo Corp',
         porte: 'ME',
         regimeTributario: 'SIMPLES_NACIONAL',
         situacaoCadastral: 'ATIVA',
-        dataAbertura: new Date('2020-01-15'),
+        dataAbertura: new Date('2024-01-01'),
         endereco: {
-            cep: '01310-100',
-            logradouro: 'Avenida Paulista',
-            numero: '1000',
-            complemento: 'Sala 101',
-            bairro: 'Bela Vista',
+            cep: '01000-000',
+            logradouro: 'Rua Exemplo',
+            numero: '100',
+            complemento: 'Sala 1',
+            bairro: 'Centro',
             cidade: 'São Paulo',
             estado: 'SP',
             pais: 'Brasil'
@@ -24,59 +24,15 @@ const seedData: Omit<ICompany, 'id' | 'createdAt' | 'updatedAt'>[] = [
         contatos: [
             {
                 tipo: 'EMAIL',
-                valor: 'contato@techsol.com.br',
+                valor: 'contato@exemplo.com.br',
                 principal: true
             },
             {
                 tipo: 'TELEFONE',
-                valor: '(11) 3000-0000',
+                valor: '(11) 1234-5678',
                 principal: true
             }
         ]
-    },
-    {
-        cnpj: '98.765.432/0001-10',
-        razaoSocial: 'Comércio Digital S.A.',
-        nomeFantasia: 'DigiShop',
-        porte: 'EPP',
-        regimeTributario: 'LUCRO_PRESUMIDO',
-        situacaoCadastral: 'ATIVA',
-        dataAbertura: new Date('2019-06-20'),
-        endereco: {
-            cep: '22041-001',
-            logradouro: 'Avenida Atlântica',
-            numero: '2000',
-            bairro: 'Copacabana',
-            cidade: 'Rio de Janeiro',
-            estado: 'RJ',
-            pais: 'Brasil'
-        },
-        contatos: [
-            {
-                tipo: 'EMAIL',
-                valor: 'contato@digishop.com.br',
-                principal: true
-            }
-        ]
-    },
-    {
-        cnpj: '11.222.333/0001-44',
-        razaoSocial: 'Consultoria Empresarial ME',
-        nomeFantasia: 'ConsultaBiz',
-        porte: 'ME',
-        regimeTributario: 'SIMPLES_NACIONAL',
-        situacaoCadastral: 'ATIVA',
-        dataAbertura: new Date('2021-03-10'),
-        endereco: {
-            cep: '30130-010',
-            logradouro: 'Avenida Afonso Pena',
-            numero: '1500',
-            complemento: 'Conjunto 202',
-            bairro: 'Centro',
-            cidade: 'Belo Horizonte',
-            estado: 'MG',
-            pais: 'Brasil'
-        }
     }
 ];
 
@@ -84,12 +40,12 @@ async function seedDatabase() {
     try {
         console.log('🌱 Iniciando seed do banco de dados...');
 
-        // Verificar se já existem dados
-        const companies = await CompanyRepository.findAll();
-        if (companies.length > 0) {
-            console.log('⚠️  Banco já contém dados. Seed cancelado.');
-            return;
-        }
+        // Limpar banco de dados existente
+        const db = DatabaseService.getConnection();
+        console.log('🗑️  Limpando dados antigos...');
+        db.prepare('DELETE FROM partners').run();
+        db.prepare('DELETE FROM contacts').run();
+        db.prepare('DELETE FROM companies').run();
 
         // Inserir dados de exemplo
         for (const data of seedData) {

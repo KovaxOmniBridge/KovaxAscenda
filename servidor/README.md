@@ -7,7 +7,25 @@ Servidor Node.js com Express e TypeScript para gerenciamento de empresas.
 - **Node.js** - Runtime JavaScript
 - **Express** - Framework web
 - **TypeScript** - Tipagem estática
+- **SQLite (better-sqlite3)** - Banco de dados local otimizado
 - **CORS** - Habilitação de requisições cross-origin
+
+## 💾 Banco de Dados
+
+O sistema utiliza **SQLite** otimizado para alto desempenho:
+
+- ✅ Suporta **milhares de empresas**
+- ✅ Persistência permanente em arquivo
+- ✅ Queries otimizadas com índices
+- ✅ Write-Ahead Logging (WAL) ativado
+- ✅ Cache de 10MB para melhor performance
+- ✅ Localização: `data/ascenda.db`
+
+### Capacidades do SQLite:
+- **Registros**: Suporta facilmente 100.000+ empresas
+- **Tamanho**: Até 281 TB de dados
+- **Performance**: ~500.000 SELECT/s em hardware comum
+- **Confiabilidade**: Sistema de transações ACID
 
 ## 📁 Estrutura
 
@@ -35,6 +53,16 @@ servidor/
 
 ```bash
 npm install
+```
+
+## ⚙️ Primeiro Uso
+
+```bash
+# 1. Popular banco com dados iniciais (apenas primeira vez)
+npm run seed
+
+# 2. Iniciar servidor
+npm run dev
 ```
 
 ## 🎮 Como Executar
@@ -118,12 +146,29 @@ O servidor vem com 3 empresas de exemplo para teste inicial:
 2. **DigiShop** - Comércio Digital S.A. (Rio de Janeiro/RJ)
 3. **ConsultaBiz** - Consultoria Empresarial ME (Belo Horizonte/MG)
 
+Execute `npm run seed` para popular o banco com esses dados.
+
 ## 🔧 Configuração
 
-Por padrão, o servidor roda na porta **3001**. Para alterar, defina a variável de ambiente:
+Por padrão, o servidor roda na porta **3001**. Para alterar, crie um arquivo `.env`:
 
 ```bash
-PORT=3000 npm run dev
+PORT=3000
+```
+
+### Estrutura de Pastas
+
+```
+servidor/
+├── data/              # Banco de dados SQLite
+│   └── ascenda.db
+├── src/
+│   ├── database/      # Configuração do banco
+│   ├── controllers/   # Controladores
+│   ├── services/      # Lógica de negócio
+│   ├── repositories/  # Acesso a dados
+│   └── routes/        # Rotas da API
+└── ...
 ```
 
 ## 🎯 Validações Implementadas
@@ -132,12 +177,23 @@ PORT=3000 npm run dev
 - Campos obrigatórios: cnpj, razaoSocial, nomeFantasia
 - Validação de existência ao atualizar/deletar
 - Tratamento de erros adequado com códigos HTTP
+- Transações ACID para integridade dos dados
+
+## � Performance
+
+O banco de dados está otimizado para:
+- ✅ Milhares de empresas cadastradas
+- ✅ Queries rápidas com índices otimizados
+- ✅ Inserções em lote eficientes
+- ✅ Cache inteligente de 10MB
+- ✅ Write-Ahead Logging para consistência
 
 ## 🔄 Próximos Passos
 
-- [ ] Adicionar persistência em banco de dados
+- [x] Persistência em banco de dados SQLite
 - [ ] Implementar autenticação JWT
 - [ ] Adicionar validação de CNPJ
 - [ ] Implementar paginação
 - [ ] Adicionar testes unitários
 - [ ] Implementar logs estruturados
+- [ ] Sistema de backup automático

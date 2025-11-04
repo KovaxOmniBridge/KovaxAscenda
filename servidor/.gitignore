@@ -3,6 +3,9 @@ dist/
 .env
 *.log
 .DS_Store
+
+# Banco de dados SQLite
+data/
 *.db
 *.db-journal
 *.db-shm
