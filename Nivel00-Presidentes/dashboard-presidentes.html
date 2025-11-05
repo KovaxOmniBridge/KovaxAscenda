@@ -24,19 +24,19 @@
         <!-- Indicadores Principais -->
         <section class="kpi-section">
             <div class="kpi-card">
-                <div class="kpi-icon">💰</div>
+                <div class="kpi-icon">�</div>
                 <div class="kpi-content">
-                    <h3>Receita Anual</h3>
-                    <p class="kpi-value" id="revenue">R$ 0,00</p>
-                    <span class="kpi-trend positive">+12.5% vs ano anterior</span>
+                    <h3>Squads Ativos</h3>
+                    <p class="kpi-value" id="revenue">0</p>
+                    <span class="kpi-trend positive">Carregando...</span>
                 </div>
             </div>
             <div class="kpi-card">
-                <div class="kpi-icon">📈</div>
+                <div class="kpi-icon">�</div>
                 <div class="kpi-content">
-                    <h3>Margem EBITDA</h3>
+                    <h3>Taxa de Alocação</h3>
                     <p class="kpi-value" id="ebitda">0%</p>
-                    <span class="kpi-trend positive">+2.3% vs trimestre</span>
+                    <span class="kpi-trend neutral">em squads</span>
                 </div>
             </div>
             <div class="kpi-card">
@@ -44,15 +44,15 @@
                 <div class="kpi-content">
                     <h3>Colaboradores</h3>
                     <p class="kpi-value" id="totalEmployees">0</p>
-                    <span class="kpi-trend neutral">+15 contratações</span>
+                    <span class="kpi-trend neutral">Carregando...</span>
                 </div>
             </div>
             <div class="kpi-card">
-                <div class="kpi-icon">🎯</div>
+                <div class="kpi-icon">📚</div>
                 <div class="kpi-content">
-                    <h3>NPS Score</h3>
+                    <h3>Chapters Ativos</h3>
                     <p class="kpi-value" id="nps">0</p>
-                    <span class="kpi-trend positive">+8 pontos</span>
+                    <span class="kpi-trend positive">Carregando...</span>
                 </div>
             </div>
         </section>
@@ -123,45 +123,10 @@
                 <div class="card">
                     <div class="card-header">
                         <h2>✅ Aprovações Críticas</h2>
-                        <span class="badge badge-warning">3 pendentes</span>
+                        <span class="badge badge-warning" id="urgentApprovalsCount">0 pendentes</span>
                     </div>
-                    <div class="card-body">
-                        <div class="approval-item urgent">
-                            <div class="approval-icon">💰</div>
-                            <div class="approval-content">
-                                <h4>Investimento Série B</h4>
-                                <p>Aprovação de R$ 50M para expansão</p>
-                                <span class="approval-date">Vence em 2 dias</span>
-                            </div>
-                            <div class="approval-actions">
-                                <button class="btn-approve">Aprovar</button>
-                                <button class="btn-reject">Recusar</button>
-                            </div>
-                        </div>
-                        <div class="approval-item">
-                            <div class="approval-icon">🏢</div>
-                            <div class="approval-content">
-                                <h4>Aquisição Startup Tech</h4>
-                                <p>Fusão com empresa de IA</p>
-                                <span class="approval-date">Vence em 5 dias</span>
-                            </div>
-                            <div class="approval-actions">
-                                <button class="btn-approve">Aprovar</button>
-                                <button class="btn-reject">Recusar</button>
-                            </div>
-                        </div>
-                        <div class="approval-item">
-                            <div class="approval-icon">👥</div>
-                            <div class="approval-content">
-                                <h4>Plano de Stock Options</h4>
-                                <p>Pool de 5% para key talents</p>
-                                <span class="approval-date">Vence em 7 dias</span>
-                            </div>
-                            <div class="approval-actions">
-                                <button class="btn-approve">Aprovar</button>
-                                <button class="btn-reject">Recusar</button>
-                            </div>
-                        </div>
+                    <div class="card-body" id="urgentApprovalsContainer">
+                        <p class="loading">Carregando aprovações...</p>
                     </div>
                 </div>
 
@@ -170,28 +135,8 @@
                     <div class="card-header">
                         <h2>⚠️ Alertas Executivos</h2>
                     </div>
-                    <div class="card-body">
-                        <div class="alert-item critical">
-                            <div class="alert-header">
-                                <span class="alert-badge">CRÍTICO</span>
-                                <span class="alert-time">Há 2 horas</span>
-                            </div>
-                            <p class="alert-message">Churn rate aumentou 15% no último trimestre</p>
-                        </div>
-                        <div class="alert-item warning">
-                            <div class="alert-header">
-                                <span class="alert-badge">ATENÇÃO</span>
-                                <span class="alert-time">Há 1 dia</span>
-                            </div>
-                            <p class="alert-message">Budget de Marketing excedeu 8% do planejado</p>
-                        </div>
-                        <div class="alert-item info">
-                            <div class="alert-header">
-                                <span class="alert-badge">INFO</span>
-                                <span class="alert-time">Há 2 dias</span>
-                            </div>
-                            <p class="alert-message">Nova regulamentação do setor publicada</p>
-                        </div>
+                    <div class="card-body" id="alertsContainer">
+                        <p class="loading">Gerando alertas...</p>
                     </div>
                 </div>
             </div>
@@ -221,6 +166,8 @@
         </div>
     </div>
 
+    <!-- Dev Mode Indicator -->
+    <script src="../shared/dev-mode-indicator.js"></script>
     <script src="dashboard-presidentes.js"></script>
 </body>
 </html>

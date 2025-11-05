@@ -21,8 +21,8 @@ app.use(cors());
 // Body Parser: Permite receber JSON nas requisições
 app.use(express.json());
 
-// Static Files: Serve arquivos HTML/CSS/JS da raiz do projeto
-app.use(express.static(path.join(__dirname, '..')));
+// Static Files: Serve arquivos HTML/CSS/JS da raiz do projeto (pasta pai)
+app.use(express.static(path.join(__dirname, '..', '..')));
 
 // Logger: Log simples de todas as requisições para debug
 app.use((req, res, next) => {

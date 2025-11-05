@@ -89,8 +89,7 @@ desenvolvedor/
 ├── README.md ........................ Este arquivo (guia principal)
 ├── AUTENTICACAO.md .................. Sistema de autenticação dev
 ├── EXPLORADOR_INTERFACES.md ......... Guia do Interface Explorer
-├── GUIA_TESTES.md ................... Como testar funcionalidades
-└── ACESSO_RAPIDO.md ................. Atalhos e dicas rápidas
+└── GUIA_TESTES.md ................... Como testar funcionalidades
 ```
 
 ### 🎨 Explorar Interfaces ⭐ NOVO!

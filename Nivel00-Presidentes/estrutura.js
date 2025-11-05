@@ -1,72 +1,103 @@
 const API_BASE = 'http://localhost:3000/api';
 let currentCompany = null;
 let currentUser = null;
+let authToken = null;
 let allUsers = [];
 let allSquads = [];
 let allChapters = [];
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadUserData();
-    loadCompanyData();
-    loadOrganizationData();
+    checkAuth();
 });
 
-async function loadUserData() {
-    const devToken = localStorage.getItem('devToken');
-    if (devToken) {
-        document.getElementById('userName').textContent = 'Desenvolvedor (God Mode)';
-        return;
-    }
+async function checkAuth() {
+    authToken = localStorage.getItem('token');
+    const userDataString = localStorage.getItem('user');
+    const companyDataString = localStorage.getItem('company');
     
-    const userId = localStorage.getItem('userId');
-    if (!userId) {
+    if (!authToken || !userDataString || !companyDataString) {
+        alert('❌ Sessão inválida. Redirecionando para login...');
         window.location.href = '/index.html';
         return;
     }
-
+    
     try {
-        const response = await fetch(`${API_BASE}/users/${userId}`);
-        if (response.ok) {
-            currentUser = await response.json();
-            document.getElementById('userName').textContent = currentUser.name;
+        currentUser = JSON.parse(userDataString);
+        currentCompany = JSON.parse(companyDataString);
+        
+        // Verificar se é nível 0 (Presidente) ou modo explorador
+        if (currentUser.nivel !== 0 && !currentUser.isExplorer) {
+            alert('❌ Acesso negado. Apenas Presidentes (Nível 0) podem acessar este painel.');
+            window.location.href = '/index.html';
+            return;
         }
+        
+        // Atualizar interface
+        document.getElementById('userName').textContent = currentUser.name;
+        document.getElementById('companyName').textContent = currentCompany.name;
+        
+        // Carregar dados
+        await loadOrganizationData();
+        
     } catch (error) {
-        console.error('Erro:', error);
+        console.error('❌ Erro ao processar autenticação:', error);
+        alert('Erro ao carregar dados da sessão');
+        window.location.href = '/index.html';
     }
 }
 
-async function loadCompanyData() {
-    const companyId = localStorage.getItem('companyId') || 1;
-    try {
-        const response = await fetch(`${API_BASE}/companies/${companyId}`);
-        if (response.ok) {
-            currentCompany = await response.json();
-            document.getElementById('companyName').textContent = currentCompany.name;
-        }
-    } catch (error) {
-        console.error('Erro:', error);
-    }
+function fetchWithAuth(url, options = {}) {
+    const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`,
+        ...options.headers
+    };
+    
+    return fetch(url, { ...options, headers });
 }
 
 async function loadOrganizationData() {
-    const companyId = localStorage.getItem('companyId') || 1;
-    
     try {
         // Carregar usuários
-        const usersRes = await fetch(`${API_BASE}/dev/users/company/${companyId}`);
-        allUsers = usersRes.ok ? await usersRes.json() : generateDemoUsers();
+        const usersRes = await fetchWithAuth(`${API_BASE}/users/company/${currentCompany.id}`);
+        allUsers = usersRes.ok ? await usersRes.json() : [];
         
-        // Carregar squads
-        const squadsRes = await fetch(`${API_BASE}/dev/squads/company/${companyId}`);
-        allSquads = squadsRes.ok ? await squadsRes.json() : generateDemoSquads();
+        // Carregar squads com contagem de membros
+        const squadsRes = await fetchWithAuth(`${API_BASE}/squads/company/${currentCompany.id}`);
+        allSquads = squadsRes.ok ? await squadsRes.json() : [];
         
-        // Carregar chapters
-        const chaptersRes = await fetch(`${API_BASE}/dev/chapters/company/${companyId}`);
-        allChapters = chaptersRes.ok ? await chaptersRes.json() : generateDemoChapters();
+        // Buscar contagem de membros de cada squad
+        for (const squad of allSquads) {
+            try {
+                const membersRes = await fetchWithAuth(`${API_BASE}/squads/${squad.id}/members`);
+                const members = membersRes.ok ? await membersRes.json() : [];
+                squad.member_count = members.length;
+            } catch (error) {
+                squad.member_count = 0;
+            }
+        }
+        
+        // Carregar chapters com contagem de membros
+        const chaptersRes = await fetchWithAuth(`${API_BASE}/chapters/company/${currentCompany.id}`);
+        allChapters = chaptersRes.ok ? await chaptersRes.json() : [];
+        
+        // Buscar contagem de membros de cada chapter
+        for (const chapter of allChapters) {
+            try {
+                const membersRes = await fetchWithAuth(`${API_BASE}/chapters/${chapter.id}/members`);
+                const members = membersRes.ok ? await membersRes.json() : [];
+                chapter.member_count = members.length;
+            } catch (error) {
+                chapter.member_count = 0;
+            }
+        }
+        
+        console.log(`✅ Dados carregados: ${allUsers.length} usuários, ${allSquads.length} squads, ${allChapters.length} chapters`);
     } catch (error) {
-        allUsers = generateDemoUsers();
-        allSquads = generateDemoSquads();
-        allChapters = generateDemoChapters();
+        console.error('❌ Erro ao carregar dados:', error);
+        allUsers = [];
+        allSquads = [];
+        allChapters = [];
     }
     
     updateStats();
@@ -142,71 +173,81 @@ function renderHierarchy() {
 function renderSquads() {
     const container = document.getElementById('squadsGrid');
     if (allSquads.length === 0) {
-        container.innerHTML = '<p class="empty-state">Nenhum squad cadastrado</p>';
+        container.innerHTML = `
+            <p class="empty-state">
+                Nenhum squad cadastrado.<br>
+                <a href="../Nivel01-AdministradoresGerais/squads.html">Criar primeiro squad</a>
+            </p>
+        `;
         return;
     }
     
-    container.innerHTML = allSquads.map(squad => `
-        <div class="squad-card">
-            <div class="card-header">
-                <h3>🚀 ${squad.name}</h3>
-                <span class="badge">${squad.member_count || 0} membros</span>
+    container.innerHTML = allSquads.map(squad => {
+        const statusLabel = squad.status === 'active' ? 'Ativo' : 'Inativo';
+        const statusClass = squad.status === 'active' ? 'success' : 'neutral';
+        return `
+            <div class="squad-card">
+                <div class="card-header">
+                    <h3>🚀 ${squad.name}</h3>
+                    <span class="badge ${statusClass}">${statusLabel}</span>
+                </div>
+                <p class="card-description">${squad.description || 'Squad ágil multidisciplinar'}</p>
+                <div class="card-footer">
+                    <span>� ${squad.member_count || 0} membros</span>
+                    <span>📅 ${squad.start_date ? new Date(squad.start_date).toLocaleDateString('pt-BR') : 'N/A'}</span>
+                </div>
             </div>
-            <p class="card-description">${squad.description || 'Squad ágil multidisciplinar'}</p>
-            <div class="card-footer">
-                <span>📌 ${squad.project || 'Projeto'}</span>
-            </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 function renderChapters() {
     const container = document.getElementById('chaptersGrid');
     if (allChapters.length === 0) {
-        container.innerHTML = '<p class="empty-state">Nenhum chapter cadastrado</p>';
+        container.innerHTML = `
+            <p class="empty-state">
+                Nenhum chapter cadastrado.<br>
+                <a href="../Nivel01-AdministradoresGerais/chapters.html">Criar primeiro chapter</a>
+            </p>
+        `;
         return;
     }
     
-    container.innerHTML = allChapters.map(chapter => `
-        <div class="chapter-card">
-            <div class="card-header">
-                <h3>📚 ${chapter.name}</h3>
-                <span class="badge">${chapter.member_count || 0} membros</span>
+    container.innerHTML = allChapters.map(chapter => {
+        const statusLabel = chapter.status === 'active' ? 'Ativo' : 'Inativo';
+        const statusClass = chapter.status === 'active' ? 'success' : 'neutral';
+        return `
+            <div class="chapter-card">
+                <div class="card-header">
+                    <h3>📚 ${chapter.name}</h3>
+                    <span class="badge ${statusClass}">${statusLabel}</span>
+                </div>
+                <p class="card-description">${chapter.description || 'Comunidade de especialistas'}</p>
+                <div class="card-footer">
+                    <span>� ${chapter.member_count || 0} membros</span>
+                    <span>🎯 ${chapter.specialty || 'Especialidade'}</span>
+                </div>
             </div>
-            <p class="card-description">${chapter.specialty || 'Comunidade de especialistas'}</p>
-            <div class="card-footer">
-                <span>👤 Líder: ${chapter.lead_name || 'Não definido'}</span>
-            </div>
-        </div>
-    `).join('');
-}
-
-function generateDemoUsers() {
-    return [
-        { name: 'CEO Maria Santos', hierarchical_level: 0 },
-        { name: 'Admin João Silva', hierarchical_level: 1 },
-        { name: 'Admin Ana Costa', hierarchical_level: 1 },
-        { name: 'Diretor Pedro Lima', hierarchical_level: 2 },
-        { name: 'Diretora Carla Souza', hierarchical_level: 2 },
-        { name: 'Gerente Carlos Tech', hierarchical_level: 3 }
-    ];
-}
-
-function generateDemoSquads() {
-    return [
-        { name: 'Mobile Team', member_count: 8, project: 'App iOS/Android' },
-        { name: 'Backend Core', member_count: 12, project: 'API & Microservices' }
-    ];
-}
-
-function generateDemoChapters() {
-    return [
-        { name: 'Frontend', member_count: 15, specialty: 'React, Vue, Angular' },
-        { name: 'DevOps', member_count: 8, specialty: 'AWS, Docker, K8s' }
-    ];
+        `;
+    }).join('');
 }
 
 function logout() {
-    localStorage.clear();
-    window.location.href = '/index.html';
+    if (confirm('Deseja realmente sair?')) {
+        // Limpar apenas dados da sessão, manter devMode se existir
+        const devMode = localStorage.getItem('devMode');
+        const impersonatedBy = localStorage.getItem('impersonatedBy');
+        
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('company');
+        
+        // Se estava em modo dev, voltar para o dashboard do dev
+        if (devMode === 'true' && impersonatedBy) {
+            window.location.href = '/desenvolvedor/dev-dashboard.html';
+        } else {
+            localStorage.clear();
+            window.location.href = '/index.html';
+        }
+    }
 }

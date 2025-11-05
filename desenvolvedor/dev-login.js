@@ -52,10 +52,11 @@ async function handleLogin(event) {
         const data = await response.json();
         
         if (response.ok) {
-            // Salvar token
-            localStorage.setItem('devToken', data.token);
-            localStorage.setItem('devUser', JSON.stringify(data.user));
+            // Salvar token (API retorna devToken, não token)
+            localStorage.setItem('devToken', data.devToken);
+            localStorage.setItem('devUser', JSON.stringify(data.developer));
             
+            console.log('✅ Login realizado com sucesso!', data);
             showToast('✅ Login realizado com sucesso!', 'success');
             
             // Redirecionar para o painel dev
@@ -63,7 +64,7 @@ async function handleLogin(event) {
                 window.location.href = 'dev-dashboard.html';
             }, 1000);
         } else {
-            showToast(`❌ ${data.message || 'Erro ao fazer login'}`, 'error');
+            showToast(`❌ ${data.error || 'Erro ao fazer login'}`, 'error');
             submitBtn.disabled = false;
             submitBtn.textContent = '🚀 Acessar Painel Dev';
         }
@@ -137,7 +138,7 @@ async function handleRegister(event) {
             submitBtn.disabled = false;
             submitBtn.textContent = '✨ Criar Conta Dev';
         } else {
-            showToast(`❌ ${data.message || 'Erro ao criar conta'}`, 'error');
+            showToast(`❌ ${data.error || 'Erro ao criar conta'}`, 'error');
             submitBtn.disabled = false;
             submitBtn.textContent = '✨ Criar Conta Dev';
         }

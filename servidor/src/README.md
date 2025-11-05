@@ -99,14 +99,16 @@ src/
 
 ### DevController
 - `register()` - Registrar desenvolvedor
-- `login()` - Login de desenvolvedor
+- `login()` - Login de desenvolvedor (gera token com isDeveloper: true)
 - `verifyToken()` - Verificar token
 - `listDevelopers()` - Listar desenvolvedores
-- `listCompanies()` - Listar empresas (sem auth)
+- `listCompanies()` - Listar empresas
 - `deleteCompany()` - Deletar empresa
 - `clearAllDevelopers()` - Limpar todos devs
 - `viewTable()` - Visualizar tabela
 - `clearAllData()` - Limpar todos dados
+- `impersonateUser()` - Gerar token como usuário específico
+- `getAuditLogsController()` - Visualizar logs de auditoria
 
 ## 🛣️ Rotas da API
 
@@ -151,16 +153,72 @@ src/
 - `GET /api/templates/:companyId` - Obter template
 - `PUT /api/templates/:companyId` - Atualizar template
 
-### Desenvolvedor (Público - NÃO USAR EM PRODUÇÃO)
-- `POST /api/dev/auth/register` - Registrar dev
-- `POST /api/dev/auth/login` - Login dev
-- `GET /api/dev/auth/verify` - Verificar token
-- `GET /api/dev/auth/users` - Listar devs
-- `DELETE /api/dev/auth/clear-all` - Limpar devs
-- `GET /api/dev/companies` - Listar empresas
+### Desenvolvedor (🔒 Protegido - Requer autenticação de dev)
+
+**Rotas Públicas:**
+- `POST /api/dev/auth/register` - Registrar desenvolvedor
+- `POST /api/dev/auth/login` - Login de desenvolvedor
+
+**Rotas Protegidas (Requer token de desenvolvedor):**
+- `GET /api/dev/auth/verify` - Verificar token dev
+- `GET /api/dev/auth/users` - Listar todos os devs
+- `DELETE /api/dev/auth/clear-all` - Limpar todos os devs
+- `GET /api/dev/companies` - Listar todas as empresas
 - `DELETE /api/dev/companies/:id` - Deletar empresa
-- `GET /api/dev/table/:tableName` - Visualizar tabela
-- `POST /api/dev/clear-all` - Limpar dados
+- `GET /api/dev/table/:tableName` - Visualizar qualquer tabela
+- `POST /api/dev/clear-all` - Limpar todos os dados
+- `POST /api/dev/impersonate/:userId` - Gerar token como usuário específico
+- `GET /api/dev/audit/logs?limit=100` - Visualizar logs de auditoria
+
+**⚠️ Importante:**
+- Token de dev tem `isDeveloper: true`
+- Desenvolvedor pode acessar rotas normais de usuário com seu próprio token
+- Desenvolvedor pode personificar qualquer usuário
+- Todas as ações são registradas em logs de auditoria
+
+## 🔐 Segurança Implementada
+
+### Autenticação de Desenvolvedores
+```javascript
+// Todas as rotas /api/dev/* (exceto register e login) requerem:
+Authorization: Bearer <devToken>
+
+// Token de desenvolvedor contém:
+{
+  devId: 1,
+  email: "dev@ascenda.app",
+  role: "developer",
+  isDeveloper: true  // Flag especial
+}
+```
+
+### Acesso Universal do Desenvolvedor
+- Desenvolvedor pode usar seu token dev em rotas normais `/api/users/*`, `/api/squads/*`, etc.
+- Middleware `authenticateToken` detecta `isDeveloper: true` e permite acesso
+- Não precisa personificar para ver dados de qualquer empresa
+
+### Personificação de Usuários
+```javascript
+// Desenvolvedor pode gerar token como usuário específico:
+POST /api/dev/impersonate/:userId
+Authorization: Bearer <devToken>
+
+// Retorna token de usuário com marca de personificação:
+{
+  userId: 42,
+  companyId: 5,
+  accessKey: "joao.silva",
+  role: "Administrador Geral",
+  nivel: 1,
+  impersonatedBy: 1  // ID do desenvolvedor
+}
+```
+
+### Auditoria
+- Todas as ações de desenvolvedores são logadas em `logs/dev-audit.log`
+- Logs incluem: timestamp, devId, email, método, URL, IP, user-agent
+- Senhas são removidas dos logs automaticamente
+- Logs podem ser consultados via `/api/dev/audit/logs`
 
 ## 🔧 Como Adicionar Nova Funcionalidade
 

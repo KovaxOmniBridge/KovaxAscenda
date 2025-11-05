@@ -67,6 +67,7 @@ function resetRegistrationForm() {
     currentStep = 1;
     registrationData = {
         company: {},
+        president: {},
         admins: []
     };
     
@@ -87,10 +88,19 @@ function resetRegistrationForm() {
     document.getElementById('adminsItems').innerHTML = '<div class="empty-state">Nenhum administrador adicionado. Adicione pelo menos um administrador para continuar.</div>';
 }
 
+// Função para toggle de campos do presidente
+function togglePresidentFields() {
+    const isChecked = document.getElementById('iAmPresident').checked;
+    // Pode ser usado para pré-preencher alguns campos se necessário
+    if (isChecked) {
+        console.log('Cadastrando como presidente');
+    }
+}
+
 // Navegação entre etapas
 function nextStep() {
     if (validateCurrentStep()) {
-        if (currentStep < 3) {
+        if (currentStep < 4) {
             // Salvar dados da etapa atual
             saveCurrentStepData();
             
@@ -141,6 +151,8 @@ function validateCurrentStep() {
             return validateStep1();
         case 2:
             return validateStep2();
+        case 3:
+            return validateStep3();
         default:
             return true;
     }
@@ -168,8 +180,43 @@ function validateStep1() {
     return true;
 }
 
-// Validação Etapa 2
+// Validação Etapa 2 (Presidente)
 function validateStep2() {
+    const name = document.getElementById('presidentName').value.trim();
+    const email = document.getElementById('presidentEmail').value.trim();
+    const phone = document.getElementById('presidentPhone').value.trim();
+    const accessKey = document.getElementById('presidentAccessKey').value.trim();
+    const password = document.getElementById('presidentPassword').value;
+    const confirmPassword = document.getElementById('presidentConfirmPassword').value;
+    
+    if (!name || !email || !phone || !accessKey || !password || !confirmPassword) {
+        showMessage('Por favor, preencha todos os campos obrigatórios do presidente.', 'error');
+        return false;
+    }
+    
+    // Validar email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        showMessage('Email do presidente inválido.', 'error');
+        return false;
+    }
+    
+    // Validar senha
+    if (password.length < 8) {
+        showMessage('A senha do presidente deve ter no mínimo 8 caracteres.', 'error');
+        return false;
+    }
+    
+    if (password !== confirmPassword) {
+        showMessage('As senhas do presidente não coincidem.', 'error');
+        return false;
+    }
+    
+    return true;
+}
+
+// Validação Etapa 3 (Administradores Gerais)
+function validateStep3() {
     if (registrationData.admins.length === 0) {
         showMessage('Adicione pelo menos um administrador geral.', 'error');
         return false;
@@ -203,6 +250,19 @@ function saveCurrentStepData() {
             industry: document.getElementById('industry').value,
             website: `https://ascenda.app/${sanitizedName}`,
             description: document.getElementById('companyDescription').value.trim()
+        };
+    } else if (currentStep === 2) {
+        // Salvar dados do presidente
+        registrationData.president = {
+            name: document.getElementById('presidentName').value.trim(),
+            email: document.getElementById('presidentEmail').value.trim(),
+            phone: document.getElementById('presidentPhone').value.trim(),
+            department: document.getElementById('presidentDepartment').value.trim() || 'Presidência',
+            accessKey: document.getElementById('presidentAccessKey').value.trim(),
+            role: document.getElementById('presidentRole').value.trim() || 'Presidente',
+            password: document.getElementById('presidentPassword').value,
+            nivel: 0, // Nível 0 = Presidente
+            isSelfRegistering: document.getElementById('iAmPresident').checked
         };
     }
 }
@@ -375,10 +435,23 @@ function generateReview() {
         </div>
         
         <div class="review-section">
-            <h3 class="review-section-title">👥 Administradores Gerais (${registrationData.admins.length})</h3>
+            <h3 class="review-section-title">� Presidente (Nível 0)</h3>
+            <div style="padding: 1rem; background: white; border-radius: 0.5rem; border-left: 4px solid #fbbf24;">
+                <h4 style="margin-bottom: 0.5rem;">${registrationData.president.name}</h4>
+                <p style="margin: 0.25rem 0; font-size: 0.9rem;"><strong>Email:</strong> ${registrationData.president.email}</p>
+                <p style="margin: 0.25rem 0; font-size: 0.9rem;"><strong>Telefone:</strong> ${registrationData.president.phone}</p>
+                <p style="margin: 0.25rem 0; font-size: 0.9rem;"><strong>Departamento:</strong> ${registrationData.president.department}</p>
+                <p style="margin: 0.25rem 0; font-size: 0.9rem;"><strong>Cargo:</strong> ${registrationData.president.role}</p>
+                <p style="margin: 0.25rem 0; font-size: 0.9rem;"><strong>Nome de Usuário:</strong> ${registrationData.president.accessKey}</p>
+                ${registrationData.president.isSelfRegistering ? '<p style="margin-top: 0.5rem; color: #10b981; font-weight: 600;">✓ Auto-cadastro (você é o presidente)</p>' : ''}
+            </div>
+        </div>
+        
+        <div class="review-section">
+            <h3 class="review-section-title">⚙️ Administradores Gerais - Nível 1 (${registrationData.admins.length})</h3>
             ${registrationData.admins.map(admin => `
                 <div style="margin-bottom: 1.5rem; padding: 1rem; background: white; border-radius: 0.5rem; border-left: 4px solid ${admin.isPrimary ? '#10b981' : '#2563eb'};">
-                    <h4 style="margin-bottom: 0.5rem;">${admin.name} ${admin.isPrimary ? '👑' : ''}</h4>
+                    <h4 style="margin-bottom: 0.5rem;">${admin.name} ${admin.isPrimary ? '👑 Principal' : ''}</h4>
                     <p style="margin: 0.25rem 0; font-size: 0.9rem;"><strong>Email:</strong> ${admin.email}</p>
                     <p style="margin: 0.25rem 0; font-size: 0.9rem;"><strong>Telefone:</strong> ${admin.phone}</p>
                     <p style="margin: 0.25rem 0; font-size: 0.9rem;"><strong>Departamento:</strong> ${admin.department}</p>
@@ -461,48 +534,70 @@ async function handleLogin(event) {
     }
 }
 
-// Função de Cadastro de Empresa
+// Função de Cadastro de Empresa (agora envia pedido)
 async function handleRegister(event) {
     event.preventDefault();
     
     // Validação final
-    if (!validateStep2()) {
+    if (!validateStep3()) {
         showMessage('Complete todas as etapas antes de finalizar.', 'error');
+        return;
+    }
+
+    // Validar documentos
+    const documentsInput = document.getElementById('documents');
+    if (!documentsInput.files || documentsInput.files.length === 0) {
+        showMessage('Por favor, envie pelo menos um documento da empresa.', 'error');
+        return;
+    }
+
+    if (documentsInput.files.length > 10) {
+        showMessage('Máximo de 10 documentos permitidos.', 'error');
         return;
     }
     
     try {
-        const response = await fetch(`${API_URL}/companies`, {
+        // Criar FormData para enviar arquivos
+        const formData = new FormData();
+        
+        // Adicionar dados da empresa, presidente e admins como JSON
+        formData.append('company', JSON.stringify(registrationData.company));
+        formData.append('president', JSON.stringify(registrationData.president));
+        formData.append('admins', JSON.stringify(registrationData.admins));
+        
+        // Adicionar documentos
+        for (let i = 0; i < documentsInput.files.length; i++) {
+            formData.append('documents', documentsInput.files[i]);
+        }
+
+        const response = await fetch(`${API_URL}/company-requests`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                company: registrationData.company,
-                admins: registrationData.admins
-            })
+            body: formData
         });
         
         const data = await response.json();
         
         if (!response.ok) {
-            showMessage(data.error || 'Erro ao cadastrar empresa', 'error');
+            showMessage(data.error || 'Erro ao enviar pedido de cadastro', 'error');
             return;
         }
         
-        // Atualizar lista de empresas
-        await loadCompanies();
-        
         // Mensagem de sucesso
-        showMessage('Empresa cadastrada com sucesso! Redirecionando para login...', 'success');
+        const successMessage = `✅ Pedido enviado com sucesso!\n\n` +
+            `Seu pedido de cadastro foi recebido e está em análise.\n\n` +
+            `📧 Você receberá um email em até 3 dias úteis com o resultado da análise.\n\n` +
+            `Empresa: ${registrationData.company.name}\n` +
+            `Protocolo: #${data.requestId || 'Aguardando'}`;
+        
+        showMessage(successMessage, 'success');
         
         // Resetar e redirecionar
         setTimeout(() => {
             resetRegistrationForm();
-            showLoginForm();
-        }, 2500);
+            showHero();
+        }, 5000);
     } catch (error) {
-        console.error('Erro ao cadastrar empresa:', error);
+        console.error('Erro ao enviar pedido:', error);
         showMessage('Erro ao conectar com o servidor.', 'error');
     }
 }

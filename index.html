@@ -11,11 +11,16 @@
         <!-- Header -->
         <header class="header">
             <div class="logo">
-                <h1>Ascenda Flex</h1>
+                <h1>✨ Ascenda Flex</h1>
                 <p class="tagline">Gestão Organizacional Híbrida Inteligente</p>
             </div>
             <nav class="nav">
-                <button class="btn-secondary" onclick="showRegisterForm()">Cadastrar Empresa</button>
+                <button class="btn-secondary" onclick="showLoginForm()">
+                    <span>🔓</span> Login
+                </button>
+                <button class="btn-primary-outline" onclick="showRegisterForm()">
+                    <span>📝</span> Solicitar Cadastro
+                </button>
             </nav>
         </header>
 
@@ -23,7 +28,8 @@
         <section class="hero" id="hero">
             <div class="hero-content">
                 <h2>Transforme a Gestão da Sua Organização</h2>
-                <p>Ascenda Flex é uma plataforma completa de gestão organizacional híbrida que combina hierarquia tradicional, squads multifuncionais e chapters (comunidades de prática). Organize sua empresa de forma flexível e potencialize resultados.</p>
+                <p class="hero-subtitle">Ascenda Flex é uma plataforma completa de gestão organizacional híbrida que combina hierarquia tradicional, squads multifuncionais e chapters (comunidades de prática). Organize sua empresa de forma flexível e potencialize resultados.</p>
+                
                 <div class="hero-features">
                     <div class="feature">
                         <span class="feature-icon">📊</span>
@@ -40,21 +46,31 @@
                         <h3>Chapters</h3>
                         <p>Comunidades de prática permanentes</p>
                     </div>
-                </div>
-                        <p>Estrutura hierárquica organizada</p>
-                    </div>
                     <div class="feature">
                         <span class="feature-icon">🔒</span>
                         <h3>Segurança</h3>
                         <p>Controle de acesso robusto</p>
                     </div>
                     <div class="feature">
-                        <span class="feature-icon">📈</span>
+                        <span class="feature-icon">�</span>
                         <h3>Análise de Dados</h3>
                         <p>Tratamento inteligente de informações</p>
                     </div>
+                    <div class="feature">
+                        <span class="feature-icon">🎯</span>
+                        <h3>Gestão de Objetivos</h3>
+                        <p>Acompanhamento e metas claras</p>
+                    </div>
                 </div>
-                <button class="btn-primary" onclick="showLoginForm()">Acessar Plataforma</button>
+
+                <div class="hero-actions">
+                    <button class="btn-primary" onclick="showLoginForm()">
+                        <span>🔓</span> Acessar Plataforma
+                    </button>
+                    <button class="btn-outline" onclick="showRegisterForm()">
+                        <span>📝</span> Solicitar Cadastro
+                    </button>
+                </div>
             </div>
         </section>
 
@@ -101,8 +117,8 @@
         <!-- Formulário de Cadastro de Empresa -->
         <section class="register-section hidden" id="registerSection">
             <div class="form-container-large">
-                <h2>Cadastrar Nova Empresa</h2>
-                <p class="form-description">Configure sua empresa multinacional na plataforma Ascenda</p>
+                <h2>Solicitar Cadastro de Empresa</h2>
+                <p class="form-description">Envie um pedido para cadastrar sua empresa na plataforma Ascenda. Nossa equipe analisará as informações e documentos antes de aprovar.</p>
                 
                 <!-- Indicador de Progresso -->
                 <div class="progress-steps">
@@ -112,10 +128,14 @@
                     </div>
                     <div class="step" data-step="2">
                         <div class="step-number">2</div>
-                        <div class="step-label">Administradores Gerais</div>
+                        <div class="step-label">Presidente</div>
                     </div>
                     <div class="step" data-step="3">
                         <div class="step-number">3</div>
+                        <div class="step-label">Administradores Gerais</div>
+                    </div>
+                    <div class="step" data-step="4">
+                        <div class="step-number">4</div>
                         <div class="step-label">Revisão</div>
                     </div>
                 </div>
@@ -193,10 +213,28 @@
                                 placeholder="Descreva brevemente as atividades e objetivos da empresa"
                             ></textarea>
                         </div>
+
+                        <div class="form-group">
+                            <label for="documents">Documentos da Empresa *</label>
+                            <input 
+                                type="file" 
+                                id="documents" 
+                                multiple
+                                accept=".pdf,.jpg,.jpeg,.png"
+                            >
+                            <small style="color: #666; display: block; margin-top: 8px;">
+                                <strong>Envie documentos que comprovem a existência legal da empresa:</strong><br>
+                                • Contrato Social / Estatuto Social<br>
+                                • CNPJ (Certificado de Registro)<br>
+                                • Comprovante de Endereço da Sede<br>
+                                • Documento de Identificação do Presidente (RG/CNH/Passaporte)<br>
+                                Formatos aceitos: PDF, JPG, PNG (Máx. 10 arquivos)
+                            </small>
+                        </div>
                         
-                        <div class="info-box">
-                            <span class="info-icon">ℹ️</span>
-                            <p>Um website será criado automaticamente para sua empresa na plataforma Ascenda.</p>
+                        <div class="info-box" style="background: #fef3c7; border-color: #fbbf24;">
+                            <span class="info-icon">⚠️</span>
+                            <p><strong>Processo de Aprovação:</strong> Após o envio, nossa equipe analisará os documentos e informações. Você receberá um email com a decisão em até 3 dias úteis.</p>
                         </div>
 
                         <div class="form-navigation">
@@ -205,9 +243,118 @@
                         </div>
                     </div>
 
-                    <!-- Etapa 2: Administradores Gerais -->
+                    <!-- Etapa 2: Presidente (Nível 0) -->
                     <div class="form-step" id="step2">
-                        <h3 class="step-title">Administradores Gerais</h3>
+                        <h3 class="step-title">👑 Presidente da Empresa (Nível 0)</h3>
+                        <p class="step-description">Configure o presidente que terá visão estratégica global e aprovações executivas</p>
+
+                        <div class="info-box" style="background: #fef3c7; border-color: #fbbf24;">
+                            <span class="info-icon">💡</span>
+                            <p><strong>Importante:</strong> O Presidente é o nível mais alto da hierarquia (Nível 0). Ele terá acesso a dashboards executivos, aprovações estratégicas e visão global da empresa.</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="iAmPresident" onchange="togglePresidentFields()">
+                                <strong>Eu sou o presidente desta empresa</strong>
+                            </label>
+                            <small>Marque se você é o presidente e está cadastrando a empresa pessoalmente</small>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="presidentName">Nome Completo *</label>
+                                <input 
+                                    type="text" 
+                                    id="presidentName" 
+                                    placeholder="Nome completo do presidente"
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="presidentEmail">Email Corporativo *</label>
+                                <input 
+                                    type="email" 
+                                    id="presidentEmail" 
+                                    placeholder="email@empresa.com"
+                                >
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="presidentPhone">Telefone *</label>
+                                <input 
+                                    type="tel" 
+                                    id="presidentPhone" 
+                                    placeholder="+55 (11) 99999-9999"
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="presidentDepartment">Departamento/Área</label>
+                                <input 
+                                    type="text" 
+                                    id="presidentDepartment" 
+                                    placeholder="Ex: Presidência, Diretoria Executiva"
+                                    value="Presidência"
+                                >
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="presidentAccessKey">Nome de Usuário *</label>
+                                <input 
+                                    type="text" 
+                                    id="presidentAccessKey" 
+                                    placeholder="Nome de usuário único"
+                                >
+                                <small>Será usado para login na plataforma</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="presidentRole">Cargo/Título</label>
+                                <input 
+                                    type="text" 
+                                    id="presidentRole" 
+                                    placeholder="Ex: CEO, Presidente, Founder"
+                                    value="Presidente"
+                                >
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="presidentPassword">Senha *</label>
+                                <input 
+                                    type="password" 
+                                    id="presidentPassword" 
+                                    placeholder="Senha segura"
+                                >
+                                <small>Mínimo 8 caracteres</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="presidentConfirmPassword">Confirmar Senha *</label>
+                                <input 
+                                    type="password" 
+                                    id="presidentConfirmPassword" 
+                                    placeholder="Digite a senha novamente"
+                                >
+                            </div>
+                        </div>
+
+                        <div class="info-box">
+                            <span class="info-icon">🔒</span>
+                            <p>As credenciais do presidente serão criadas com segurança. Após o cadastro, o presidente poderá fazer login e acessar o dashboard executivo.</p>
+                        </div>
+
+                        <div class="form-navigation">
+                            <button type="button" class="btn-secondary" onclick="previousStep()">Voltar</button>
+                            <button type="button" class="btn-primary" onclick="nextStep()">Próximo</button>
+                        </div>
+                    </div>
+
+                    <!-- Etapa 3: Administradores Gerais -->
+                    <div class="form-step" id="step3">
+                        <h3 class="step-title">⚙️ Administradores Gerais (Nível 1)</h3>
                         <p class="step-description">Configure os administradores que terão acesso total à plataforma</p>
 
                         <div class="admins-container">
@@ -317,10 +464,19 @@
                         </div>
                     </div>
 
-                    <!-- Etapa 3: Revisão -->
-                    <div class="form-step" id="step3">
-                        <h3 class="step-title">Revisão Final</h3>
-                        <p class="step-description">Revise todas as informações antes de finalizar o cadastro</p>
+                    <!-- Etapa 4: Revisão -->
+                    <div class="form-step" id="step4">
+                        <h3 class="step-title">📋 Revisão e Envio do Pedido</h3>
+                        <p class="step-description">Revise todas as informações e documentos antes de enviar seu pedido de cadastro</p>
+
+                        <div class="info-box" style="background: #dbeafe; border-color: #3b82f6;">
+                            <span class="info-icon">📬</span>
+                            <p><strong>O que acontece depois?</strong><br>
+                            1. Seu pedido será enviado à equipe Ascenda<br>
+                            2. Analisaremos os documentos e informações (até 3 dias úteis)<br>
+                            3. Você receberá um email com a aprovação ou solicitação de correções<br>
+                            4. Após aprovação, você poderá fazer login com as credenciais cadastradas</p>
+                        </div>
 
                         <div class="review-container" id="reviewContainer">
                             <!-- Conteúdo será gerado dinamicamente -->
@@ -328,7 +484,7 @@
 
                         <div class="form-navigation">
                             <button type="button" class="btn-secondary" onclick="previousStep()">Voltar</button>
-                            <button type="submit" class="btn-primary">Finalizar Cadastro</button>
+                            <button type="submit" class="btn-primary">📤 Enviar Pedido de Cadastro</button>
                         </div>
                     </div>
 
@@ -338,7 +494,30 @@
 
         <!-- Footer -->
         <footer class="footer">
-            <p>&copy; 2025 Ascenda - Plataforma de Gerenciamento Empresarial</p>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>✨ Ascenda Flex</h3>
+                    <p>Gestão Organizacional Híbrida Inteligente</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Plataforma</h4>
+                    <ul>
+                        <li><a href="#" onclick="showLoginForm()">Login</a></li>
+                        <li><a href="#" onclick="showRegisterForm()">Solicitar Cadastro</a></li>
+                        <li><a href="#" onclick="showHero()">Página Inicial</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Suporte</h4>
+                    <ul>
+                        <li><a href="mailto:contato@ascenda.com">Contato</a></li>
+                        <li><a href="/desenvolvedor/dev-login.html" class="dev-link">🛠️ Painel Dev</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Ascenda. Todos os direitos reservados.</p>
+            </div>
         </footer>
     </div>
 

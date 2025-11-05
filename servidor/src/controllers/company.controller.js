@@ -44,17 +44,16 @@ const getCompany = (req, res) => {
  * POST /api/companies
  */
 const createCompany = async (req, res) => {
-    const { company, admins } = req.body;
+    const { company, president, admins } = req.body;
 
     // Validações básicas
-    if (!company || !admins || admins.length === 0) {
+    if (!company || !president || !admins || admins.length === 0) {
         return res.status(400).json({ error: 'Dados incompletos' });
     }
 
-    // Verificar se há pelo menos um admin principal
-    const hasPrimary = admins.some(admin => admin.isPrimary);
-    if (!hasPrimary) {
-        return res.status(400).json({ error: 'Defina pelo menos um administrador principal' });
+    // Validação específica do presidente
+    if (!president.name || !president.email || !president.password) {
+        return res.status(400).json({ error: 'Dados do presidente incompletos' });
     }
 
     try {
@@ -78,67 +77,108 @@ const createCompany = async (req, res) => {
                 }
 
                 const companyId = this.lastID;
-                let insertedAdmins = 0;
+                let insertedUsers = 0;
+                let totalUsers = 1 + admins.length; // 1 presidente + admins
                 let errorOccurred = false;
 
-                // Inserir administradores
-                admins.forEach(async (admin) => {
-                    db.get('SELECT id FROM users WHERE access_key = ?', [admin.accessKey], async (err, existingUser) => {
+                // Primeiro: Criar o Presidente (Nível 0)
+                db.get('SELECT id FROM users WHERE access_key = ?', [president.accessKey], async (err, existingUser) => {
+                    if (err) {
+                        console.error('Erro ao verificar access_key do presidente:', err);
+                        return res.status(500).json({ error: 'Erro ao verificar chave de acesso do presidente' });
+                    }
+
+                    if (existingUser) {
+                        return res.status(400).json({ error: 'A chave de acesso do presidente já está em uso' });
+                    }
+
+                    // Hash da senha com bcrypt
+                    const salt = bcrypt.genSaltSync(10);
+                    const hashedPassword = bcrypt.hashSync(president.password, salt);
+
+                    // Inserir presidente
+                    db.run(`
+                        INSERT INTO users (company_id, name, email, phone, department, access_key, password, role, is_primary, nivel)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    `, [
+                        companyId,
+                        president.name,
+                        president.email,
+                        president.phone || '',
+                        president.department || 'Presidência',
+                        president.accessKey,
+                        hashedPassword,
+                        president.role || 'Presidente',
+                        1, // Presidente é sempre principal
+                        0 // Nível 0 - Presidente/Fundador
+                    ], (err) => {
                         if (err) {
-                            console.error('Erro ao verificar access_key:', err);
-                            if (!errorOccurred) {
-                                errorOccurred = true;
-                                return res.status(500).json({ error: 'Erro ao verificar chave de acesso' });
-                            }
-                            return;
+                            console.error('Erro ao inserir presidente:', err);
+                            return res.status(500).json({ error: 'Erro ao criar presidente' });
                         }
 
-                        if (existingUser) {
-                            if (!errorOccurred) {
-                                errorOccurred = true;
-                                return res.status(400).json({ error: `Chave de acesso "${admin.accessKey}" já está em uso` });
-                            }
-                            return;
-                        }
+                        insertedUsers++;
 
-                        // Hash da senha com bcrypt
-                        const salt = bcrypt.genSaltSync(10);
-                        const hashedPassword = bcrypt.hashSync(admin.password, salt);
-
-                        // Inserir usuário
-                        db.run(`
-                            INSERT INTO users (company_id, name, email, phone, department, access_key, password, role, is_primary, nivel)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                        `, [
-                            companyId,
-                            admin.name,
-                            admin.email,
-                            admin.phone,
-                            admin.department,
-                            admin.accessKey,
-                            hashedPassword,
-                            admin.role,
-                            admin.isPrimary ? 1 : 0,
-                            1 // Nível 1 - Administradores Gerais
-                        ], (err) => {
-                            if (err) {
-                                console.error('Erro ao inserir administrador:', err);
-                                if (!errorOccurred) {
-                                    errorOccurred = true;
-                                    return res.status(500).json({ error: 'Erro ao criar administradores' });
+                        // Segundo: Inserir Administradores (Nível 1)
+                        admins.forEach(async (admin) => {
+                            db.get('SELECT id FROM users WHERE access_key = ?', [admin.accessKey], async (err, existingUser) => {
+                                if (err) {
+                                    console.error('Erro ao verificar access_key:', err);
+                                    if (!errorOccurred) {
+                                        errorOccurred = true;
+                                        return res.status(500).json({ error: 'Erro ao verificar chave de acesso' });
+                                    }
+                                    return;
                                 }
-                                return;
-                            }
 
-                            insertedAdmins++;
+                                if (existingUser) {
+                                    if (!errorOccurred) {
+                                        errorOccurred = true;
+                                        return res.status(400).json({ error: `Chave de acesso "${admin.accessKey}" já está em uso` });
+                                    }
+                                    return;
+                                }
 
-                            // Se todos os admins foram inseridos com sucesso
-                            if (insertedAdmins === admins.length && !errorOccurred) {
-                                res.status(201).json({
-                                    message: 'Empresa cadastrada com sucesso',
-                                    companyId: companyId
+                                // Hash da senha com bcrypt
+                                const salt = bcrypt.genSaltSync(10);
+                                const hashedPassword = bcrypt.hashSync(admin.password, salt);
+
+                                // Inserir administrador
+                                db.run(`
+                                    INSERT INTO users (company_id, name, email, phone, department, access_key, password, role, is_primary, nivel)
+                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                `, [
+                                    companyId,
+                                    admin.name,
+                                    admin.email,
+                                    admin.phone,
+                                    admin.department,
+                                    admin.accessKey,
+                                    hashedPassword,
+                                    admin.role,
+                                    admin.isPrimary ? 1 : 0,
+                                    1 // Nível 1 - Administradores Gerais
+                                ], (err) => {
+                                    if (err) {
+                                        console.error('Erro ao inserir administrador:', err);
+                                        if (!errorOccurred) {
+                                            errorOccurred = true;
+                                            return res.status(500).json({ error: 'Erro ao criar administradores' });
+                                        }
+                                        return;
+                                    }
+
+                                    insertedUsers++;
+
+                                    // Se todos os usuários foram inseridos com sucesso
+                                    if (insertedUsers === totalUsers && !errorOccurred) {
+                                        res.status(201).json({
+                                            message: 'Empresa cadastrada com sucesso',
+                                            companyId: companyId
+                                        });
+                                    }
                                 });
-                            }
+                            });
                         });
                     });
                 });

@@ -32,26 +32,84 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     if (!token || !user) {
+        console.log('❌ Sem token ou usuário. Redirecionando para login...');
         window.location.href = '../index.html';
         return;
     }
 
-    currentUser = JSON.parse(user);
-    await loadDashboardData();
-    populateCountrySelect();
+    try {
+        currentUser = JSON.parse(user);
+        console.log('✅ Usuário carregado:', currentUser);
+        
+        // Validar token no servidor
+        const validToken = await validateToken(token);
+        if (!validToken) {
+            console.log('❌ Token inválido. Redirecionando para login...');
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '../index.html';
+            return;
+        }
+        
+        await loadDashboardData();
+        populateCountrySelect();
+    } catch (error) {
+        console.error('❌ Erro ao carregar dados do usuário:', error);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '../index.html';
+    }
 });
+
+// Validar token no servidor
+async function validateToken(token) {
+    try {
+        const response = await fetch(`${API_URL}/auth/profile`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (response.ok) {
+            const userData = await response.json();
+            console.log('✅ Token válido. Dados do servidor:', userData);
+            // Atualizar dados do usuário com os dados do servidor
+            currentUser = {
+                ...currentUser,
+                ...userData
+            };
+            localStorage.setItem('user', JSON.stringify(currentUser));
+            return true;
+        }
+        
+        console.log('❌ Token inválido. Status:', response.status);
+        return false;
+    } catch (error) {
+        console.error('❌ Erro ao validar token:', error);
+        return false;
+    }
+}
 
 // Carregar dados do dashboard
 async function loadDashboardData() {
     try {
-        // Atualizar informações do header
-        document.getElementById('userName').textContent = currentUser.name;
-        document.getElementById('userRole').textContent = currentUser.role;
-        document.getElementById('companyName').textContent = currentUser.company.name;
+        // Atualizar informações do header com validações
+        if (document.getElementById('userName')) {
+            document.getElementById('userName').textContent = currentUser.name || 'Usuário';
+        }
+        if (document.getElementById('userRole')) {
+            document.getElementById('userRole').textContent = currentUser.role || 'Usuário';
+        }
+        if (document.getElementById('companyName')) {
+            document.getElementById('companyName').textContent = (currentUser.company && currentUser.company.name) || 'Empresa';
+        }
         
         // Iniciais do avatar
-        const initials = currentUser.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-        document.getElementById('userAvatar').textContent = initials;
+        const initials = (currentUser.name || 'U').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        if (document.getElementById('userAvatar')) {
+            document.getElementById('userAvatar').textContent = initials;
+        }
 
         // Carregar dados da empresa
         await loadCompanyData();
@@ -74,22 +132,56 @@ async function loadDashboardData() {
 // Carregar dados da empresa
 async function loadCompanyData() {
     try {
+        // Validar se temos o ID da empresa
+        if (!currentUser.company || !currentUser.company.id) {
+            console.warn('⚠️ ID da empresa não encontrado no usuário');
+            // Tentar obter da resposta do perfil
+            const token = localStorage.getItem('token');
+            const profileResponse = await fetch(`${API_URL}/auth/profile`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (profileResponse.ok) {
+                const profileData = await profileResponse.json();
+                currentUser.company = profileData.company;
+                localStorage.setItem('user', JSON.stringify(currentUser));
+            } else {
+                throw new Error('Não foi possível obter o ID da empresa');
+            }
+        }
+        
         const response = await fetch(`${API_URL}/companies/${currentUser.company.id}`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
 
-        if (!response.ok) throw new Error('Erro ao carregar empresa');
+        if (!response.ok) {
+            console.error('❌ Erro ao carregar empresa. Status:', response.status);
+            throw new Error('Erro ao carregar empresa');
+        }
 
         currentCompany = await response.json();
+        console.log('✅ Dados da empresa carregados:', currentCompany);
         
-        // Preencher formulário da empresa
-        document.getElementById('companyNameField').value = currentCompany.name;
-        document.getElementById('companyLegalNameField').value = currentCompany.legal_name;
-        document.getElementById('companyFoundedYearField').value = currentCompany.founded_year;
-        document.getElementById('companySizeField').value = currentCompany.size;
-        document.getElementById('companyIndustryField').value = currentCompany.industry;
+        // Preencher formulário da empresa com validações
+        if (document.getElementById('companyNameField')) {
+            document.getElementById('companyNameField').value = currentCompany.name || '';
+        }
+        if (document.getElementById('companyLegalNameField')) {
+            document.getElementById('companyLegalNameField').value = currentCompany.legal_name || '';
+        }
+        if (document.getElementById('companyFoundedYearField')) {
+            document.getElementById('companyFoundedYearField').value = currentCompany.founded_year || '';
+        }
+        if (document.getElementById('companySizeField')) {
+            document.getElementById('companySizeField').value = currentCompany.size || '';
+        }
+        if (document.getElementById('companyIndustryField')) {
+            document.getElementById('companyIndustryField').value = currentCompany.industry || '';
+        }
         document.getElementById('companyWebsiteField').value = currentCompany.website;
         document.getElementById('companyDescriptionField').value = currentCompany.description;
 

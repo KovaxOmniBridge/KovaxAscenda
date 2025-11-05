@@ -2,23 +2,45 @@
 
 ## 🚀 Visão Geral
 
-O **Explorador de Interfaces** é uma ferramenta poderosa no Painel do Desenvolvedor que permite acessar **qualquer interface de qualquer empresa sem restrições de nível hierárquico**.
+O **Explorador de Interfaces** é uma ferramenta poderosa no Painel do Desenvolvedor que permite acessar **qualquer interface de qualquer empresa sem restrições de nível hierárquico** usando **credenciais customizadas**.
 
 ---
 
 ## 💡 Para Que Serve?
 
 ### Problemas que Resolve:
-1. ❌ **Antes**: Precisava fazer login como usuário específico para ver cada interface
-2. ❌ **Antes**: Demorava muito para testar diferentes níveis hierárquicos
-3. ❌ **Antes**: Impossível comparar interfaces lado a lado
-4. ❌ **Antes**: Precisava criar usuários em todos os níveis para testar
+1. ❌ **Antes**: Precisava criar usuários reais para testar cada interface
+2. ❌ **Antes**: Limitado aos usuários existentes no banco de dados
+3. ❌ **Antes**: Demorava muito para testar diferentes níveis hierárquicos
+4. ❌ **Antes**: Impossível testar com nomes/emails específicos sem alterar banco
 
 ### Solução:
-✅ **Agora**: Acessa qualquer interface com 2 cliques  
+✅ **Agora**: Cria credenciais customizadas na hora (nome, email, nível)
+✅ **Agora**: Acessa qualquer interface sem precisar de conta real  
 ✅ **Agora**: Explora todos os 8 níveis hierárquicos instantaneamente  
-✅ **Agora**: Abre múltiplas interfaces em abas diferentes  
+✅ **Agora**: Abre múltiplas interfaces em abas diferentes com perfis diferentes
 ✅ **Agora**: God Mode completo para desenvolvimento e teste  
+
+---
+
+## 🆕 Sistema de Login Customizado
+
+### Como Funciona:
+1. **Escolhe a interface** que quer explorar
+2. **Preenche o formulário** com credenciais customizadas:
+   - 👤 Nome (qualquer nome)
+   - 📧 Email (qualquer email válido)
+   - 🎯 Nível hierárquico (0-7)
+   - 💼 Cargo (opcional)
+3. **Clica em "Acessar Interface"**
+4. **Pronto!** Interface abre com suas credenciais customizadas
+
+### Vantagens:
+- ✅ Não precisa criar usuários no banco
+- ✅ Pode usar qualquer nome/email para testar
+- ✅ Sessão temporária (24h de validade)
+- ✅ Identificado como "Modo Explorador" no banner
+- ✅ Auditado: registra qual dev acessou
 
 ---
 
@@ -97,11 +119,37 @@ Você verá cards visuais para cada interface com:
   - 🚀 **Abrir** - Abre na mesma aba
   - 🔗 **Nova Aba** - Abre em nova aba do navegador
 
-### Passo 4: Abrir Interface
+### Passo 4: Preencher Login Customizado
+Ao clicar em uma interface, um modal aparece com:
+
+**Campos Obrigatórios:**
+- 👤 **Nome**: Digite qualquer nome para teste (ex: "João Teste")
+- 📧 **Email**: Digite qualquer email válido (ex: "joao@teste.com")
+- 🎯 **Nível Hierárquico**: Escolha de 0 a 7
+
+**Campo Opcional:**
+- 💼 **Cargo**: Digite o cargo (ex: "Desenvolvedor", "Tester")
+
+**Exemplo de Preenchimento:**
+```
+Nome: Maria Testadora
+Email: maria.teste@exemplo.com
+Nível: 1 - Admin Geral
+Cargo: QA Engineer
+```
+
+### Passo 5: Acessar Interface
+```
+1. Clique em "🚀 Acessar Interface"
+2. O sistema cria uma sessão temporária
+3. A interface abre com suas credenciais customizadas
+4. Banner mostra "MODO EXPLORADOR"
+```
+
 **Opção A - Mesma Aba:**
 ```
-- Clique no card inteiro OU
 - Clique no botão "🚀 Abrir"
+- Preencha o login
 - A interface abrirá na mesma aba
 ```
 

@@ -72,143 +72,38 @@ function logout() {
 // ==================== CARREGAR APROVAÇÕES ====================
 
 async function loadApprovals() {
-    const companyId = localStorage.getItem('companyId') || 1;
+    const token = localStorage.getItem('token');
+    if (!token) {
+        alert('❌ Sessão inválida');
+        window.location.href = '/index.html';
+        return;
+    }
+    
+    const companyId = currentCompany?.id || localStorage.getItem('companyId') || 1;
     
     try {
-        const response = await fetch(`${API_BASE}/approvals/company/${companyId}`);
+        const response = await fetch(`${API_BASE}/approvals/company/${companyId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
         
         if (response.ok) {
             allApprovals = await response.json();
+            console.log(`✅ ${allApprovals.length} aprovações carregadas`);
         } else {
-            // Dados de demonstração se API não existir
-            allApprovals = generateDemoApprovals();
+            throw new Error(`HTTP ${response.status}`);
         }
         
         updateStats();
         filterApprovals();
     } catch (error) {
-        console.error('Erro ao carregar aprovações:', error);
-        allApprovals = generateDemoApprovals();
+        console.error('❌ Erro ao carregar aprovações:', error);
+        allApprovals = [];
         updateStats();
         filterApprovals();
     }
-}
-
-function generateDemoApprovals() {
-    return [
-        {
-            id: 1,
-            type: 'hiring',
-            title: 'Contratação de Diretor de TI',
-            description: 'Necessária contratação de profissional sênior para liderar a transformação digital da empresa. Perfil: 10+ anos de experiência, liderança de times grandes, conhecimento em cloud e arquitetura.',
-            requester: 'Carlos Silva',
-            department: 'Recursos Humanos',
-            priority: 'urgent',
-            status: 'pending',
-            amount: 25000,
-            justification: 'A área de TI cresceu 300% no último ano e precisa de liderança estratégica para escalar processos e garantir a segurança da informação.',
-            impact: 'Estruturação da área de TI, redução de riscos de segurança, melhoria na velocidade de entrega de projetos digitais.',
-            created_at: '2024-11-04T10:30:00',
-            decision_date: null,
-            decision_notes: null
-        },
-        {
-            id: 2,
-            type: 'investment',
-            title: 'Investimento em Nova Plataforma de CRM',
-            description: 'Aquisição e implementação de plataforma Salesforce Enterprise para gestão completa do relacionamento com clientes.',
-            requester: 'Ana Costa',
-            department: 'Comercial',
-            priority: 'high',
-            status: 'pending',
-            amount: 850000,
-            justification: 'Sistema atual não suporta mais o volume de leads. Perdemos oportunidades por falta de automação e integração.',
-            impact: 'Aumento de 40% na conversão de leads, redução de 60% no tempo de resposta ao cliente, melhor previsibilidade de vendas.',
-            created_at: '2024-11-03T14:20:00',
-            decision_date: null,
-            decision_notes: null
-        },
-        {
-            id: 3,
-            type: 'project',
-            title: 'Lançamento de Produto Premium',
-            description: 'Desenvolvimento de linha premium de produtos voltada para o segmento corporativo de alto valor.',
-            requester: 'Roberto Mendes',
-            department: 'Produtos',
-            priority: 'high',
-            status: 'pending',
-            amount: 1200000,
-            justification: 'Pesquisa de mercado identificou demanda reprimida no segmento premium. Concorrentes já atuam nesse nicho com margem 3x superior.',
-            impact: 'Nova fonte de receita estimada em R$ 5M no primeiro ano, posicionamento de marca mais forte, acesso a novos clientes.',
-            created_at: '2024-11-02T09:15:00',
-            decision_date: null,
-            decision_notes: null
-        },
-        {
-            id: 4,
-            type: 'structure',
-            title: 'Criação de Diretoria de Inovação',
-            description: 'Proposta de nova estrutura organizacional com criação da Diretoria de Inovação reportando diretamente à Presidência.',
-            requester: 'Fernanda Lima',
-            department: 'Estratégia',
-            priority: 'medium',
-            status: 'pending',
-            amount: 0,
-            justification: 'Empresa precisa de foco dedicado em inovação para manter competitividade. Atuais iniciativas estão dispersas.',
-            impact: 'Aceleração de projetos inovadores, cultura de experimentação, parcerias estratégicas com startups e universidades.',
-            created_at: '2024-11-01T16:45:00',
-            decision_date: null,
-            decision_notes: null
-        },
-        {
-            id: 5,
-            type: 'budget',
-            title: 'Orçamento Extraordinário - Marketing Digital',
-            description: 'Aprovação de budget adicional para campanhas de Black Friday e fim de ano.',
-            requester: 'Juliana Santos',
-            department: 'Marketing',
-            priority: 'urgent',
-            status: 'approved',
-            amount: 450000,
-            justification: 'Oportunidade única de capturar market share. Concorrentes já anunciaram investimentos massivos.',
-            impact: 'Estimativa de ROI de 3.5x, aumento de 25% na base de clientes, fortalecimento de marca.',
-            created_at: '2024-10-28T11:00:00',
-            decision_date: '2024-10-29T09:30:00',
-            decision_notes: 'Aprovado. Impacto claro e timing adequado. Acompanhar métricas semanalmente.'
-        },
-        {
-            id: 6,
-            type: 'contract',
-            title: 'Parceria com Distribuidor Regional',
-            description: 'Contrato de exclusividade com distribuidor para região Sul por 3 anos.',
-            requester: 'Pedro Oliveira',
-            department: 'Comercial',
-            priority: 'medium',
-            status: 'approved',
-            amount: 0,
-            justification: 'Distribuidor tem capilaridade em 150 cidades e relacionamento consolidado com grandes redes.',
-            impact: 'Expansão geográfica imediata, redução de custos logísticos, aumento de 30% em volume na região.',
-            created_at: '2024-10-25T13:20:00',
-            decision_date: '2024-10-27T15:00:00',
-            decision_notes: 'Aprovado com ajustes nas cláusulas de exclusividade. Revisão anual obrigatória.'
-        },
-        {
-            id: 7,
-            type: 'hiring',
-            title: 'Contratação de 3 Engenheiros Senior',
-            description: 'Ampliação do time de desenvolvimento para suportar novos projetos.',
-            requester: 'Marcos Tech',
-            department: 'Tecnologia',
-            priority: 'low',
-            status: 'rejected',
-            amount: 45000,
-            justification: 'Backlog crescente e risco de atraso em entregas críticas.',
-            impact: 'Aumento na capacidade de entrega, redução de sobrecarga da equipe atual.',
-            created_at: '2024-10-20T10:00:00',
-            decision_date: '2024-10-22T14:30:00',
-            decision_notes: 'Rejeitado temporariamente. Priorizar otimização de processos antes de aumentar headcount. Reavaliar em Q1.'
-        }
-    ];
 }
 
 // ==================== ESTATÍSTICAS ====================
@@ -261,7 +156,8 @@ function displayApprovals(approvals) {
         container.innerHTML = `
             <div class="no-data">
                 <div class="no-data-icon">📭</div>
-                <p>Nenhuma aprovação encontrada com os filtros aplicados</p>
+                <p>Nenhuma aprovação encontrada</p>
+                <button onclick="openNewApprovalModal()" class="btn-primary">+ Criar Nova Solicitação</button>
             </div>
         `;
         return;
@@ -276,7 +172,7 @@ function displayApprovals(approvals) {
                 </div>
                 
                 <div class="approval-meta">
-                    <span>👤 ${approval.requester}</span>
+                    <span>👤 ${approval.requester_name || approval.requester || 'N/A'}</span>
                     <span>🏢 ${approval.department}</span>
                     <span>📅 ${formatDate(approval.created_at)}</span>
                     ${approval.amount > 0 ? `<span>💰 ${formatCurrency(approval.amount)}</span>` : ''}
@@ -315,7 +211,7 @@ function openApprovalModal(id) {
     
     document.getElementById('detailType').textContent = `${getTypeIcon(approval.type)} ${getTypeLabel(approval.type)}`;
     document.getElementById('detailPriority').textContent = `${getPriorityIcon(approval.priority)} ${getPriorityLabel(approval.priority)}`;
-    document.getElementById('detailRequester').textContent = approval.requester;
+    document.getElementById('detailRequester').textContent = approval.requester_name || approval.requester || 'N/A';
     document.getElementById('detailDepartment').textContent = approval.department;
     document.getElementById('detailDate').textContent = formatDateTime(approval.created_at);
     document.getElementById('detailDescription').textContent = approval.description;
@@ -367,27 +263,42 @@ function closeApprovalModal() {
 
 async function approveRequest() {
     const notes = document.getElementById('decisionNotes').value;
+    const token = localStorage.getItem('token');
+    const userId = currentUser?.id || localStorage.getItem('userId');
     
     if (!confirm('Confirma a APROVAÇÃO desta solicitação?')) return;
     
     try {
-        const approval = allApprovals.find(a => a.id === currentApprovalId);
-        approval.status = 'approved';
-        approval.decision_date = new Date().toISOString();
-        approval.decision_notes = notes || 'Aprovado sem comentários';
+        const response = await fetch(`${API_BASE}/approvals/${currentApprovalId}/approve`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                decision_notes: notes || 'Aprovado',
+                decided_by: userId
+            })
+        });
         
-        alert('✅ Solicitação aprovada com sucesso!');
-        closeApprovalModal();
-        updateStats();
-        filterApprovals();
+        if (response.ok) {
+            alert('✅ Solicitação aprovada com sucesso!');
+            closeApprovalModal();
+            await loadApprovals();
+        } else {
+            const error = await response.json();
+            throw new Error(error.error || 'Erro ao aprovar');
+        }
     } catch (error) {
-        console.error('Erro ao aprovar:', error);
-        alert('❌ Erro ao processar aprovação');
+        console.error('❌ Erro ao aprovar:', error);
+        alert(`❌ Erro: ${error.message}`);
     }
 }
 
 async function rejectRequest() {
     const notes = document.getElementById('decisionNotes').value;
+    const token = localStorage.getItem('token');
+    const userId = currentUser?.id || localStorage.getItem('userId');
     
     if (!notes.trim()) {
         alert('⚠️ Por favor, adicione um comentário explicando a rejeição.');
@@ -397,18 +308,29 @@ async function rejectRequest() {
     if (!confirm('Confirma a REJEIÇÃO desta solicitação?')) return;
     
     try {
-        const approval = allApprovals.find(a => a.id === currentApprovalId);
-        approval.status = 'rejected';
-        approval.decision_date = new Date().toISOString();
-        approval.decision_notes = notes;
+        const response = await fetch(`${API_BASE}/approvals/${currentApprovalId}/reject`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                decision_notes: notes,
+                decided_by: userId
+            })
+        });
         
-        alert('❌ Solicitação rejeitada.');
-        closeApprovalModal();
-        updateStats();
-        filterApprovals();
+        if (response.ok) {
+            alert('❌ Solicitação rejeitada.');
+            closeApprovalModal();
+            await loadApprovals();
+        } else {
+            const error = await response.json();
+            throw new Error(error.error || 'Erro ao rejeitar');
+        }
     } catch (error) {
-        console.error('Erro ao rejeitar:', error);
-        alert('❌ Erro ao processar rejeição');
+        console.error('❌ Erro ao rejeitar:', error);
+        alert(`❌ Erro: ${error.message}`);
     }
 }
 
@@ -437,8 +359,12 @@ function updateFormFields() {
 }
 
 async function createApproval() {
+    const token = localStorage.getItem('token');
+    const userId = currentUser?.id || localStorage.getItem('userId');
+    const companyId = currentCompany?.id || localStorage.getItem('companyId');
+    
     const newApproval = {
-        id: Math.max(...allApprovals.map(a => a.id)) + 1,
+        company_id: companyId,
         type: document.getElementById('newType').value,
         title: document.getElementById('newTitle').value,
         priority: document.getElementById('newPriority').value,
@@ -446,20 +372,32 @@ async function createApproval() {
         description: document.getElementById('newDescription').value,
         justification: document.getElementById('newJustification').value,
         impact: document.getElementById('newImpact').value,
-        requester: currentUser?.name || 'Presidente',
-        department: 'Presidência',
-        status: 'pending',
-        created_at: new Date().toISOString(),
-        decision_date: null,
-        decision_notes: null
+        requester_id: userId,
+        department: currentUser?.department || 'Presidência'
     };
     
-    allApprovals.unshift(newApproval);
-    
-    alert('✅ Solicitação criada com sucesso!');
-    closeNewApprovalModal();
-    updateStats();
-    filterApprovals();
+    try {
+        const response = await fetch(`${API_BASE}/approvals`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newApproval)
+        });
+        
+        if (response.ok) {
+            alert('✅ Solicitação criada com sucesso!');
+            closeNewApprovalModal();
+            await loadApprovals();
+        } else {
+            const error = await response.json();
+            throw new Error(error.error || 'Erro ao criar solicitação');
+        }
+    } catch (error) {
+        console.error('❌ Erro ao criar aprovação:', error);
+        alert(`❌ Erro: ${error.message}`);
+    }
 }
 
 // ==================== HELPERS ====================

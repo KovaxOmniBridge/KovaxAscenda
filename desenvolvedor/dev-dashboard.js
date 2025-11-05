@@ -29,9 +29,12 @@ function checkDevAuth() {
     
     if (!token) {
         // Não está autenticado, redirecionar para login
+        console.log('❌ Token não encontrado, redirecionando para login...');
         window.location.href = 'dev-login.html';
         return false;
     }
+    
+    console.log('✅ Token encontrado, verificando validade...');
     
     // Verificar validade do token
     fetch(`${API_BASE}/dev/auth/verify`, {
@@ -46,11 +49,38 @@ function checkDevAuth() {
         return response.json();
     })
     .then(data => {
+        console.log('✅ Token válido! Dados:', data);
         // Token válido, mostrar info do usuário
-        displayDevUser(data.user);
+        // Pegar dados completos do localStorage (que tem o name)
+        const devUserStorage = localStorage.getItem('devUser');
+        console.log('📦 devUser do localStorage:', devUserStorage);
+        let devUser = { name: 'Desenvolvedor', role: 'developer' };
+        
+        if (devUserStorage) {
+            try {
+                devUser = JSON.parse(devUserStorage);
+                console.log('✅ devUser parseado:', devUser);
+            } catch (e) {
+                console.error('Erro ao parsear devUser do localStorage:', e);
+            }
+        }
+        
+        // Se o localStorage não tem name, usar o email como fallback
+        if (!devUser.name && data.developer && data.developer.email) {
+            devUser.name = data.developer.email.split('@')[0];
+            console.log('⚠️ Usando email como fallback para name:', devUser.name);
+        }
+        
+        // Garantir que role está atualizado do token
+        if (data.developer && data.developer.role) {
+            devUser.role = data.developer.role;
+        }
+        
+        console.log('🎯 Chamando displayDevUser com:', devUser);
+        displayDevUser(devUser);
     })
     .catch(error => {
-        console.error('Erro ao verificar token:', error);
+        console.error('❌ Erro ao verificar token:', error);
         // Token inválido, limpar e redirecionar
         localStorage.removeItem('devToken');
         localStorage.removeItem('devUser');
@@ -61,6 +91,12 @@ function checkDevAuth() {
 }
 
 function displayDevUser(user) {
+    console.log('📋 Exibindo dados do desenvolvedor:', user);
+    
+    // Garantir que temos os dados mínimos
+    const devName = user.name || user.email?.split('@')[0] || 'Desenvolvedor';
+    const devRole = user.role || 'developer';
+    
     // Adicionar info do usuário no header se necessário
     const headerRight = document.querySelector('.header-right');
     if (headerRight && !document.getElementById('devUserInfo')) {
@@ -69,8 +105,8 @@ function displayDevUser(user) {
         userInfo.style.cssText = 'display: flex; align-items: center; gap: 1rem; margin-right: 1rem; color: #2d3748;';
         userInfo.innerHTML = `
             <div style="text-align: right;">
-                <div style="font-weight: 600;">${user.name}</div>
-                <div style="font-size: 0.85rem; color: #6c757d;">${getRoleLabel(user.role)}</div>
+                <div style="font-weight: 600;">${devName}</div>
+                <div style="font-size: 0.85rem; color: #6c757d;">${getRoleLabel(devRole)}</div>
             </div>
             <button class="btn-secondary" onclick="logout()" style="padding: 0.5rem 1rem;">
                 🚪 Sair
@@ -106,11 +142,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
     
-    // Carregar dados
+    // Carregar dados iniciais
     loadStats();
     loadCompanies();
-    loadAllUsers();
-    loadQuickLogin();
+    loadRequests('pending'); // Carregar pedidos pendentes
 });
 
 // ==================== NAVEGAÇÃO ====================
@@ -125,7 +160,8 @@ function showTab(tabName) {
     document.getElementById(`tab-${tabName}`).classList.add('active');
     
     // Carregar dados específicos
-    if (tabName === 'quick-login') loadQuickLogin();
+    if (tabName === 'requests') loadRequests('pending');
+    if (tabName === 'developers') loadDevelopers();
     if (tabName === 'interfaces') loadCompaniesForInterfaces();
 }
 
@@ -133,52 +169,58 @@ function showTab(tabName) {
 
 async function loadStats() {
     try {
+        console.log('📊 Carregando estatísticas...');
+        
         // Empresas
-        const companiesRes = await fetch(`${API_BASE}/companies`);
+        const companiesRes = await fetchWithDevAuth(`${API_BASE}/dev/companies`);
         const companies = await companiesRes.json();
         document.getElementById('totalCompanies').textContent = companies.length;
+        console.log(`✅ ${companies.length} empresas encontradas`);
         
-        // Usuários (usando rota DEV sem auth)
+        // Usuários
         let totalUsers = 0;
         for (const company of companies) {
             try {
-                const usersRes = await fetch(`${API_BASE}/dev/users/company/${company.id}`);
+                const usersRes = await fetchWithDevAuth(`${API_BASE}/dev/users/company/${company.id}`);
                 const users = await usersRes.json();
                 totalUsers += users.length;
             } catch (e) {
-                console.error('Erro ao carregar usuários:', e);
+                console.error('Erro ao carregar usuários da empresa', company.id, ':', e);
             }
         }
         document.getElementById('totalUsers').textContent = totalUsers;
+        console.log(`✅ ${totalUsers} usuários encontrados`);
         
-        // Squads (usando rota DEV sem auth)
+        // Squads
         let totalSquads = 0;
         for (const company of companies) {
             try {
-                const squadsRes = await fetch(`${API_BASE}/dev/squads/company/${company.id}`);
+                const squadsRes = await fetchWithDevAuth(`${API_BASE}/dev/squads/company/${company.id}`);
                 const squads = await squadsRes.json();
                 totalSquads += squads.length;
             } catch (e) {
-                console.error('Erro ao carregar squads:', e);
+                console.error('Erro ao carregar squads da empresa', company.id, ':', e);
             }
         }
         document.getElementById('totalSquads').textContent = totalSquads;
+        console.log(`✅ ${totalSquads} squads encontrados`);
         
-        // Chapters (usando rota DEV sem auth)
+        // Chapters
         let totalChapters = 0;
         for (const company of companies) {
             try {
-                const chaptersRes = await fetch(`${API_BASE}/dev/chapters/company/${company.id}`);
+                const chaptersRes = await fetchWithDevAuth(`${API_BASE}/dev/chapters/company/${company.id}`);
                 const chapters = await chaptersRes.json();
                 totalChapters += chapters.length;
             } catch (e) {
-                console.error('Erro ao carregar chapters:', e);
+                console.error('Erro ao carregar chapters da empresa', company.id, ':', e);
             }
         }
         document.getElementById('totalChapters').textContent = totalChapters;
+        console.log(`✅ ${totalChapters} chapters encontrados`);
         
     } catch (error) {
-        console.error('Erro ao carregar estatísticas:', error);
+        console.error('❌ Erro ao carregar estatísticas:', error);
     }
 }
 
@@ -186,11 +228,23 @@ async function loadStats() {
 
 async function loadCompanies() {
     try {
-        const response = await fetch(`${API_BASE}/dev/companies`);
+        console.log('🏢 Carregando empresas...');
+        const response = await fetchWithDevAuth(`${API_BASE}/dev/companies`);
+        
+        if (!response.ok) {
+            throw new Error(`Erro HTTP: ${response.status}`);
+        }
+        
         const companies = await response.json();
+        console.log(`✅ ${companies.length} empresas carregadas:`, companies);
         
         const tbody = document.getElementById('companiesTableBody');
         const filterSelect = document.getElementById('filterCompany');
+        
+        if (!tbody) {
+            console.error('❌ Elemento companiesTableBody não encontrado!');
+            return;
+        }
         
         // Preencher tabela
         tbody.innerHTML = companies.map(c => `
@@ -200,26 +254,38 @@ async function loadCompanies() {
                 <td>${c.legal_name || '-'}</td>
                 <td>${c.industry || '-'}</td>
                 <td>${getSizeName(c.size)}</td>
-                <td><button class="btn-secondary" onclick="viewTemplate(${c.id})">Ver Template</button></td>
+                <td><span class="status-badge status-${c.status || 'active'}">${getStatusLabel(c.status || 'active')}</span></td>
                 <td>
-                    <button class="btn-secondary" onclick="viewCompany(${c.id})">👁️</button>
-                    <button class="btn-danger" onclick="deleteCompany(${c.id}, '${c.name}')">🗑️</button>
+                    <button class="btn-secondary" onclick="viewCompanyUsers(${c.id}, '${c.name}')" title="Ver usuários e fazer login rápido">👥 Usuários</button>
+                    <button class="btn-secondary" onclick="viewCompanyDetails(${c.id})" title="Ver detalhes da empresa">👁️ Detalhes</button>
+                    <button class="btn-warning" onclick="changeCompanyStatus(${c.id}, '${c.name}', '${c.status || 'active'}')" title="Alterar status">⚙️ Status</button>
                 </td>
             </tr>
         `).join('');
         
         // Preencher filtro
-        filterSelect.innerHTML = '<option value="">Todas as Empresas</option>' + 
-            companies.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+        if (filterSelect) {
+            filterSelect.innerHTML = '<option value="">Todas as Empresas</option>' + 
+                companies.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+        }
             
     } catch (error) {
-        console.error('Erro ao carregar empresas:', error);
+        console.error('❌ Erro ao carregar empresas:', error);
     }
 }
 
 function getSizeName(size) {
     const names = { small: 'Pequena', medium: 'Média', large: 'Grande' };
     return names[size] || size;
+}
+
+function getStatusLabel(status) {
+    const labels = {
+        'active': '✅ Ativa',
+        'inactive': '⏸️ Desativada',
+        'suspended': '⚠️ Suspensa'
+    };
+    return labels[status] || '✅ Ativa';
 }
 
 function openCompanyModal() {
@@ -283,7 +349,7 @@ async function deleteCompany(id, name) {
     if (!confirm(`⚠️ CONFIRMAÇÃO FINAL: Tem CERTEZA ABSOLUTA?`)) return;
     
     try {
-        const response = await fetch(`${API_BASE}/dev/companies/${id}`, {
+        const response = await fetchWithDevAuth(`${API_BASE}/dev/companies/${id}`, {
             method: 'DELETE'
         });
         
@@ -292,7 +358,6 @@ async function deleteCompany(id, name) {
             alert(`✅ ${result.message}`);
             loadCompanies();
             loadStats();
-            loadAllUsers();
         } else {
             alert('❌ Erro ao deletar empresa');
         }
@@ -302,206 +367,409 @@ async function deleteCompany(id, name) {
     }
 }
 
-async function viewCompany(id) {
-    try {
-        const response = await fetch(`${API_BASE}/companies/${id}`);
-        const company = await response.json();
-        
-        const info = `
-🏢 DETALHES DA EMPRESA
+// Nova função: Ver usuários de uma empresa específica
+let currentCompanyUsers = [];
+let currentCompanyId = null;
+let currentCompanyName = '';
 
-ID: ${company.id}
-Nome: ${company.name}
-Razão Social: ${company.legal_name}
-Ano Fundação: ${company.founded_year}
-Tamanho: ${getSizeName(company.size)}
-Setor: ${company.industry}
-Website: ${company.website}
-Descrição: ${company.description}
-        `.trim();
+async function viewCompanyUsers(companyId, companyName) {
+    try {
+        console.log(`👥 Carregando usuários da empresa ${companyName} (ID: ${companyId})...`);
         
-        alert(info);
+        currentCompanyId = companyId;
+        currentCompanyName = companyName;
+        
+        const response = await fetchWithDevAuth(`${API_BASE}/dev/users/company/${companyId}`);
+        const users = await response.json();
+        
+        currentCompanyUsers = users;
+        
+        console.log(`✅ ${users.length} usuários encontrados`);
+        
+        // Atualizar título do modal
+        document.getElementById('companyUsersTitle').textContent = companyName;
+        
+        // Renderizar usuários
+        renderCompanyUsers(users);
+        
+        // Abrir modal
+        document.getElementById('companyUsersModal').classList.add('active');
+        
     } catch (error) {
-        alert('Erro ao buscar detalhes da empresa');
+        console.error('❌ Erro ao carregar usuários:', error);
+        alert('❌ Erro ao carregar usuários da empresa');
     }
 }
 
-async function viewTemplate(companyId) {
+function renderCompanyUsers(users) {
+    const grid = document.getElementById('companyUsersGrid');
+    
+    if (users.length === 0) {
+        grid.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: #6c757d;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">📭</div>
+                <h3>Nenhum usuário cadastrado</h3>
+                <p>Esta empresa ainda não possui usuários.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    grid.innerHTML = users.map(user => `
+        <div class="user-card">
+            <h4>${user.name}</h4>
+            <p><strong>📧 Email:</strong> ${user.email}</p>
+            <p><strong>🏷️ Depto:</strong> ${user.department}</p>
+            <p><strong>📊 Role:</strong> ${user.role || 'Não definido'}</p>
+            <p><strong>🔑 Chave:</strong> <code>${user.access_key}</code></p>
+            ${user.phone ? `<p><strong>📞 Tel:</strong> ${user.phone}</p>` : ''}
+            <span class="nivel-badge">Nível ${user.nivel}</span>
+            <button class="btn-primary" onclick="quickLoginAs(${user.id}, ${currentCompanyId})">
+                🚀 Login Rápido
+            </button>
+        </div>
+    `).join('');
+}
+
+function filterModalUsers() {
+    const nivelFilter = document.getElementById('modalFilterNivel').value;
+    const searchTerm = document.getElementById('modalSearchUser').value.toLowerCase();
+    
+    let filtered = currentCompanyUsers;
+    
+    // Filtrar por nível
+    if (nivelFilter) {
+        filtered = filtered.filter(u => u.nivel == nivelFilter);
+    }
+    
+    // Filtrar por busca
+    if (searchTerm) {
+        filtered = filtered.filter(u => 
+            u.name.toLowerCase().includes(searchTerm) ||
+            u.email.toLowerCase().includes(searchTerm) ||
+            u.department.toLowerCase().includes(searchTerm)
+        );
+    }
+    
+    renderCompanyUsers(filtered);
+}
+
+function closeCompanyUsersModal() {
+    document.getElementById('companyUsersModal').classList.remove('active');
+    document.getElementById('modalFilterNivel').value = '';
+    document.getElementById('modalSearchUser').value = '';
+    currentCompanyUsers = [];
+}
+
+// Nova função: Ver detalhes completos da empresa
+async function viewCompanyDetails(id) {
     try {
-        const response = await fetch(`${API_BASE}/templates/${companyId}`);
-        const template = await response.json();
+        console.log(`🏢 Carregando detalhes da empresa ID: ${id}...`);
         
-        let levels = [];
-        if (template.active_levels) {
-            const activeLevels = template.active_levels.split(',');
-            const names = typeof template.level_names === 'string' 
-                ? JSON.parse(template.level_names) 
-                : template.level_names;
-            
-            activeLevels.forEach(level => {
-                if (names[level]) {
-                    levels.push(`Nível ${level}: ${names[level]}`);
-                }
-            });
+        const response = await fetchWithDevAuth(`${API_BASE}/dev/companies`);
+        const companies = await response.json();
+        const company = companies.find(c => c.id === id);
+        
+        if (!company) {
+            alert('❌ Empresa não encontrada');
+            return;
         }
         
-        const info = `
-⚙️ TEMPLATE ORGANIZACIONAL
-
-Tipo: ${template.template_type || 'Não configurado'}
-Níveis Ativos: ${template.active_levels ? template.active_levels.split(',').length : 0}
-
-${levels.length > 0 ? '\nESTRUTURA:\n' + levels.join('\n') : 'Nenhum nível configurado'}
-        `.trim();
+        // Buscar estatísticas da empresa
+        const usersRes = await fetchWithDevAuth(`${API_BASE}/dev/users/company/${id}`);
+        const users = await usersRes.json();
         
-        alert(info);
+        const squadsRes = await fetchWithDevAuth(`${API_BASE}/dev/squads/company/${id}`);
+        const squads = await squadsRes.json();
+        
+        const chaptersRes = await fetchWithDevAuth(`${API_BASE}/dev/chapters/company/${id}`);
+        const chapters = await chaptersRes.json();
+        
+        // Renderizar conteúdo do modal
+        const content = document.getElementById('companyDetailsContent');
+        content.innerHTML = `
+            <div class="details-section">
+                <h4>📋 Informações Básicas</h4>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <label>ID</label>
+                        <p>${company.id}</p>
+                    </div>
+                    <div class="detail-item">
+                        <label>Nome</label>
+                        <p>${company.name}</p>
+                    </div>
+                    <div class="detail-item">
+                        <label>Razão Social</label>
+                        <p>${company.legal_name || '-'}</p>
+                    </div>
+                    <div class="detail-item">
+                        <label>Ano de Fundação</label>
+                        <p>${company.founded_year || '-'}</p>
+                    </div>
+                    <div class="detail-item">
+                        <label>Tamanho</label>
+                        <p>${getSizeName(company.size)}</p>
+                    </div>
+                    <div class="detail-item">
+                        <label>Setor</label>
+                        <p>${company.industry || '-'}</p>
+                    </div>
+                    <div class="detail-item">
+                        <label>Website</label>
+                        <p><a href="${company.website || '#'}" target="_blank">${company.website || '-'}</a></p>
+                    </div>
+                    <div class="detail-item">
+                        <label>Status</label>
+                        <p><span class="status-badge status-${company.status || 'active'}">${getStatusLabel(company.status || 'active')}</span></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="details-section">
+                <h4>📊 Estatísticas</h4>
+                <div class="stats-cards">
+                    <div class="stat-detail-card">
+                        <h3>${users.length}</h3>
+                        <p>� Usuários</p>
+                    </div>
+                    <div class="stat-detail-card">
+                        <h3>${squads.length}</h3>
+                        <p>� Squads</p>
+                    </div>
+                    <div class="stat-detail-card">
+                        <h3>${chapters.length}</h3>
+                        <p>📚 Chapters</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="details-section">
+                <h4>📝 Descrição</h4>
+                <p style="color: #6c757d; line-height: 1.6;">${company.description || 'Sem descrição disponível.'}</p>
+            </div>
+        `;
+        
+        // Abrir modal
+        document.getElementById('companyDetailsModal').classList.add('active');
+        console.log('✅ Detalhes exibidos com sucesso');
+        
     } catch (error) {
-        alert('Erro ao buscar template');
+        console.error('❌ Erro ao carregar detalhes:', error);
+        alert('❌ Erro ao carregar detalhes da empresa');
     }
 }
 
-// ==================== USUÁRIOS ====================
+function closeCompanyDetailsModal() {
+    document.getElementById('companyDetailsModal').classList.remove('active');
+}
 
-async function loadAllUsers() {
-    const filterCompanyId = document.getElementById('filterCompany').value;
-    const filterNivel = document.getElementById('filterNivel').value;
+// Nova função: Alterar status da empresa
+let statusChangeCompanyId = null;
+let statusChangeCompanyName = '';
+let statusChangeCurrent = '';
+
+async function changeCompanyStatus(id, name, currentStatus) {
+    statusChangeCompanyId = id;
+    statusChangeCompanyName = name;
+    statusChangeCurrent = currentStatus;
+    
+    // Atualizar informações do modal
+    document.getElementById('statusCompanyName').textContent = name;
+    document.getElementById('statusCurrentLabel').textContent = getStatusLabel(currentStatus);
+    
+    // Abrir modal
+    document.getElementById('statusModal').classList.add('active');
+}
+
+async function selectStatus(newStatus) {
+    if (newStatus === statusChangeCurrent) {
+        alert('ℹ️ O status selecionado é o mesmo que o atual');
+        closeStatusModal();
+        return;
+    }
+    
+    const statusLabels = {
+        'active': '✅ Ativa',
+        'inactive': '⏸️ Desativada',
+        'suspended': '⚠️ Suspensa'
+    };
+    
+    if (!confirm(`Confirma alterar o status de "${statusChangeCompanyName}" para ${statusLabels[newStatus]}?`)) {
+        return;
+    }
     
     try {
-        const companiesRes = await fetch(`${API_BASE}/companies`);
-        const companies = await companiesRes.json();
+        console.log(`⚙️ Alterando status da empresa ${statusChangeCompanyId} para: ${newStatus}...`);
         
-        let allUsers = [];
+        const response = await fetchWithDevAuth(`${API_BASE}/dev/companies/${statusChangeCompanyId}/status`, {
+            method: 'PUT',
+            body: JSON.stringify({ status: newStatus })
+        });
         
-        for (const company of companies) {
-            if (filterCompanyId && company.id != filterCompanyId) continue;
-            
-            try {
-                const usersRes = await fetch(`${API_BASE}/dev/users/company/${company.id}`);
-                const users = await usersRes.json();
-                
-                users.forEach(user => {
-                    user.company_name = company.name;
-                });
-                
-                allUsers = allUsers.concat(users);
-            } catch (e) {
-                console.error('Erro ao carregar usuários:', e);
-            }
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Erro ao alterar status');
         }
         
-        // Filtrar por nível
-        if (filterNivel) {
-            allUsers = allUsers.filter(u => u.nivel == filterNivel);
+        const result = await response.json();
+        
+        alert(`✅ ${result.message}\n\n"${statusChangeCompanyName}" agora está: ${statusLabels[newStatus]}`);
+        console.log(`✅ Status da empresa ${statusChangeCompanyId} alterado para: ${newStatus}`);
+        
+        // Fechar modal
+        closeStatusModal();
+        
+        // Recarregar lista
+        loadCompanies();
+        loadStats();
+    } catch (error) {
+        console.error('❌ Erro ao alterar status:', error);
+        alert(`❌ Erro ao alterar status da empresa: ${error.message}`);
+    }
+}
+
+function closeStatusModal() {
+    document.getElementById('statusModal').classList.remove('active');
+    statusChangeCompanyId = null;
+    statusChangeCompanyName = '';
+    statusChangeCurrent = '';
+}
+
+// ==================== GERENCIAMENTO DE DESENVOLVEDORES ====================
+
+async function loadDevelopers() {
+    try {
+        console.log('🧑‍💻 Carregando desenvolvedores...');
+        
+        const response = await fetchWithDevAuth(`${API_BASE}/dev/auth/users`);
+        const developers = await response.json();
+        
+        console.log(`✅ ${developers.length} desenvolvedores encontrados`);
+        
+        const tbody = document.getElementById('developersTableBody');
+        
+        if (!tbody) {
+            console.error('❌ Elemento developersTableBody não encontrado!');
+            return;
         }
         
-        const tbody = document.getElementById('usersTableBody');
-        tbody.innerHTML = allUsers.map(u => `
+        tbody.innerHTML = developers.map(dev => `
             <tr>
-                <td>${u.id}</td>
-                <td>${u.company_name}</td>
-                <td>${u.name}</td>
-                <td>${u.email}</td>
-                <td><span class="nivel-badge">N${u.nivel}</span></td>
-                <td>${u.department}</td>
-                <td><code>${u.access_key}</code></td>
+                <td>${dev.id}</td>
+                <td>${dev.name}</td>
+                <td>${dev.email}</td>
+                <td><span class="role-badge role-${dev.role}">${getRoleLabel(dev.role)}</span></td>
+                <td>${new Date(dev.created_at).toLocaleDateString('pt-BR')}</td>
                 <td>
-                    <button class="btn-primary" onclick="quickLoginAs(${u.id}, ${u.company_id})">Login</button>
+                    <button class="btn-secondary" onclick="viewDeveloperDetails(${dev.id})" title="Ver detalhes">👁️ Ver</button>
                 </td>
             </tr>
         `).join('');
         
     } catch (error) {
-        console.error('Erro ao carregar usuários:', error);
+        console.error('❌ Erro ao carregar desenvolvedores:', error);
     }
 }
+
+async function viewDeveloperDetails(devId) {
+    try {
+        console.log(`🧑‍💻 Carregando detalhes do desenvolvedor ID: ${devId}...`);
+        
+        const response = await fetchWithDevAuth(`${API_BASE}/dev/auth/users`);
+        const developers = await response.json();
+        const dev = developers.find(d => d.id === devId);
+        
+        if (!dev) {
+            alert('❌ Desenvolvedor não encontrado');
+            return;
+        }
+        
+        const info = `
+🧑‍💻 DETALHES DO DESENVOLVEDOR
+
+${'='.repeat(60)}
+ID: ${dev.id}
+Nome: ${dev.name}
+Email: ${dev.email}
+Role: ${getRoleLabel(dev.role)}
+Criado em: ${new Date(dev.created_at).toLocaleString('pt-BR')}
+${'='.repeat(60)}
+        `;
+        
+        alert(info);
+        console.log('✅ Detalhes do desenvolvedor exibidos');
+    } catch (error) {
+        console.error('❌ Erro ao carregar detalhes do desenvolvedor:', error);
+        alert('❌ Erro ao carregar detalhes');
+    }
+}
+
+// ==================== USUÁRIOS DAS EMPRESAS ====================
+// NOTA: Esta função não é mais necessária, pois os usuários são exibidos 
+// no modal dentro da visualização de cada empresa
 
 // ==================== LOGIN RÁPIDO ====================
 
-async function loadQuickLogin() {
+// ==================== QUICK LOGIN ====================
+
+async function quickLoginAs(userId, companyId) {
     try {
-        const companiesRes = await fetch(`${API_BASE}/companies`);
-        const companies = await companiesRes.json();
+        console.log(`🚀 Iniciando login rápido - Usuário ID: ${userId}, Empresa ID: ${companyId}`);
         
-        let allUsers = [];
-        
-        for (const company of companies) {
-            try {
-                const usersRes = await fetch(`${API_BASE}/dev/users/company/${company.id}`);
-                const users = await usersRes.json();
-                
-                users.forEach(user => {
-                    user.company_name = company.name;
-                });
-                
-                allUsers = allUsers.concat(users);
-            } catch (e) {}
+        // Validar se está rodando via HTTP
+        const serverUrl = window.location.origin;
+        if (serverUrl === 'null' || serverUrl.startsWith('file://')) {
+            alert('⚠️ ERRO: Painel Dev deve ser acessado via servidor HTTP!\n\n' +
+                  '❌ Não use: file:///C:/Users/.../dev-dashboard.html\n' +
+                  '✅ Use: http://localhost:3000/desenvolvedor/dev-dashboard.html\n\n' +
+                  'Certifique-se que o servidor está rodando (node server.js)');
+            return;
         }
         
-        const grid = document.getElementById('quickLoginGrid');
-        grid.innerHTML = allUsers.map(u => `
-            <div class="login-card">
-                <h3>${u.name}</h3>
-                <p><strong>Empresa:</strong> ${u.company_name}</p>
-                <p><strong>Email:</strong> ${u.email}</p>
-                <p><strong>Departamento:</strong> ${u.department}</p>
-                <span class="nivel-badge">Nível ${u.nivel}</span>
-                <button class="btn-primary" onclick="quickLoginAs(${u.id}, ${u.company_id})">
-                    🚀 Login Rápido
-                </button>
-            </div>
-        `).join('');
+        console.log(`🌐 Server URL: ${serverUrl}`);
+        
+        // Chamar endpoint de impersonation - servidor processa tudo
+        const response = await fetchWithDevAuth(`${API_BASE}/dev/impersonate/${userId}`, {
+            method: 'POST'
+        });
+        
+        if (!response.ok) {
+            throw new Error('Erro ao gerar sessão de impersonation');
+        }
+        
+        const data = await response.json();
+        
+        console.log(`✅ Impersonation configurado para: ${data.user.name}`);
+        console.log(`📊 Empresa: ${data.company.name}`);
+        console.log(`🎯 Dashboard: ${data.dashboardPath}`);
+        
+        // Montar URL completa do dashboard
+        const fullDashboardUrl = `${serverUrl}${data.dashboardUrl}`;
+        
+        console.log(`🔗 Abrindo URL: ${fullDashboardUrl}`);
+        
+        // Abrir dashboard diretamente em nova aba
+        const newWindow = window.open(fullDashboardUrl, '_blank');
+        
+        if (!newWindow) {
+            alert('❌ Popup bloqueado! Permita popups para este site.');
+            return;
+        }
+        
+        console.log('✅ Nova janela aberta com sessão do usuário');
         
     } catch (error) {
-        console.error('Erro:', error);
+        console.error('❌ Erro ao fazer login rápido:', error);
+        alert(`❌ Erro ao fazer login rápido: ${error.message}`);
     }
-}
-
-function quickLoginAs(userId, companyId) {
-    // Simular login sem senha
-    fetch(`${API_BASE}/companies/${companyId}`)
-        .then(res => res.json())
-        .then(company => {
-            return fetch(`${API_BASE}/users/company/${companyId}`);
-        })
-        .then(res => res.json())
-        .then(users => {
-            const user = users.find(u => u.id === userId);
-            
-            if (user) {
-                // Gerar token fake (em produção viria do backend)
-                const fakeToken = btoa(JSON.stringify({ userId, companyId, exp: Date.now() + 86400000 }));
-                
-                // Salvar no localStorage
-                localStorage.setItem('token', fakeToken);
-                localStorage.setItem('user', JSON.stringify(user));
-                
-                // Redirecionar baseado no nível
-                const dashboards = {
-                    0: '/Nivel00-Presidentes/dashboard-presidentes.html',
-                    1: '/Nivel01-AdministradoresGerais/dashboard-admin.html',
-                    2: '/Nivel02-DiretoresExecutivos/dashboard-diretores.html',
-                    3: '/Nivel03-Gerentes/dashboard-gerentes.html',
-                    4: '/Nivel04-Coordenadores/dashboard-coordenadores.html',
-                    5: '/Nivel05-Supervisores/dashboard-supervisores.html',
-                    6: '/Nivel06-Especialistas/dashboard-especialistas.html',
-                    7: '/Nivel07-Operacional/dashboard-operacional.html'
-                };
-                
-                const dashboard = dashboards[user.nivel] || dashboards[1];
-                window.location.href = dashboard;
-            }
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            alert('Erro ao fazer login rápido');
-        });
 }
 
 // ==================== BANCO DE DADOS ====================
 
 async function viewTable(tableName) {
     try {
-        const response = await fetch(`${API_BASE}/dev/table/${tableName}`);
+        const response = await fetchWithDevAuth(`${API_BASE}/dev/table/${tableName}`);
         const data = await response.json();
         
         const viewDiv = document.getElementById('tableDataView');
@@ -579,8 +847,6 @@ async function seedTechStartup() {
             alert(`✅ ${result.message}\n\nID da Empresa: ${result.companyId}\nUsuários: ${result.users}\nSquads: ${result.squads}\n\n${result.credentials}`);
             loadStats();
             loadCompanies();
-            loadAllUsers();
-            loadQuickLogin();
         } else {
             alert('❌ Erro ao criar startup');
         }
@@ -646,7 +912,7 @@ async function clearAllData() {
     }
     
     try {
-        const response = await fetch(`${API_BASE}/dev/clear-all`, {
+        const response = await fetchWithDevAuth(`${API_BASE}/dev/clear-all`, {
             method: 'POST'
         });
         
@@ -655,8 +921,6 @@ async function clearAllData() {
             alert(`✅ ${result.message}\n\nTodos os dados foram removidos exceto a empresa demonstrativa.`);
             loadStats();
             loadCompanies();
-            loadAllUsers();
-            loadQuickLogin();
         } else {
             alert('❌ Erro ao limpar dados');
         }
@@ -782,7 +1046,12 @@ async function loadInterfacesByCompany() {
     
     // Buscar dados da empresa
     try {
-        const response = await fetch(`${API_BASE}/dev/companies`);
+        const response = await fetchWithDevAuth(`${API_BASE}/dev/companies`);
+        
+        if (!response.ok) {
+            throw new Error(`Erro HTTP: ${response.status}`);
+        }
+        
         const companies = await response.json();
         const company = companies.find(c => c.id == companyId);
         
@@ -820,28 +1089,68 @@ async function loadInterfacesByCompany() {
     }
 }
 
-function openInterface(path, companyId) {
-    // Salvar contexto da empresa no localStorage
-    localStorage.setItem('devModeCompanyId', companyId);
-    
-    // Construir URL absoluta usando o servidor
-    const baseUrl = 'http://localhost:3000';
-    const fullUrl = baseUrl + path;
-    
-    // Abrir interface na mesma aba
-    window.location.href = fullUrl;
+// ==================== EXPLORADOR DE INTERFACES ====================
+
+async function openInterface(path, companyId) {
+    try {
+        // Criar sessão do explorador no backend
+        const response = await fetchWithDevAuth(`${API_BASE}/dev/explorer/auth/${companyId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ interfacePath: path })
+        });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Erro ao criar sessão');
+        }
+        
+        const result = await response.json();
+        
+        // Construir URL absoluta
+        const baseUrl = 'http://localhost:3000';
+        const fullUrl = baseUrl + result.dashboardUrl;
+        
+        // Abrir interface na mesma aba
+        window.location.href = fullUrl;
+        
+        console.log(`🎨 Explorador: Acessando ${result.company.name} - ${path}`);
+        
+    } catch (error) {
+        console.error('Erro ao abrir interface:', error);
+        alert(`❌ Erro: ${error.message}`);
+    }
 }
 
-function openInterfaceNewTab(path, companyId) {
-    // Salvar contexto da empresa no localStorage
-    localStorage.setItem('devModeCompanyId', companyId);
-    
-    // Construir URL absoluta usando o servidor
-    const baseUrl = 'http://localhost:3000';
-    const fullUrl = baseUrl + path;
-    
-    // Abrir interface em nova aba
-    window.open(fullUrl, '_blank');
+async function openInterfaceNewTab(path, companyId) {
+    try {
+        // Criar sessão do explorador no backend
+        const response = await fetchWithDevAuth(`${API_BASE}/dev/explorer/auth/${companyId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ interfacePath: path })
+        });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Erro ao criar sessão');
+        }
+        
+        const result = await response.json();
+        
+        // Construir URL absoluta
+        const baseUrl = 'http://localhost:3000';
+        const fullUrl = baseUrl + result.dashboardUrl;
+        
+        // Abrir interface em nova aba
+        window.open(fullUrl, '_blank');
+        
+        console.log(`🎨 Explorador: Acessando ${result.company.name} - ${path} (Nova Aba)`);
+        
+    } catch (error) {
+        console.error('Erro ao abrir interface:', error);
+        alert(`❌ Erro: ${error.message}`);
+    }
 }
 
 // Carregar empresas no select quando abrir a aba
@@ -862,14 +1171,208 @@ async function loadCompaniesForInterfaces() {
     }
 }
 
+// ==================== PEDIDOS DE CADASTRO ====================
+
+let currentRequestsFilter = 'pending';
+
+async function loadRequests(status = 'pending') {
+    try {
+        const url = status === 'all' 
+            ? `${API_BASE}/company-requests` 
+            : `${API_BASE}/company-requests?status=${status}`;
+        
+        const response = await fetchWithDevAuth(url);
+        const requests = await response.json();
+        
+        const requestsList = document.getElementById('requestsList');
+        
+        if (requests.length === 0) {
+            requestsList.innerHTML = `
+                <div class="empty-state" style="grid-column: 1/-1; text-align: center; padding: 3rem;">
+                    <h3>📭 Nenhum pedido ${status === 'all' ? '' : status === 'pending' ? 'pendente' : status === 'approved' ? 'aprovado' : 'rejeitado'}</h3>
+                    <p>Não há pedidos de cadastro neste status no momento.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        requestsList.innerHTML = requests.map(request => {
+            const statusBadge = {
+                'pending': '<span class="badge badge-warning">⏳ Pendente</span>',
+                'approved': '<span class="badge badge-success">✅ Aprovado</span>',
+                'rejected': '<span class="badge badge-danger">❌ Rejeitado</span>'
+            }[request.status];
+            
+            return `
+                <div class="request-card ${request.status}">
+                    <div class="request-header">
+                        <h3>${request.company.name}</h3>
+                        ${statusBadge}
+                    </div>
+                    <div class="request-body">
+                        <p><strong>Razão Social:</strong> ${request.company.legalName}</p>
+                        <p><strong>Setor:</strong> ${request.company.industry}</p>
+                        <p><strong>Presidente:</strong> ${request.president.name} (${request.president.email})</p>
+                        <p><strong>Admins:</strong> ${request.admins.length} cadastrado(s)</p>
+                        <p><strong>Documentos:</strong> ${request.documents.length} arquivo(s)</p>
+                        <p><strong>Data do Pedido:</strong> ${new Date(request.createdAt).toLocaleString('pt-BR')}</p>
+                        ${request.rejectionReason ? `<p style="color: #dc2626;"><strong>Motivo da Rejeição:</strong> ${request.rejectionReason}</p>` : ''}
+                    </div>
+                    <div class="request-actions">
+                        <button class="btn-secondary" onclick="viewRequestDetails(${request.id})">
+                            👁️ Ver Detalhes
+                        </button>
+                        ${request.status === 'pending' ? `
+                            <button class="btn-primary" onclick="approveRequest(${request.id})">
+                                ✅ Aprovar
+                            </button>
+                            <button class="btn-danger" onclick="rejectRequest(${request.id})">
+                                ❌ Rejeitar
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+    } catch (error) {
+        console.error('Erro ao carregar pedidos:', error);
+        alert('Erro ao carregar pedidos');
+    }
+}
+
+function filterRequests(status) {
+    currentRequestsFilter = status;
+    
+    // Atualizar botões
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    // Carregar pedidos filtrados
+    loadRequests(status === 'all' ? null : status);
+}
+
+async function viewRequestDetails(requestId) {
+    try {
+        const response = await fetchWithDevAuth(`${API_BASE}/company-requests/${requestId}`);
+        const request = await response.json();
+        
+        const details = `
+=== DETALHES DO PEDIDO #${request.id} ===
+
+📋 STATUS: ${request.status.toUpperCase()}
+
+🏢 EMPRESA:
+Nome: ${request.company.name}
+Razão Social: ${request.company.legalName}
+Fundação: ${request.company.foundedYear}
+Setor: ${request.company.industry}
+Porte: ${request.company.size}
+Descrição: ${request.company.description}
+
+👑 PRESIDENTE (Nível 0):
+Nome: ${request.president.name}
+Email: ${request.president.email}
+Telefone: ${request.president.phone || 'Não informado'}
+Usuário: ${request.president.accessKey}
+Cargo: ${request.president.role}
+
+👥 ADMINISTRADORES (Nível 1):
+${request.admins.map((admin, i) => `
+${i + 1}. ${admin.name} - ${admin.email}
+   Departamento: ${admin.department}
+   Usuário: ${admin.accessKey}
+   Principal: ${admin.isPrimary ? 'Sim' : 'Não'}
+`).join('\n')}
+
+📎 DOCUMENTOS: ${request.documents.length} arquivo(s)
+${request.documents.map((doc, i) => `${i + 1}. ${doc.originalName} (${(doc.size / 1024).toFixed(2)} KB)`).join('\n')}
+
+📅 CRIADO EM: ${new Date(request.createdAt).toLocaleString('pt-BR')}
+${request.reviewedAt ? `✅ REVISADO EM: ${new Date(request.reviewedAt).toLocaleString('pt-BR')}` : ''}
+${request.rejectionReason ? `❌ MOTIVO DA REJEIÇÃO: ${request.rejectionReason}` : ''}
+        `;
+        
+        alert(details);
+    } catch (error) {
+        console.error('Erro ao carregar detalhes:', error);
+        alert('Erro ao carregar detalhes do pedido');
+    }
+}
+
+async function approveRequest(requestId) {
+    if (!confirm('Tem certeza que deseja APROVAR este pedido?\n\nIsso criará a empresa e todos os usuários cadastrados no sistema.')) {
+        return;
+    }
+    
+    try {
+        const devUser = JSON.parse(localStorage.getItem('devUser'));
+        
+        const response = await fetchWithDevAuth(`${API_BASE}/company-requests/${requestId}/approve`, {
+            method: 'PATCH',
+            body: JSON.stringify({
+                reviewerId: devUser.id
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (!response.ok) {
+            alert(`❌ Erro: ${result.error}`);
+            return;
+        }
+        
+        alert(`✅ Pedido aprovado com sucesso!\n\nEmpresa criada com ID: ${result.companyId}\n\nOs usuários já podem fazer login.`);
+        loadRequests(currentRequestsFilter);
+        loadStats(); // Atualizar estatísticas
+        
+    } catch (error) {
+        console.error('Erro ao aprovar pedido:', error);
+        alert('Erro ao aprovar pedido');
+    }
+}
+
+async function rejectRequest(requestId) {
+    const reason = prompt('Informe o motivo da rejeição:\n\n(Esta mensagem será enviada ao solicitante)');
+    
+    if (!reason || reason.trim() === '') {
+        alert('É necessário informar um motivo para rejeitar o pedido.');
+        return;
+    }
+    
+    try {
+        const devUser = JSON.parse(localStorage.getItem('devUser'));
+        
+        const response = await fetchWithDevAuth(`${API_BASE}/company-requests/${requestId}/reject`, {
+            method: 'PATCH',
+            body: JSON.stringify({
+                reason: reason.trim(),
+                reviewerId: devUser.id
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (!response.ok) {
+            alert(`❌ Erro: ${result.error}`);
+            return;
+        }
+        
+        alert(`✅ Pedido rejeitado com sucesso.\n\nMotivo registrado: ${reason}`);
+        loadRequests(currentRequestsFilter);
+        
+    } catch (error) {
+        console.error('Erro ao rejeitar pedido:', error);
+        alert('Erro ao rejeitar pedido');
+    }
+}
+
 // Exportar funções para uso global
 window.showTab = showTab;
 window.openCompanyModal = openCompanyModal;
 window.closeCompanyModal = closeCompanyModal;
 window.saveCompany = saveCompany;
 window.deleteCompany = deleteCompany;
-window.viewCompany = viewCompany;
-window.viewTemplate = viewTemplate;
 window.quickLoginAs = quickLoginAs;
 window.viewTable = viewTable;
 window.testAPI = testAPI;
@@ -881,3 +1384,9 @@ window.loadInterfacesByCompany = loadInterfacesByCompany;
 window.openInterface = openInterface;
 window.openInterfaceNewTab = openInterfaceNewTab;
 window.logout = logout;
+window.loadRequests = loadRequests;
+window.filterRequests = filterRequests;
+window.viewRequestDetails = viewRequestDetails;
+window.approveRequest = approveRequest;
+window.rejectRequest = rejectRequest;
+

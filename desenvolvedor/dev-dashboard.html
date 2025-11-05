@@ -56,14 +56,14 @@
         <div class="dev-content">
             <!-- Sidebar Tabs -->
             <aside class="dev-tabs">
-                <button class="tab-btn active" onclick="showTab('companies')">
+                <button class="tab-btn active" onclick="showTab('requests')">
+                    📬 Pedidos de Cadastro
+                </button>
+                <button class="tab-btn" onclick="showTab('companies')">
                     🏢 Empresas
                 </button>
-                <button class="tab-btn" onclick="showTab('users')">
-                    👥 Usuários
-                </button>
-                <button class="tab-btn" onclick="showTab('quick-login')">
-                    🚀 Login Rápido
+                <button class="tab-btn" onclick="showTab('developers')">
+                    🧑‍💻 Desenvolvedores
                 </button>
                 <button class="tab-btn" onclick="showTab('database')">
                     💾 Banco de Dados
@@ -82,6 +82,26 @@
             <!-- Tab Content -->
             <main class="tab-content">
                 
+                <!-- Tab: Pedidos de Cadastro -->
+                <div id="tab-requests" class="tab-panel active">
+                    <div class="panel-header">
+                        <h2>📬 Pedidos de Cadastro Pendentes</h2>
+                        <p class="subtitle">Analise e aprove/rejeite empresas que solicitaram cadastro na plataforma</p>
+                    </div>
+
+                    <!-- Filtros -->
+                    <div class="filter-bar">
+                        <button class="filter-btn active" onclick="filterRequests('pending')">Pendentes</button>
+                        <button class="filter-btn" onclick="filterRequests('approved')">Aprovados</button>
+                        <button class="filter-btn" onclick="filterRequests('rejected')">Rejeitados</button>
+                        <button class="filter-btn" onclick="filterRequests('all')">Todos</button>
+                    </div>
+
+                    <div id="requestsList" class="requests-grid">
+                        <!-- Preenchido dinamicamente -->
+                    </div>
+                </div>
+                
                 <!-- Tab: Empresas -->
                 <div id="tab-companies" class="tab-panel active">
                     <div class="panel-header">
@@ -97,7 +117,7 @@
                                     <th>Razão Social</th>
                                     <th>Setor</th>
                                     <th>Tamanho</th>
-                                    <th>Template</th>
+                                    <th>Status</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
@@ -108,56 +128,28 @@
                     </div>
                 </div>
 
-                <!-- Tab: Usuários -->
-                <div id="tab-users" class="tab-panel">
+                <!-- Tab: Desenvolvedores -->
+                <div id="tab-developers" class="tab-panel">
                     <div class="panel-header">
-                        <h2>Todos os Usuários</h2>
-                        <div class="filters">
-                            <select id="filterCompany" onchange="loadAllUsers()">
-                                <option value="">Todas as Empresas</option>
-                            </select>
-                            <select id="filterNivel" onchange="loadAllUsers()">
-                                <option value="">Todos os Níveis</option>
-                                <option value="0">Nível 0 - CEO</option>
-                                <option value="1">Nível 1 - Admin Geral</option>
-                                <option value="2">Nível 2 - Diretor</option>
-                                <option value="3">Nível 3 - Gerente</option>
-                                <option value="4">Nível 4 - Coordenador</option>
-                                <option value="5">Nível 5 - Supervisor</option>
-                                <option value="6">Nível 6 - Analista</option>
-                                <option value="7">Nível 7 - Assistente</option>
-                            </select>
-                        </div>
+                        <h2>🧑‍💻 Desenvolvedores Cadastrados</h2>
+                        <p class="subtitle">Gerenciar contas de desenvolvedor do sistema</p>
                     </div>
                     <div class="data-table">
                         <table>
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Empresa</th>
                                     <th>Nome</th>
                                     <th>Email</th>
-                                    <th>Nível</th>
-                                    <th>Departamento</th>
-                                    <th>Chave</th>
+                                    <th>Role</th>
+                                    <th>Criado em</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
-                            <tbody id="usersTableBody">
+                            <tbody id="developersTableBody">
                                 <!-- Preenchido dinamicamente -->
                             </tbody>
                         </table>
-                    </div>
-                </div>
-
-                <!-- Tab: Login Rápido -->
-                <div id="tab-quick-login" class="tab-panel">
-                    <div class="panel-header">
-                        <h2>🚀 Login Rápido (Sem Senha)</h2>
-                        <p class="subtitle">Faça login como qualquer usuário sem precisar de senha</p>
-                    </div>
-                    <div class="quick-login-grid" id="quickLoginGrid">
-                        <!-- Preenchido dinamicamente -->
                     </div>
                 </div>
 
@@ -353,6 +345,95 @@
             <div class="modal-footer">
                 <button class="btn-secondary" onclick="closeCompanyModal()">Cancelar</button>
                 <button class="btn-primary" onclick="saveCompany()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Usuários da Empresa -->
+    <div class="modal" id="companyUsersModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3>👥 Usuários da Empresa: <span id="companyUsersTitle">-</span></h3>
+                <button class="modal-close" onclick="closeCompanyUsersModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-filters">
+                    <select id="modalFilterNivel" onchange="filterModalUsers()">
+                        <option value="">Todos os Níveis</option>
+                        <option value="0">Nível 0 - CEO</option>
+                        <option value="1">Nível 1 - Admin Geral</option>
+                        <option value="2">Nível 2 - Diretor</option>
+                        <option value="3">Nível 3 - Gerente</option>
+                        <option value="4">Nível 4 - Coordenador</option>
+                        <option value="5">Nível 5 - Supervisor</option>
+                        <option value="6">Nível 6 - Analista</option>
+                        <option value="7">Nível 7 - Assistente</option>
+                    </select>
+                    <input type="text" id="modalSearchUser" placeholder="🔍 Buscar por nome ou email..." onkeyup="filterModalUsers()">
+                </div>
+                <div class="users-grid" id="companyUsersGrid">
+                    <!-- Preenchido dinamicamente -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeCompanyUsersModal()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Detalhes da Empresa -->
+    <div class="modal" id="companyDetailsModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3>🏢 Detalhes da Empresa</h3>
+                <button class="modal-close" onclick="closeCompanyDetailsModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="companyDetailsContent">
+                <!-- Preenchido dinamicamente -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeCompanyDetailsModal()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Alterar Status -->
+    <div class="modal" id="statusModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⚙️ Alterar Status da Empresa</h3>
+                <button class="modal-close" onclick="closeStatusModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h4 id="statusCompanyName" style="margin-bottom: 1rem; color: #2d3748;">-</h4>
+                <p style="margin-bottom: 1.5rem; color: #6c757d;">Status atual: <strong id="statusCurrentLabel">-</strong></p>
+                
+                <div class="status-options">
+                    <div class="status-option" onclick="selectStatus('active')">
+                        <div class="status-icon">✅</div>
+                        <div class="status-info">
+                            <h4>Ativa</h4>
+                            <p>Empresa operando normalmente</p>
+                        </div>
+                    </div>
+                    <div class="status-option" onclick="selectStatus('inactive')">
+                        <div class="status-icon">⏸️</div>
+                        <div class="status-info">
+                            <h4>Desativada</h4>
+                            <p>Empresa temporariamente desativada</p>
+                        </div>
+                    </div>
+                    <div class="status-option" onclick="selectStatus('suspended')">
+                        <div class="status-icon">⚠️</div>
+                        <div class="status-info">
+                            <h4>Suspensa</h4>
+                            <p>Empresa suspensa por violação</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeStatusModal()">Cancelar</button>
             </div>
         </div>
     </div>

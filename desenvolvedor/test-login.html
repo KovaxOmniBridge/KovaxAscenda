@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Login Desenvolvedor</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background: #007bff;
+            color: white;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .success {
+            color: #28a745;
+            background: #d4edda;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .log {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        input {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Teste de Login Desenvolvedor</h1>
+    
+    <div class="test-box">
+        <h3>1. Testar Login</h3>
+        <input type="email" id="testEmail" placeholder="Email" value="teste@dev.local">
+        <input type="password" id="testPassword" placeholder="Senha" value="senha123">
+        <br>
+        <button onclick="testLogin()">🚀 Testar Login</button>
+        <button onclick="clearStorage()">🗑️ Limpar LocalStorage</button>
+        <button onclick="showStorage()">👁️ Ver LocalStorage</button>
+        <div id="loginResult"></div>
+    </div>
+
+    <div class="test-box">
+        <h3>2. Verificar Token</h3>
+        <button onclick="testVerifyToken()">✅ Verificar Token Salvo</button>
+        <div id="verifyResult"></div>
+    </div>
+
+    <div class="test-box">
+        <h3>3. Console de Logs</h3>
+        <div id="logConsole" class="log">Logs aparecerão aqui...</div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000/api';
+        
+        function log(message, type = 'info') {
+            const logConsole = document.getElementById('logConsole');
+            const timestamp = new Date().toLocaleTimeString();
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+            logConsole.textContent += `\n[${timestamp}] ${icon} ${message}`;
+            logConsole.scrollTop = logConsole.scrollHeight;
+            console.log(message);
+        }
+
+        async function testLogin() {
+            const email = document.getElementById('testEmail').value;
+            const password = document.getElementById('testPassword').value;
+            const resultDiv = document.getElementById('loginResult');
+            
+            log('Iniciando teste de login...', 'info');
+            log(`Email: ${email}`, 'info');
+            
+            try {
+                const response = await fetch(`${API_BASE}/dev/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                log(`Status da resposta: ${response.status}`, 'info');
+                log(`Dados recebidos: ${JSON.stringify(data, null, 2)}`, 'info');
+                
+                if (response.ok) {
+                    log('Login bem-sucedido!', 'success');
+                    
+                    // Salvar no localStorage
+                    localStorage.setItem('devToken', data.devToken);
+                    localStorage.setItem('devUser', JSON.stringify(data.developer));
+                    
+                    log('Token salvo no localStorage', 'success');
+                    log(`Token: ${data.devToken.substring(0, 50)}...`, 'info');
+                    
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            ✅ Login realizado com sucesso!<br>
+                            <strong>Nome:</strong> ${data.developer.name}<br>
+                            <strong>Email:</strong> ${data.developer.email}<br>
+                            <strong>Role:</strong> ${data.developer.role}<br>
+                            <strong>Token salvo!</strong>
+                        </div>
+                    `;
+                } else {
+                    log(`Erro no login: ${data.error}`, 'error');
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            ❌ Erro: ${data.error || 'Erro desconhecido'}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                log(`Exceção capturada: ${error.message}`, 'error');
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        ❌ Erro de conexão: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        async function testVerifyToken() {
+            const resultDiv = document.getElementById('verifyResult');
+            const token = localStorage.getItem('devToken');
+            
+            if (!token) {
+                log('Nenhum token encontrado no localStorage', 'error');
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        ❌ Nenhum token encontrado. Faça login primeiro.
+                    </div>
+                `;
+                return;
+            }
+            
+            log('Verificando token...', 'info');
+            log(`Token: ${token.substring(0, 50)}...`, 'info');
+            
+            try {
+                const response = await fetch(`${API_BASE}/dev/auth/verify`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                log(`Status da verificação: ${response.status}`, 'info');
+                log(`Dados recebidos: ${JSON.stringify(data, null, 2)}`, 'info');
+                
+                if (response.ok) {
+                    log('Token válido!', 'success');
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            ✅ Token válido!<br>
+                            <strong>Dev ID:</strong> ${data.developer.devId}<br>
+                            <strong>Email:</strong> ${data.developer.email}<br>
+                            <strong>Role:</strong> ${data.developer.role}<br>
+                            <strong>É Desenvolvedor:</strong> ${data.developer.isDeveloper ? 'Sim' : 'Não'}
+                        </div>
+                    `;
+                } else {
+                    log(`Token inválido: ${data.error}`, 'error');
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            ❌ Token inválido: ${data.error}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                log(`Exceção ao verificar token: ${error.message}`, 'error');
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        ❌ Erro: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        function clearStorage() {
+            localStorage.removeItem('devToken');
+            localStorage.removeItem('devUser');
+            log('LocalStorage limpo', 'success');
+            alert('LocalStorage limpo!');
+        }
+
+        function showStorage() {
+            const token = localStorage.getItem('devToken');
+            const user = localStorage.getItem('devUser');
+            
+            log('=== CONTEÚDO DO LOCALSTORAGE ===', 'info');
+            if (token) {
+                log(`devToken: ${token.substring(0, 50)}...`, 'info');
+            } else {
+                log('devToken: null', 'info');
+            }
+            if (user) {
+                log(`devUser: ${user}`, 'info');
+            } else {
+                log('devUser: null', 'info');
+            }
+            log('================================', 'info');
+        }
+
+        // Log inicial
+        log('Página de teste carregada', 'success');
+        log('Servidor API: ' + API_BASE, 'info');
+    </script>
+</body>
+</html>

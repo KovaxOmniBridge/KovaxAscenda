@@ -25,6 +25,7 @@ function initializeSchema() {
                         industry TEXT NOT NULL,
                         website TEXT NOT NULL,
                         description TEXT NOT NULL,
+                        status TEXT DEFAULT 'active',
                         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
                     )`
@@ -180,6 +181,52 @@ function initializeSchema() {
                         role TEXT NOT NULL DEFAULT 'developer',
                         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                         last_login DATETIME
+                    )`
+                },
+
+                // Tabela de Pedidos de Cadastro de Empresas
+                {
+                    name: 'company_requests',
+                    sql: `CREATE TABLE IF NOT EXISTS company_requests (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        status TEXT NOT NULL DEFAULT 'pending',
+                        company_data TEXT NOT NULL,
+                        president_data TEXT NOT NULL,
+                        admins_data TEXT NOT NULL,
+                        documents TEXT,
+                        rejection_reason TEXT,
+                        reviewed_by INTEGER,
+                        reviewed_at DATETIME,
+                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        FOREIGN KEY (reviewed_by) REFERENCES dev_users(id) ON DELETE SET NULL
+                    )`
+                },
+
+                // Tabela de Aprovações Presidenciais
+                {
+                    name: 'approvals',
+                    sql: `CREATE TABLE IF NOT EXISTS approvals (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        company_id INTEGER NOT NULL,
+                        type TEXT NOT NULL,
+                        title TEXT NOT NULL,
+                        description TEXT NOT NULL,
+                        requester_id INTEGER NOT NULL,
+                        department TEXT NOT NULL,
+                        priority TEXT NOT NULL DEFAULT 'normal',
+                        status TEXT NOT NULL DEFAULT 'pending',
+                        amount REAL,
+                        justification TEXT,
+                        impact TEXT,
+                        decision_notes TEXT,
+                        decided_by INTEGER,
+                        decided_at DATETIME,
+                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE,
+                        FOREIGN KEY (requester_id) REFERENCES users(id) ON DELETE CASCADE,
+                        FOREIGN KEY (decided_by) REFERENCES users(id) ON DELETE SET NULL
                     )`
                 }
             ];
