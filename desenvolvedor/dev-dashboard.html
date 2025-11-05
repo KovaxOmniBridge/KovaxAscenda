@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛠️ Dev Dashboard - Ascenda</title>
+    <link rel="stylesheet" href="dev-dashboard.css">
+</head>
+<body>
+    <div class="dev-container">
+        <!-- Header -->
+        <header class="dev-header">
+            <div class="header-left">
+                <h1>🛠️ Painel do Desenvolvedor</h1>
+                <span class="badge badge-dev">MODO DESENVOLVIMENTO</span>
+            </div>
+            <div class="header-right">
+                <button class="btn-danger" onclick="clearAllData()">🗑️ Limpar Todos os Dados</button>
+                <button class="btn-secondary" onclick="location.href='/index.html'">🏠 Voltar ao Login</button>
+            </div>
+        </header>
+
+        <!-- Quick Stats -->
+        <section class="quick-stats">
+            <div class="stat-card">
+                <div class="stat-icon">🏢</div>
+                <div class="stat-info">
+                    <h3 id="totalCompanies">0</h3>
+                    <p>Empresas</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-info">
+                    <h3 id="totalUsers">0</h3>
+                    <p>Usuários</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🚀</div>
+                <div class="stat-info">
+                    <h3 id="totalSquads">0</h3>
+                    <p>Squads</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📚</div>
+                <div class="stat-info">
+                    <h3 id="totalChapters">0</h3>
+                    <p>Chapters</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <div class="dev-content">
+            <!-- Sidebar Tabs -->
+            <aside class="dev-tabs">
+                <button class="tab-btn active" onclick="showTab('companies')">
+                    🏢 Empresas
+                </button>
+                <button class="tab-btn" onclick="showTab('users')">
+                    👥 Usuários
+                </button>
+                <button class="tab-btn" onclick="showTab('quick-login')">
+                    🚀 Login Rápido
+                </button>
+                <button class="tab-btn" onclick="showTab('database')">
+                    💾 Banco de Dados
+                </button>
+                <button class="tab-btn" onclick="showTab('api-test')">
+                    🔌 Testar API
+                </button>
+                <button class="tab-btn" onclick="showTab('seed-data')">
+                    🌱 Dados de Teste
+                </button>
+                <button class="tab-btn" onclick="showTab('interfaces')">
+                    🎨 Explorar Interfaces
+                </button>
+            </aside>
+
+            <!-- Tab Content -->
+            <main class="tab-content">
+                
+                <!-- Tab: Empresas -->
+                <div id="tab-companies" class="tab-panel active">
+                    <div class="panel-header">
+                        <h2>Empresas Cadastradas</h2>
+                        <button class="btn-primary" onclick="openCompanyModal()">+ Nova Empresa</button>
+                    </div>
+                    <div class="data-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                    <th>Razão Social</th>
+                                    <th>Setor</th>
+                                    <th>Tamanho</th>
+                                    <th>Template</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="companiesTableBody">
+                                <!-- Preenchido dinamicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tab: Usuários -->
+                <div id="tab-users" class="tab-panel">
+                    <div class="panel-header">
+                        <h2>Todos os Usuários</h2>
+                        <div class="filters">
+                            <select id="filterCompany" onchange="loadAllUsers()">
+                                <option value="">Todas as Empresas</option>
+                            </select>
+                            <select id="filterNivel" onchange="loadAllUsers()">
+                                <option value="">Todos os Níveis</option>
+                                <option value="0">Nível 0 - CEO</option>
+                                <option value="1">Nível 1 - Admin Geral</option>
+                                <option value="2">Nível 2 - Diretor</option>
+                                <option value="3">Nível 3 - Gerente</option>
+                                <option value="4">Nível 4 - Coordenador</option>
+                                <option value="5">Nível 5 - Supervisor</option>
+                                <option value="6">Nível 6 - Analista</option>
+                                <option value="7">Nível 7 - Assistente</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="data-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Empresa</th>
+                                    <th>Nome</th>
+                                    <th>Email</th>
+                                    <th>Nível</th>
+                                    <th>Departamento</th>
+                                    <th>Chave</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <!-- Preenchido dinamicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tab: Login Rápido -->
+                <div id="tab-quick-login" class="tab-panel">
+                    <div class="panel-header">
+                        <h2>🚀 Login Rápido (Sem Senha)</h2>
+                        <p class="subtitle">Faça login como qualquer usuário sem precisar de senha</p>
+                    </div>
+                    <div class="quick-login-grid" id="quickLoginGrid">
+                        <!-- Preenchido dinamicamente -->
+                    </div>
+                </div>
+
+                <!-- Tab: Banco de Dados -->
+                <div id="tab-database" class="tab-panel">
+                    <div class="panel-header">
+                        <h2>💾 Visualização do Banco de Dados</h2>
+                    </div>
+                    <div class="db-tables">
+                        <div class="db-table-card">
+                            <h3>companies</h3>
+                            <button class="btn-secondary" onclick="viewTable('companies')">Ver Dados</button>
+                        </div>
+                        <div class="db-table-card">
+                            <h3>users</h3>
+                            <button class="btn-secondary" onclick="viewTable('users')">Ver Dados</button>
+                        </div>
+                        <div class="db-table-card">
+                            <h3>countries</h3>
+                            <button class="btn-secondary" onclick="viewTable('countries')">Ver Dados</button>
+                        </div>
+                        <div class="db-table-card">
+                            <h3>organization_templates</h3>
+                            <button class="btn-secondary" onclick="viewTable('organization_templates')">Ver Dados</button>
+                        </div>
+                        <div class="db-table-card">
+                            <h3>squads</h3>
+                            <button class="btn-secondary" onclick="viewTable('squads')">Ver Dados</button>
+                        </div>
+                        <div class="db-table-card">
+                            <h3>squad_members</h3>
+                            <button class="btn-secondary" onclick="viewTable('squad_members')">Ver Dados</button>
+                        </div>
+                        <div class="db-table-card">
+                            <h3>chapters</h3>
+                            <button class="btn-secondary" onclick="viewTable('chapters')">Ver Dados</button>
+                        </div>
+                        <div class="db-table-card">
+                            <h3>chapter_members</h3>
+                            <button class="btn-secondary" onclick="viewTable('chapter_members')">Ver Dados</button>
+                        </div>
+                        <div class="db-table-card">
+                            <h3>squad_goals</h3>
+                            <button class="btn-secondary" onclick="viewTable('squad_goals')">Ver Dados</button>
+                        </div>
+                    </div>
+                    <div id="tableDataView" class="table-data-view" style="display: none;">
+                        <h3 id="tableTitle"></h3>
+                        <div class="table-data-content" id="tableDataContent">
+                            <!-- JSON será exibido aqui -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Testar API -->
+                <div id="tab-api-test" class="tab-panel">
+                    <div class="panel-header">
+                        <h2>🔌 Testar Endpoints da API</h2>
+                    </div>
+                    <div class="api-tester">
+                        <div class="form-group">
+                            <label>Método HTTP</label>
+                            <select id="apiMethod">
+                                <option value="GET">GET</option>
+                                <option value="POST">POST</option>
+                                <option value="PUT">PUT</option>
+                                <option value="DELETE">DELETE</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Endpoint</label>
+                            <input type="text" id="apiEndpoint" placeholder="/api/companies" value="/api/companies">
+                        </div>
+                        <div class="form-group">
+                            <label>Body (JSON) - Apenas para POST/PUT</label>
+                            <textarea id="apiBody" rows="8" placeholder='{"key": "value"}'></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="apiAuth" checked>
+                                Enviar Token de Autenticação
+                            </label>
+                        </div>
+                        <button class="btn-primary" onclick="testAPI()">Enviar Requisição</button>
+                        
+                        <div class="api-response" id="apiResponse">
+                            <h4>Resposta:</h4>
+                            <pre id="apiResponseContent">Nenhuma requisição feita ainda</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Dados de Teste -->
+                <div id="tab-seed-data" class="tab-panel">
+                    <div class="panel-header">
+                        <h2>🌱 Gerar Dados de Teste</h2>
+                        <p class="subtitle">Crie empresas, usuários e squads de exemplo rapidamente</p>
+                    </div>
+                    <div class="seed-options">
+                        <div class="seed-card">
+                            <h3>🏢 Empresa Tech Startup</h3>
+                            <p>Cria startup de tecnologia com 15 funcionários, 3 squads ativos</p>
+                            <button class="btn-primary" onclick="seedTechStartup()">Gerar</button>
+                        </div>
+                        <div class="seed-card">
+                            <h3>🏭 Empresa Corporate</h3>
+                            <p>Cria grande corporação com 50 funcionários, todos os níveis hierárquicos</p>
+                            <button class="btn-primary" onclick="seedCorporate()">Gerar</button>
+                        </div>
+                        <div class="seed-card">
+                            <h3>🎨 Agência de Marketing</h3>
+                            <p>Cria agência com 20 funcionários, estrutura de projetos</p>
+                            <button class="btn-primary" onclick="seedAgency()">Gerar</button>
+                        </div>
+                        <div class="seed-card">
+                            <h3>🗑️ Limpar Tudo</h3>
+                            <p>Remove TODOS os dados do banco (exceto empresa demo)</p>
+                            <button class="btn-danger" onclick="clearAllData()">Limpar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Explorar Interfaces -->
+                <div id="tab-interfaces" class="tab-panel">
+                    <div class="panel-header">
+                        <h2>🎨 Explorar Interfaces - God Mode</h2>
+                        <p style="color: #fbbf24; margin-top: 8px;">Acesse qualquer interface de qualquer empresa sem restrições de nível</p>
+                    </div>
+
+                    <!-- Seletor de Empresa -->
+                    <div class="interface-selector">
+                        <div class="form-group">
+                            <label>🏢 Selecionar Empresa:</label>
+                            <select id="interfaceCompanySelect" onchange="loadInterfacesByCompany()">
+                                <option value="">Carregando empresas...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Grid de Interfaces -->
+                    <div id="interfacesGrid" class="interfaces-grid">
+                        <p style="text-align: center; color: #9ca3af; padding: 40px;">
+                            Selecione uma empresa acima para ver todas as interfaces disponíveis
+                        </p>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal: Nova Empresa -->
+    <div class="modal" id="companyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Nova Empresa</h3>
+                <button class="modal-close" onclick="closeCompanyModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="companyForm">
+                    <div class="form-group">
+                        <label>Nome</label>
+                        <input type="text" id="companyName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Razão Social</label>
+                        <input type="text" id="companyLegalName" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Ano de Fundação</label>
+                            <input type="number" id="companyYear" value="2020" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tamanho</label>
+                            <select id="companySize" required>
+                                <option value="small">Pequena (1-50)</option>
+                                <option value="medium">Média (51-250)</option>
+                                <option value="large">Grande (251+)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Setor</label>
+                        <input type="text" id="companyIndustry" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Website</label>
+                        <input type="url" id="companyWebsite" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeCompanyModal()">Cancelar</button>
+                <button class="btn-primary" onclick="saveCompany()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="dev-dashboard.js"></script>
+</body>
+</html>

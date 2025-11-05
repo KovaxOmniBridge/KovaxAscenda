@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Presidência - Ascenda Flex</title>
+    <link rel="stylesheet" href="dashboard-presidentes.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1>👑 Dashboard Presidência - Ascenda Flex</h1>
+                <p class="subtitle">Visão Estratégica Global · Nível 0 - Presidentes</p>
+            </div>
+            <div class="header-right">
+                <span class="company-name" id="companyName">Carregando...</span>
+                <span class="user-info" id="userName">Usuário</span>
+                <button class="btn-logout" onclick="logout()">Sair</button>
+            </div>
+        </header>
+
+        <!-- Indicadores Principais -->
+        <section class="kpi-section">
+            <div class="kpi-card">
+                <div class="kpi-icon">💰</div>
+                <div class="kpi-content">
+                    <h3>Receita Anual</h3>
+                    <p class="kpi-value" id="revenue">R$ 0,00</p>
+                    <span class="kpi-trend positive">+12.5% vs ano anterior</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon">📈</div>
+                <div class="kpi-content">
+                    <h3>Margem EBITDA</h3>
+                    <p class="kpi-value" id="ebitda">0%</p>
+                    <span class="kpi-trend positive">+2.3% vs trimestre</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon">👥</div>
+                <div class="kpi-content">
+                    <h3>Colaboradores</h3>
+                    <p class="kpi-value" id="totalEmployees">0</p>
+                    <span class="kpi-trend neutral">+15 contratações</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon">🎯</div>
+                <div class="kpi-content">
+                    <h3>NPS Score</h3>
+                    <p class="kpi-value" id="nps">0</p>
+                    <span class="kpi-trend positive">+8 pontos</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resumo Executivo -->
+        <section class="main-content">
+            <div class="content-left">
+                <!-- Metas Estratégicas -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>🎯 Metas Estratégicas 2025</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="goal-item">
+                            <div class="goal-info">
+                                <h4>Expansão Internacional</h4>
+                                <p>Abertura de 3 novos mercados</p>
+                            </div>
+                            <div class="goal-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 67%"></div>
+                                </div>
+                                <span class="progress-label">2/3 completo</span>
+                            </div>
+                        </div>
+                        <div class="goal-item">
+                            <div class="goal-info">
+                                <h4>Transformação Digital</h4>
+                                <p>Migração para cloud-native</p>
+                            </div>
+                            <div class="goal-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 45%"></div>
+                                </div>
+                                <span class="progress-label">45% completo</span>
+                            </div>
+                        </div>
+                        <div class="goal-item">
+                            <div class="goal-info">
+                                <h4>Sustentabilidade ESG</h4>
+                                <p>Certificação carbono neutro</p>
+                            </div>
+                            <div class="goal-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 82%"></div>
+                                </div>
+                                <span class="progress-label">82% completo</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Squads Estratégicos -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>🚀 Squads Estratégicos</h2>
+                    </div>
+                    <div class="card-body">
+                        <div id="squadsContainer">
+                            <p class="loading">Carregando squads...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-right">
+                <!-- Aprovações Pendentes -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>✅ Aprovações Críticas</h2>
+                        <span class="badge badge-warning">3 pendentes</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="approval-item urgent">
+                            <div class="approval-icon">💰</div>
+                            <div class="approval-content">
+                                <h4>Investimento Série B</h4>
+                                <p>Aprovação de R$ 50M para expansão</p>
+                                <span class="approval-date">Vence em 2 dias</span>
+                            </div>
+                            <div class="approval-actions">
+                                <button class="btn-approve">Aprovar</button>
+                                <button class="btn-reject">Recusar</button>
+                            </div>
+                        </div>
+                        <div class="approval-item">
+                            <div class="approval-icon">🏢</div>
+                            <div class="approval-content">
+                                <h4>Aquisição Startup Tech</h4>
+                                <p>Fusão com empresa de IA</p>
+                                <span class="approval-date">Vence em 5 dias</span>
+                            </div>
+                            <div class="approval-actions">
+                                <button class="btn-approve">Aprovar</button>
+                                <button class="btn-reject">Recusar</button>
+                            </div>
+                        </div>
+                        <div class="approval-item">
+                            <div class="approval-icon">👥</div>
+                            <div class="approval-content">
+                                <h4>Plano de Stock Options</h4>
+                                <p>Pool de 5% para key talents</p>
+                                <span class="approval-date">Vence em 7 dias</span>
+                            </div>
+                            <div class="approval-actions">
+                                <button class="btn-approve">Aprovar</button>
+                                <button class="btn-reject">Recusar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alertas Executivos -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>⚠️ Alertas Executivos</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert-item critical">
+                            <div class="alert-header">
+                                <span class="alert-badge">CRÍTICO</span>
+                                <span class="alert-time">Há 2 horas</span>
+                            </div>
+                            <p class="alert-message">Churn rate aumentou 15% no último trimestre</p>
+                        </div>
+                        <div class="alert-item warning">
+                            <div class="alert-header">
+                                <span class="alert-badge">ATENÇÃO</span>
+                                <span class="alert-time">Há 1 dia</span>
+                            </div>
+                            <p class="alert-message">Budget de Marketing excedeu 8% do planejado</p>
+                        </div>
+                        <div class="alert-item info">
+                            <div class="alert-header">
+                                <span class="alert-badge">INFO</span>
+                                <span class="alert-time">Há 2 dias</span>
+                            </div>
+                            <p class="alert-message">Nova regulamentação do setor publicada</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Menu de Navegação -->
+        <div class="quick-nav">
+            <h3>Acesso Rápido</h3>
+            <div class="nav-grid">
+                <button class="nav-item" onclick="navigateTo('Nivel01-AdministradoresGerais/dashboard-admin.html')">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-label">Administração</span>
+                </button>
+                <button class="nav-item" onclick="navigateTo('Nivel02-DiretoresExecutivos/dashboard-diretores.html')">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-label">Diretoria</span>
+                </button>
+                <button class="nav-item" onclick="navigateTo('Nivel01-AdministradoresGerais/squads.html')">
+                    <span class="nav-icon">🚀</span>
+                    <span class="nav-label">Squads</span>
+                </button>
+                <button class="nav-item" onclick="navigateTo('Nivel01-AdministradoresGerais/chapters.html')">
+                    <span class="nav-icon">📚</span>
+                    <span class="nav-label">Chapters</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard-presidentes.js"></script>
+</body>
+</html>

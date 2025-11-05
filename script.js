@@ -1,0 +1,566 @@
+// Configuração da API
+const API_URL = 'http://localhost:3000/api';
+
+// Dados locais (cache)
+let companies = [];
+
+// Variáveis para o formulário multi-etapas
+let currentStep = 1;
+let registrationData = {
+    company: {},
+    admins: []
+};
+
+// Inicialização
+document.addEventListener('DOMContentLoaded', function() {
+    loadCompanies();
+});
+
+// Função para carregar empresas no select
+async function loadCompanies() {
+    try {
+        const response = await fetch(`${API_URL}/companies`);
+        
+        if (!response.ok) {
+            throw new Error('Erro ao carregar empresas');
+        }
+        
+        companies = await response.json();
+        
+        const select = document.getElementById('companySelect');
+        select.innerHTML = '<option value="">-- Escolha uma empresa --</option>';
+        
+        companies.forEach(company => {
+            const option = document.createElement('option');
+            option.value = company.id;
+            option.textContent = company.name;
+            select.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Erro ao carregar empresas:', error);
+        showMessage('Erro ao conectar com o servidor. Verifique se o servidor está rodando.', 'error');
+    }
+}
+
+// Navegação entre seções
+function showLoginForm() {
+    document.getElementById('hero').classList.add('hidden');
+    document.getElementById('registerSection').classList.add('hidden');
+    document.getElementById('loginSection').classList.remove('hidden');
+}
+
+function showRegisterForm() {
+    document.getElementById('hero').classList.add('hidden');
+    document.getElementById('loginSection').classList.add('hidden');
+    document.getElementById('registerSection').classList.remove('hidden');
+    resetRegistrationForm();
+}
+
+function showHero() {
+    document.getElementById('loginSection').classList.add('hidden');
+    document.getElementById('registerSection').classList.add('hidden');
+    document.getElementById('hero').classList.remove('hidden');
+}
+
+// Resetar formulário de cadastro
+function resetRegistrationForm() {
+    currentStep = 1;
+    registrationData = {
+        company: {},
+        admins: []
+    };
+    
+    // Resetar steps visuais
+    document.querySelectorAll('.step').forEach((step, index) => {
+        step.classList.remove('active', 'completed');
+        if (index === 0) step.classList.add('active');
+    });
+    
+    // Resetar form steps
+    document.querySelectorAll('.form-step').forEach((step, index) => {
+        step.classList.remove('active');
+        if (index === 0) step.classList.add('active');
+    });
+    
+    // Limpar formulário
+    document.getElementById('registerForm').reset();
+    document.getElementById('adminsItems').innerHTML = '<div class="empty-state">Nenhum administrador adicionado. Adicione pelo menos um administrador para continuar.</div>';
+}
+
+// Navegação entre etapas
+function nextStep() {
+    if (validateCurrentStep()) {
+        if (currentStep < 3) {
+            // Salvar dados da etapa atual
+            saveCurrentStepData();
+            
+            // Marcar etapa atual como completa
+            document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('completed');
+            document.querySelector(`.step[data-step="${currentStep}"]`).classList.remove('active');
+            
+            // Avançar para próxima etapa
+            currentStep++;
+            
+            // Ativar próxima etapa
+            document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
+            
+            // Mostrar form step correspondente
+            document.querySelectorAll('.form-step').forEach(step => step.classList.remove('active'));
+            document.getElementById(`step${currentStep}`).classList.add('active');
+            
+            // Se for a etapa de revisão, gerar conteúdo
+            if (currentStep === 3) {
+                generateReview();
+            }
+        }
+    }
+}
+
+function previousStep() {
+    if (currentStep > 1) {
+        // Remover completed da etapa atual
+        document.querySelector(`.step[data-step="${currentStep}"]`).classList.remove('active');
+        
+        // Voltar para etapa anterior
+        currentStep--;
+        
+        // Ativar etapa anterior
+        document.querySelector(`.step[data-step="${currentStep}"]`).classList.remove('completed');
+        document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
+        
+        // Mostrar form step correspondente
+        document.querySelectorAll('.form-step').forEach(step => step.classList.remove('active'));
+        document.getElementById(`step${currentStep}`).classList.add('active');
+    }
+}
+
+// Validar etapa atual
+function validateCurrentStep() {
+    switch (currentStep) {
+        case 1:
+            return validateStep1();
+        case 2:
+            return validateStep2();
+        default:
+            return true;
+    }
+}
+
+// Validação Etapa 1
+function validateStep1() {
+    const companyName = document.getElementById('companyName').value.trim();
+    const legalName = document.getElementById('companyLegalName').value.trim();
+    const foundedYear = document.getElementById('foundedYear').value;
+    const size = document.getElementById('companySize').value;
+    const industry = document.getElementById('industry').value;
+    const description = document.getElementById('companyDescription').value.trim();
+    
+    if (!companyName || !legalName || !foundedYear || !size || !industry || !description) {
+        showMessage('Por favor, preencha todos os campos obrigatórios da etapa 1.', 'error');
+        return false;
+    }
+    
+    if (foundedYear < 1800 || foundedYear > 2025) {
+        showMessage('Ano de fundação inválido.', 'error');
+        return false;
+    }
+    
+    return true;
+}
+
+// Validação Etapa 2
+function validateStep2() {
+    if (registrationData.admins.length === 0) {
+        showMessage('Adicione pelo menos um administrador geral.', 'error');
+        return false;
+    }
+    
+    const hasPrimary = registrationData.admins.some(a => a.isPrimary);
+    if (!hasPrimary) {
+        showMessage('Defina pelo menos um administrador como principal.', 'error');
+        return false;
+    }
+    
+    return true;
+}
+
+// Salvar dados da etapa atual
+function saveCurrentStepData() {
+    if (currentStep === 1) {
+        const companyName = document.getElementById('companyName').value.trim();
+        const sanitizedName = companyName.toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remove acentos
+            .replace(/[^a-z0-9\s-]/g, '') // Remove caracteres especiais
+            .replace(/\s+/g, '-') // Substitui espaços por hífens
+            .replace(/-+/g, '-') // Remove hífens duplicados
+            .trim();
+        
+        registrationData.company = {
+            name: companyName,
+            legalName: document.getElementById('companyLegalName').value.trim(),
+            foundedYear: parseInt(document.getElementById('foundedYear').value),
+            size: document.getElementById('companySize').value,
+            industry: document.getElementById('industry').value,
+            website: `https://ascenda.app/${sanitizedName}`,
+            description: document.getElementById('companyDescription').value.trim()
+        };
+    }
+}
+
+// Adicionar administrador
+function addAdmin() {
+    const name = document.getElementById('adminName').value.trim();
+    const email = document.getElementById('adminEmail').value.trim();
+    const phone = document.getElementById('adminPhone').value.trim();
+    const department = document.getElementById('adminDepartment').value.trim();
+    const accessKey = document.getElementById('adminAccessKey').value.trim();
+    const password = document.getElementById('adminPassword').value;
+    const confirmPassword = document.getElementById('adminConfirmPassword').value;
+    const isPrimary = document.getElementById('isPrimaryAdmin').checked;
+    
+    if (!name || !email || !phone || !department || !accessKey || !password || !confirmPassword) {
+        showMessage('Preencha todos os campos do administrador antes de adicionar.', 'error');
+        return;
+    }
+    
+    // Validar email
+    if (!validateEmail(email)) {
+        showMessage('Email inválido.', 'error');
+        return;
+    }
+    
+    // Validar senha
+    if (password.length < 8) {
+        showMessage('A senha deve ter pelo menos 8 caracteres.', 'error');
+        return;
+    }
+    
+    // Validar confirmação de senha
+    if (password !== confirmPassword) {
+        showMessage('As senhas não coincidem. Por favor, verifique.', 'error');
+        return;
+    }
+    
+    // Verificar chave de acesso duplicada
+    if (registrationData.admins.some(a => a.accessKey === accessKey)) {
+        showMessage('Este nome de usuário já está em uso.', 'error');
+        return;
+    }
+    
+    // Verificar chave de acesso em outras empresas
+    // Nota: Esta verificação agora é feita no backend
+    
+    // Se marcar como primary, desmarcar outros
+    if (isPrimary) {
+        registrationData.admins.forEach(a => a.isPrimary = false);
+    }
+    
+    const adminData = {
+        name,
+        email,
+        phone,
+        department,
+        accessKey,
+        password,
+        isPrimary,
+        role: 'Administrador Geral'
+    };
+    
+    registrationData.admins.push(adminData);
+    renderAdmins();
+    
+    // Limpar campos
+    document.getElementById('adminName').value = '';
+    document.getElementById('adminEmail').value = '';
+    document.getElementById('adminPhone').value = '';
+    document.getElementById('adminDepartment').value = '';
+    document.getElementById('adminAccessKey').value = '';
+    document.getElementById('adminPassword').value = '';
+    document.getElementById('adminConfirmPassword').value = '';
+    document.getElementById('isPrimaryAdmin').checked = false;
+    
+    showMessage('Administrador adicionado com sucesso!', 'success');
+}
+
+// Renderizar administradores
+function renderAdmins() {
+    const container = document.getElementById('adminsItems');
+    
+    if (registrationData.admins.length === 0) {
+        container.innerHTML = '<div class="empty-state">Nenhum administrador adicionado. Adicione pelo menos um administrador para continuar.</div>';
+        return;
+    }
+    
+    container.innerHTML = registrationData.admins.map((admin, index) => `
+        <div class="admin-card ${admin.isPrimary ? 'primary' : ''}">
+            <div class="card-header">
+                <div class="card-title">${admin.name}</div>
+                ${admin.isPrimary ? '<div class="card-badge primary">Principal</div>' : ''}
+            </div>
+            <div class="card-content">
+                <p><strong>Email:</strong> ${admin.email}</p>
+                <p><strong>Telefone:</strong> ${admin.phone}</p>
+                <p><strong>Departamento:</strong> ${admin.department}</p>
+                <p><strong>Nome de Usuário:</strong> ${admin.accessKey}</p>
+            </div>
+            <div class="card-actions">
+                <button type="button" class="btn-small btn-remove" onclick="removeAdmin(${index})">Remover</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Remover administrador
+function removeAdmin(index) {
+    registrationData.admins.splice(index, 1);
+    renderAdmins();
+    showMessage('Administrador removido.', 'success');
+}
+
+// Gerar revisão
+function generateReview() {
+    const container = document.getElementById('reviewContainer');
+    
+    const sizeLabels = {
+        small: 'Pequena (1-50 funcionários)',
+        medium: 'Média (51-250 funcionários)',
+        large: 'Grande (251-1000 funcionários)',
+        enterprise: 'Corporação (1000+ funcionários)'
+    };
+    
+    const industryLabels = {
+        technology: 'Tecnologia',
+        finance: 'Financeiro',
+        healthcare: 'Saúde',
+        retail: 'Varejo',
+        manufacturing: 'Manufatura',
+        services: 'Serviços',
+        education: 'Educação',
+        logistics: 'Logística',
+        energy: 'Energia',
+        other: 'Outro'
+    };
+    
+    const html = `
+        <div class="review-section">
+            <h3 class="review-section-title">📋 Informações da Empresa</h3>
+            <div class="review-item">
+                <div class="review-label">Nome:</div>
+                <div class="review-value">${registrationData.company.name}</div>
+            </div>
+            <div class="review-item">
+                <div class="review-label">Razão Social:</div>
+                <div class="review-value">${registrationData.company.legalName}</div>
+            </div>
+            <div class="review-item">
+                <div class="review-label">Ano de Fundação:</div>
+                <div class="review-value">${registrationData.company.foundedYear}</div>
+            </div>
+            <div class="review-item">
+                <div class="review-label">Porte:</div>
+                <div class="review-value">${sizeLabels[registrationData.company.size]}</div>
+            </div>
+            <div class="review-item">
+                <div class="review-label">Setor:</div>
+                <div class="review-value">${industryLabels[registrationData.company.industry]}</div>
+            </div>
+            <div class="review-item">
+                <div class="review-label">Website Ascenda:</div>
+                <div class="review-value">${registrationData.company.website}</div>
+            </div>
+            <div class="review-item">
+                <div class="review-label">Descrição:</div>
+                <div class="review-value">${registrationData.company.description}</div>
+            </div>
+        </div>
+        
+        <div class="review-section">
+            <h3 class="review-section-title">👥 Administradores Gerais (${registrationData.admins.length})</h3>
+            ${registrationData.admins.map(admin => `
+                <div style="margin-bottom: 1.5rem; padding: 1rem; background: white; border-radius: 0.5rem; border-left: 4px solid ${admin.isPrimary ? '#10b981' : '#2563eb'};">
+                    <h4 style="margin-bottom: 0.5rem;">${admin.name} ${admin.isPrimary ? '👑' : ''}</h4>
+                    <p style="margin: 0.25rem 0; font-size: 0.9rem;"><strong>Email:</strong> ${admin.email}</p>
+                    <p style="margin: 0.25rem 0; font-size: 0.9rem;"><strong>Telefone:</strong> ${admin.phone}</p>
+                    <p style="margin: 0.25rem 0; font-size: 0.9rem;"><strong>Departamento:</strong> ${admin.department}</p>
+                    <p style="margin: 0.25rem 0; font-size: 0.9rem;"><strong>Nome de Usuário:</strong> ${admin.accessKey}</p>
+                </div>
+            `).join('')}
+        </div>
+    `;
+    
+    container.innerHTML = html;
+}
+
+// Função de Login
+async function handleLogin(event) {
+    event.preventDefault();
+    
+    const companyId = parseInt(document.getElementById('companySelect').value);
+    const accessKey = document.getElementById('accessKey').value;
+    const password = document.getElementById('password').value;
+    
+    // Validação
+    if (!companyId) {
+        showMessage('Por favor, selecione uma empresa.', 'error');
+        return;
+    }
+    if (!accessKey || !password) {
+        showMessage('Por favor, preencha todos os campos.', 'error');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_URL}/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                companyId,
+                accessKey,
+                password
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+            showMessage(data.error || 'Erro ao fazer login', 'error');
+            return;
+        }
+        
+        // Login bem-sucedido
+        showMessage(`Bem-vindo, ${data.user.name}! Redirecionando...`, 'success');
+        
+        // Salvar token e dados do usuário
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        
+        // Redirecionar para o dashboard apropriado baseado no nível
+        setTimeout(() => {
+            const nivel = data.user.nivel || 0;
+            
+            // Mapa de redirecionamento por nível
+            const dashboards = {
+                0: 'Nivel01-AdministradoresGerais/dashboard.html',
+                1: 'Nivel01-AdministradoresGerais/dashboard.html',
+                2: 'Nivel02-DiretoresExecutivos/dashboard.html',
+                3: 'Nivel03-Gerentes/dashboard.html',
+                4: 'Nivel04-Coordenadores/dashboard.html',
+                5: 'Nivel05-Supervisores/dashboard.html',
+                6: 'Nivel06-Analistas/dashboard.html',
+                7: 'Nivel07-Assistentes/dashboard.html'
+            };
+            
+            const dashboardUrl = dashboards[nivel] || 'Nivel01-AdministradoresGerais/dashboard.html';
+            window.location.href = dashboardUrl;
+        }, 1500);
+    } catch (error) {
+        console.error('Erro ao fazer login:', error);
+        showMessage('Erro ao conectar com o servidor.', 'error');
+    }
+}
+
+// Função de Cadastro de Empresa
+async function handleRegister(event) {
+    event.preventDefault();
+    
+    // Validação final
+    if (!validateStep2()) {
+        showMessage('Complete todas as etapas antes de finalizar.', 'error');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_URL}/companies`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                company: registrationData.company,
+                admins: registrationData.admins
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+            showMessage(data.error || 'Erro ao cadastrar empresa', 'error');
+            return;
+        }
+        
+        // Atualizar lista de empresas
+        await loadCompanies();
+        
+        // Mensagem de sucesso
+        showMessage('Empresa cadastrada com sucesso! Redirecionando para login...', 'success');
+        
+        // Resetar e redirecionar
+        setTimeout(() => {
+            resetRegistrationForm();
+            showLoginForm();
+        }, 2500);
+    } catch (error) {
+        console.error('Erro ao cadastrar empresa:', error);
+        showMessage('Erro ao conectar com o servidor.', 'error');
+    }
+}
+
+// Função para exibir mensagens
+function showMessage(message, type) {
+    // Remover mensagem anterior se existir
+    const existingMessage = document.querySelector('.message');
+    if (existingMessage) {
+        existingMessage.remove();
+    }
+    
+    // Criar nova mensagem
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message message-${type}`;
+    messageDiv.textContent = message;
+    
+    // Estilos inline
+    messageDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        z-index: 1000;
+        animation: slideIn 0.3s ease-out;
+        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        max-width: 400px;
+    `;
+    
+    if (type === 'success') {
+        messageDiv.style.backgroundColor = '#10b981';
+        messageDiv.style.color = 'white';
+    } else {
+        messageDiv.style.backgroundColor = '#ef4444';
+        messageDiv.style.color = 'white';
+    }
+    
+    document.body.appendChild(messageDiv);
+    
+    // Remover após 5 segundos
+    setTimeout(() => {
+        messageDiv.style.animation = 'slideOut 0.3s ease-in';
+        setTimeout(() => messageDiv.remove(), 300);
+    }, 5000);
+}
+
+// Validações
+function validateCNPJ(cnpj) {
+    // Validação básica de formato
+    const cnpjRegex = /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/;
+    return cnpjRegex.test(cnpj);
+}
+
+function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+// Adicionar animações CSS

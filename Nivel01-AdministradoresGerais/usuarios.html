@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Usuários - Ascenda Flex</title>
+    <link rel="stylesheet" href="usuarios.css">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>Ascenda Flex</h1>
+                <p>Nível 1 - Administradores Gerais</p>
+            </div>
+            
+            <nav class="menu">
+                <a href="dashboard-admin.html" class="menu-item">
+                    <span class="icon">📊</span>
+                    <span>Visão Geral</span>
+                </a>
+                <a href="templates.html" class="menu-item">
+                    <span class="icon">📋</span>
+                    <span>Templates</span>
+                </a>
+                <a href="squads.html" class="menu-item">
+                    <span class="icon">🚀</span>
+                    <span>Squads</span>
+                </a>
+                <a href="chapters.html" class="menu-item">
+                    <span class="icon">📚</span>
+                    <span>Chapters</span>
+                </a>
+                <a href="usuarios.html" class="menu-item active">
+                    <span class="icon">👥</span>
+                    <span>Usuários</span>
+                </a>
+                <a href="#" class="menu-item" id="logoutBtn">
+                    <span class="icon">🚪</span>
+                    <span>Sair</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="content-header">
+                <div>
+                    <h1>👥 Gestão de Usuários</h1>
+                    <p class="subtitle">Gerenciar colaboradores e permissões</p>
+                </div>
+                <div class="header-actions">
+                    <span id="companyName" class="company-badge">Empresa</span>
+                    <button class="btn btn-primary" onclick="openAddUserModal()">
+                        + Novo Usuário
+                    </button>
+                </div>
+            </header>
+
+            <!-- Filtros -->
+            <div class="filters">
+                <input type="text" id="searchInput" placeholder="🔍 Buscar usuário..." onkeyup="filterUsers()">
+                <select id="levelFilter" onchange="filterUsers()">
+                    <option value="">Todos os níveis</option>
+                    <option value="0">Nível 0 - Presidentes</option>
+                    <option value="1">Nível 1 - Administradores Gerais</option>
+                    <option value="2">Nível 2 - Diretores Executivos</option>
+                    <option value="3">Nível 3 - Gerentes</option>
+                    <option value="4">Nível 4 - Coordenadores</option>
+                    <option value="5">Nível 5 - Supervisores</option>
+                    <option value="6">Nível 6 - Especialistas</option>
+                    <option value="7">Nível 7 - Operacional</option>
+                </select>
+            </div>
+
+            <!-- Lista de Usuários -->
+            <div class="users-grid" id="usersGrid">
+                <p class="loading">Carregando usuários...</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Add/Edit User -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Novo Usuário</h2>
+                <button class="close" onclick="closeUserModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="userForm">
+                    <input type="hidden" id="userId">
+                    
+                    <div class="form-group">
+                        <label for="userName">Nome Completo *</label>
+                        <input type="text" id="userName" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="userEmail">E-mail *</label>
+                        <input type="email" id="userEmail" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="userPassword">Senha *</label>
+                        <input type="password" id="userPassword" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="userLevel">Nível Hierárquico *</label>
+                        <select id="userLevel" class="form-control" required>
+                            <option value="">Selecione...</option>
+                            <option value="0">Nível 0 - Presidentes</option>
+                            <option value="1">Nível 1 - Administradores Gerais</option>
+                            <option value="2">Nível 2 - Diretores Executivos</option>
+                            <option value="3">Nível 3 - Gerentes</option>
+                            <option value="4">Nível 4 - Coordenadores</option>
+                            <option value="5">Nível 5 - Supervisores</option>
+                            <option value="6">Nível 6 - Especialistas</option>
+                            <option value="7">Nível 7 - Operacional</option>
+                        </select>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeUserModal()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="usuarios.js"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Coordenação - Ascenda Flex</title>
+    <link rel="stylesheet" href="dashboard-coordenadores.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-left">
+                <h1>🎯 Dashboard Coordenação - Ascenda Flex</h1>
+                <p class="subtitle">Coordenação de Projetos e Atividades · Nível 4 - Coordenadores</p>
+            </div>
+            <div class="header-right">
+                <span class="company-name" id="companyName">Empresa</span>
+                <span class="user-info" id="userName">Usuário</span>
+                <button class="btn-logout" onclick="logout()">Sair</button>
+            </div>
+        </header>
+
+        <section class="kpi-section">
+            <div class="kpi-card"><div class="kpi-icon">📋</div><div class="kpi-content"><h3>Tasks Ativas</h3><p class="kpi-value">45</p></div></div>
+            <div class="kpi-card"><div class="kpi-icon">✅</div><div class="kpi-content"><h3>Concluídas</h3><p class="kpi-value">128</p></div></div>
+            <div class="kpi-card"><div class="kpi-icon">👥</div><div class="kpi-content"><h3>Equipe</h3><p class="kpi-value" id="team">0</p></div></div>
+            <div class="kpi-card"><div class="kpi-icon">⚡</div><div class="kpi-content"><h3>Velocity</h3><p class="kpi-value">32 pts</p></div></div>
+        </section>
+
+        <div class="main-content">
+            <div class="content-left">
+                <div class="card"><div class="card-header"><h2>📊 Projetos em Andamento</h2></div><div class="card-body"><p>Coordenação de múltiplos projetos e sprints</p></div></div>
+                <div class="card"><div class="card-header"><h2>🚀 Squad</h2></div><div class="card-body" id="squadsContainer"><p class="loading">Carregando...</p></div></div>
+            </div>
+            <div class="content-right">
+                <div class="card"><div class="card-header"><h2>👥 Equipe</h2></div><div class="card-body" id="teamContainer"><p class="loading">Carregando...</p></div></div>
+                <div class="card"><div class="card-header"><h2>⚠️ Bloqueios</h2></div><div class="card-body"><p>2 impedimentos ativos</p></div></div>
+            </div>
+        </div>
+
+        <div class="quick-nav"><h3>Acesso Rápido</h3><div class="nav-grid">
+            <button class="nav-item" onclick="navigateTo('/Nivel01-AdministradoresGerais/squads.html')"><span>🚀</span><span>Squads</span></button>
+            <button class="nav-item" onclick="navigateTo('/Nivel01-AdministradoresGerais/chapters.html')"><span>📚</span><span>Chapters</span></button>
+        </div></div>
+    </div>
+    <script src="dashboard-coordenadores.js"></script>
+</body>
+</html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ascenda - Plataforma de Gerenciamento Empresarial</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <h1>Ascenda Flex</h1>
+                <p class="tagline">Gestão Organizacional Híbrida Inteligente</p>
+            </div>
+            <nav class="nav">
+                <button class="btn-secondary" onclick="showRegisterForm()">Cadastrar Empresa</button>
+            </nav>
+        </header>
+
+        <!-- Apresentação da Empresa -->
+        <section class="hero" id="hero">
+            <div class="hero-content">
+                <h2>Transforme a Gestão da Sua Organização</h2>
+                <p>Ascenda Flex é uma plataforma completa de gestão organizacional híbrida que combina hierarquia tradicional, squads multifuncionais e chapters (comunidades de prática). Organize sua empresa de forma flexível e potencialize resultados.</p>
+                <div class="hero-features">
+                    <div class="feature">
+                        <span class="feature-icon">📊</span>
+                        <h3>Hierarquia de 8 Níveis</h3>
+                        <p>Do presidente ao operacional</p>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">🚀</span>
+                        <h3>Squads Flexíveis</h3>
+                        <p>Equipes multifuncionais temporárias</p>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">📚</span>
+                        <h3>Chapters</h3>
+                        <p>Comunidades de prática permanentes</p>
+                    </div>
+                </div>
+                        <p>Estrutura hierárquica organizada</p>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">🔒</span>
+                        <h3>Segurança</h3>
+                        <p>Controle de acesso robusto</p>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">📈</span>
+                        <h3>Análise de Dados</h3>
+                        <p>Tratamento inteligente de informações</p>
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="showLoginForm()">Acessar Plataforma</button>
+            </div>
+        </section>
+
+        <!-- Formulário de Login -->
+        <section class="login-section hidden" id="loginSection">
+            <div class="form-container">
+                <h2>Login</h2>
+                <p class="form-description">Acesse sua conta selecionando sua empresa e inserindo suas credenciais</p>
+                
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="companySelect">Selecione sua Empresa</label>
+                        <select id="companySelect" required>
+                            <option value="">-- Escolha uma empresa --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="accessKey">Nome de Usuário</label>
+                        <input 
+                            type="text" 
+                            id="accessKey" 
+                            placeholder="Digite seu nome de usuário"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Senha</label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            placeholder="Digite sua senha"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="btn-primary btn-block">Entrar</button>
+                    <button type="button" class="btn-secondary btn-block" onclick="showHero()">Voltar</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Formulário de Cadastro de Empresa -->
+        <section class="register-section hidden" id="registerSection">
+            <div class="form-container-large">
+                <h2>Cadastrar Nova Empresa</h2>
+                <p class="form-description">Configure sua empresa multinacional na plataforma Ascenda</p>
+                
+                <!-- Indicador de Progresso -->
+                <div class="progress-steps">
+                    <div class="step active" data-step="1">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Dados da Empresa</div>
+                    </div>
+                    <div class="step" data-step="2">
+                        <div class="step-number">2</div>
+                        <div class="step-label">Administradores Gerais</div>
+                    </div>
+                    <div class="step" data-step="3">
+                        <div class="step-number">3</div>
+                        <div class="step-label">Revisão</div>
+                    </div>
+                </div>
+
+                <form id="registerForm" onsubmit="handleRegister(event)">
+                    
+                    <!-- Etapa 1: Dados da Empresa -->
+                    <div class="form-step active" id="step1">
+                        <h3 class="step-title">Informações Básicas da Empresa</h3>
+                        
+                        <div class="form-group">
+                            <label for="companyName">Nome da Empresa *</label>
+                            <input 
+                                type="text" 
+                                id="companyName" 
+                                placeholder="Digite o nome completo da empresa"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="companyLegalName">Razão Social *</label>
+                            <input 
+                                type="text" 
+                                id="companyLegalName" 
+                                placeholder="Nome legal/razão social da empresa"
+                            >
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="foundedYear">Ano de Fundação *</label>
+                                <input 
+                                    type="number" 
+                                    id="foundedYear" 
+                                    placeholder="Ex: 2020"
+                                    min="1800"
+                                    max="2025"
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="companySize">Porte da Empresa *</label>
+                                <select id="companySize">
+                                    <option value="">Selecione</option>
+                                    <option value="small">Pequena (1-50 funcionários)</option>
+                                    <option value="medium">Média (51-250 funcionários)</option>
+                                    <option value="large">Grande (251-1000 funcionários)</option>
+                                    <option value="enterprise">Corporação (1000+ funcionários)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="industry">Setor de Atuação *</label>
+                            <select id="industry">
+                                <option value="">Selecione o setor</option>
+                                <option value="technology">Tecnologia</option>
+                                <option value="finance">Financeiro</option>
+                                <option value="healthcare">Saúde</option>
+                                <option value="retail">Varejo</option>
+                                <option value="manufacturing">Manufatura</option>
+                                <option value="services">Serviços</option>
+                                <option value="education">Educação</option>
+                                <option value="logistics">Logística</option>
+                                <option value="energy">Energia</option>
+                                <option value="other">Outro</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="companyDescription">Descrição da Empresa *</label>
+                            <textarea 
+                                id="companyDescription" 
+                                rows="4"
+                                placeholder="Descreva brevemente as atividades e objetivos da empresa"
+                            ></textarea>
+                        </div>
+                        
+                        <div class="info-box">
+                            <span class="info-icon">ℹ️</span>
+                            <p>Um website será criado automaticamente para sua empresa na plataforma Ascenda.</p>
+                        </div>
+
+                        <div class="form-navigation">
+                            <button type="button" class="btn-secondary" onclick="showHero()">Cancelar</button>
+                            <button type="button" class="btn-primary" onclick="nextStep()">Próximo</button>
+                        </div>
+                    </div>
+
+                    <!-- Etapa 2: Administradores Gerais -->
+                    <div class="form-step" id="step2">
+                        <h3 class="step-title">Administradores Gerais</h3>
+                        <p class="step-description">Configure os administradores que terão acesso total à plataforma</p>
+
+                        <div class="admins-container">
+                            <div class="add-admin-form">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="adminName">Nome Completo *</label>
+                                        <input 
+                                            type="text" 
+                                            id="adminName" 
+                                            placeholder="Nome do administrador"
+                                        >
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="adminEmail">Email Corporativo *</label>
+                                        <input 
+                                            type="email" 
+                                            id="adminEmail" 
+                                            placeholder="email@empresa.com"
+                                        >
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="adminPhone">Telefone *</label>
+                                        <input 
+                                            type="tel" 
+                                            id="adminPhone" 
+                                            placeholder="+55 (11) 99999-9999"
+                                        >
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="adminDepartment">Departamento/Área *</label>
+                                        <input 
+                                            type="text" 
+                                            id="adminDepartment" 
+                                            placeholder="Ex: TI, Finanças, RH"
+                                        >
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="adminAccessKey">Nome de Usuário *</label>
+                                        <input 
+                                            type="text" 
+                                            id="adminAccessKey" 
+                                            placeholder="Nome de usuário único"
+                                        >
+                                        <small>Use letras, números e caracteres especiais</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="adminDepartment">Departamento/Área *</label>
+                                        <input 
+                                            type="text" 
+                                            id="adminDepartment" 
+                                            placeholder="Ex: TI, Finanças, RH"
+                                        >
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="adminPassword">Senha *</label>
+                                        <input 
+                                            type="password" 
+                                            id="adminPassword" 
+                                            placeholder="Senha segura"
+                                        >
+                                        <small>Mínimo 8 caracteres</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="adminConfirmPassword">Confirmar Senha *</label>
+                                        <input 
+                                            type="password" 
+                                            id="adminConfirmPassword" 
+                                            placeholder="Digite a senha novamente"
+                                        >
+                                        <small>As senhas devem ser iguais</small>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" id="isPrimaryAdmin">
+                                        Administrador Principal (responsável pela conta)
+                                    </label>
+                                </div>
+
+                                <button type="button" class="btn-secondary btn-block" onclick="addAdmin()">
+                                    + Adicionar Administrador
+                                </button>
+                            </div>
+
+                            <div class="admins-list" id="adminsList">
+                                <h4>Administradores Cadastrados:</h4>
+                                <div id="adminsItems" class="empty-state">
+                                    Nenhum administrador adicionado. Adicione pelo menos um administrador para continuar.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-navigation">
+                            <button type="button" class="btn-secondary" onclick="previousStep()">Voltar</button>
+                            <button type="button" class="btn-primary" onclick="nextStep()">Próximo</button>
+                        </div>
+                    </div>
+
+                    <!-- Etapa 3: Revisão -->
+                    <div class="form-step" id="step3">
+                        <h3 class="step-title">Revisão Final</h3>
+                        <p class="step-description">Revise todas as informações antes de finalizar o cadastro</p>
+
+                        <div class="review-container" id="reviewContainer">
+                            <!-- Conteúdo será gerado dinamicamente -->
+                        </div>
+
+                        <div class="form-navigation">
+                            <button type="button" class="btn-secondary" onclick="previousStep()">Voltar</button>
+                            <button type="submit" class="btn-primary">Finalizar Cadastro</button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2025 Ascenda - Plataforma de Gerenciamento Empresarial</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

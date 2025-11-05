@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Squads - Ascenda</title>
+    <link rel="stylesheet" href="squads.css">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>Ascenda Flex</h1>
+                <p>Nível 1 - Administradores Gerais</p>
+            </div>
+            
+            <nav class="menu">
+                <a href="dashboard.html" class="menu-item">
+                    <span class="icon">📊</span>
+                    <span>Visão Geral</span>
+                </a>
+                <a href="dashboard.html#empresas" class="menu-item">
+                    <span class="icon">🏢</span>
+                    <span>Empresas</span>
+                </a>
+                <a href="dashboard.html#usuarios" class="menu-item">
+                    <span class="icon">👥</span>
+                    <span>Usuários</span>
+                </a>
+                <a href="dashboard.html#paises" class="menu-item">
+                    <span class="icon">🌍</span>
+                    <span>Países</span>
+                </a>
+                <a href="templates.html" class="menu-item">
+                    <span class="icon">⚙️</span>
+                    <span>Template Organizacional</span>
+                </a>
+                <a href="squads.html" class="menu-item active">
+                    <span class="icon">🚀</span>
+                    <span>Squads</span>
+                </a>
+                <a href="chapters.html" class="menu-item">
+                    <span class="icon">📚</span>
+                    <span>Chapters</span>
+                </a>
+                <a href="#" class="menu-item" id="logoutBtn">
+                    <span class="icon">🚪</span>
+                    <span>Sair</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <h2>Gestão de Squads</h2>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="newSquadBtn">+ Novo Squad</button>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- Filtros -->
+                <div class="filters">
+                    <div class="filter-group">
+                        <label>Status:</label>
+                        <select id="filterStatus">
+                            <option value="">Todos</option>
+                            <option value="active" selected>Ativos</option>
+                            <option value="paused">Pausados</option>
+                            <option value="completed">Concluídos</option>
+                            <option value="cancelled">Cancelados</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Tipo:</label>
+                        <select id="filterType">
+                            <option value="">Todos</option>
+                            <option value="feature">Feature</option>
+                            <option value="project">Projeto</option>
+                            <option value="problem">Problema</option>
+                            <option value="innovation">Inovação</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Lista de Squads -->
+                <div class="squads-grid" id="squadsGrid">
+                    <!-- Será preenchido dinamicamente -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal: Novo/Editar Squad -->
+    <div class="modal" id="squadModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Novo Squad</h3>
+                <button class="modal-close" onclick="closeSquadModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="squadForm">
+                    <input type="hidden" id="squadId">
+                    
+                    <div class="form-group">
+                        <label for="squadName">Nome do Squad *</label>
+                        <input type="text" id="squadName" required placeholder="Ex: Squad App Mobile">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="squadType">Tipo *</label>
+                        <select id="squadType" required>
+                            <option value="">Selecione...</option>
+                            <option value="feature">Feature Squad - Desenvolver funcionalidade</option>
+                            <option value="project">Project Squad - Entregar projeto completo</option>
+                            <option value="problem">Problem Squad - Resolver problema crítico</option>
+                            <option value="innovation">Innovation Squad - Experimentar ideias</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="squadDescription">Descrição</label>
+                        <textarea id="squadDescription" rows="3" placeholder="Descreva o objetivo e escopo do squad"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="squadStartDate">Data de Início *</label>
+                            <input type="date" id="squadStartDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="squadEndDate">Data de Término (prevista)</label>
+                            <input type="date" id="squadEndDate">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="squadStatus">Status</label>
+                        <select id="squadStatus">
+                            <option value="active">Ativo</option>
+                            <option value="paused">Pausado</option>
+                            <option value="completed">Concluído</option>
+                            <option value="cancelled">Cancelado</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeSquadModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveSquad()">Salvar Squad</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Gerenciar Membros -->
+    <div class="modal" id="membersModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3 id="membersModalTitle">Membros do Squad</h3>
+                <button class="modal-close" onclick="closeMembersModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="members-section">
+                    <div class="add-member-form">
+                        <h4>Adicionar Membro</h4>
+                        <div class="form-row">
+                            <select id="memberUserId" class="form-control">
+                                <option value="">Selecione um usuário...</option>
+                            </select>
+                            <select id="memberRole" class="form-control">
+                                <option value="member">Membro</option>
+                                <option value="lead">Lead</option>
+                                <option value="stakeholder">Stakeholder</option>
+                            </select>
+                            <input type="number" id="memberAllocation" class="form-control" placeholder="% Alocação" min="1" max="100" value="100">
+                            <button class="btn btn-primary" onclick="addMember()">Adicionar</button>
+                        </div>
+                    </div>
+
+                    <div class="members-list">
+                        <h4>Membros Atuais</h4>
+                        <table class="members-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Departamento</th>
+                                    <th>Nível</th>
+                                    <th>Papel</th>
+                                    <th>Alocação</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="membersTableBody">
+                                <!-- Preenchido dinamicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeMembersModal()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="squads.js"></script>
+</body>
+</html>

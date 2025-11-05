@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Chapters - Ascenda Flex</title>
+    <link rel="stylesheet" href="chapters.css">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>Ascenda Flex</h1>
+                <p>Nível 1 - Administradores Gerais</p>
+            </div>
+            
+            <nav class="menu">
+                <a href="dashboard-admin.html" class="menu-item">
+                    <span class="icon">📊</span>
+                    <span>Visão Geral</span>
+                </a>
+                <a href="templates.html" class="menu-item">
+                    <span class="icon">📋</span>
+                    <span>Templates</span>
+                </a>
+                <a href="squads.html" class="menu-item">
+                    <span class="icon">🚀</span>
+                    <span>Squads</span>
+                </a>
+                <a href="chapters.html" class="menu-item active">
+                    <span class="icon">📚</span>
+                    <span>Chapters</span>
+                </a>
+                <a href="usuarios.html" class="menu-item">
+                    <span class="icon">👥</span>
+                    <span>Usuários</span>
+                </a>
+                <a href="#" class="menu-item" id="logoutBtn">
+                    <span class="icon">🚪</span>
+                    <span>Sair</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <h2>📚 Comunidades de Prática (Chapters)</h2>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="newChapterBtn">+ Novo Chapter</button>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- Filtros -->
+                <div class="filters">
+                    <div class="filter-group">
+                        <label>Especialidade:</label>
+                        <select id="filterSpecialty">
+                            <option value="">Todas</option>
+                            <option value="Backend Development">Backend Development</option>
+                            <option value="Frontend Development">Frontend Development</option>
+                            <option value="UX/UI Design">UX/UI Design</option>
+                            <option value="Data Science">Data Science</option>
+                            <option value="DevOps">DevOps</option>
+                            <option value="QA Testing">QA Testing</option>
+                            <option value="Product Management">Product Management</option>
+                            <option value="Business Analysis">Business Analysis</option>
+                        </select>
+                    </div>
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="🔍 Buscar chapter...">
+                    </div>
+                </div>
+
+                <!-- Lista de Chapters -->
+                <div class="chapters-grid" id="chaptersGrid">
+                    <p class="loading">Carregando chapters...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal: Novo/Editar Chapter -->
+    <div class="modal" id="chapterModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Novo Chapter</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="chapterForm">
+                    <input type="hidden" id="chapterId">
+                    
+                    <div class="form-group">
+                        <label for="chapterName">Nome do Chapter *</label>
+                        <input type="text" id="chapterName" class="form-control" required 
+                               placeholder="Ex: Chapter Backend Development">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="chapterSpecialty">Especialidade *</label>
+                        <select id="chapterSpecialty" class="form-control" required>
+                            <option value="">Selecione...</option>
+                            <option value="Backend Development">Backend Development</option>
+                            <option value="Frontend Development">Frontend Development</option>
+                            <option value="UX/UI Design">UX/UI Design</option>
+                            <option value="Data Science">Data Science</option>
+                            <option value="DevOps">DevOps</option>
+                            <option value="QA Testing">QA Testing</option>
+                            <option value="Product Management">Product Management</option>
+                            <option value="Business Analysis">Business Analysis</option>
+                            <option value="Mobile Development">Mobile Development</option>
+                            <option value="Security">Security</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="chapterDescription">Descrição</label>
+                        <textarea id="chapterDescription" class="form-control" rows="3"
+                                  placeholder="Objetivos e foco do chapter..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="chapterLead">Chapter Lead *</label>
+                        <select id="chapterLead" class="form-control" required>
+                            <option value="">Selecione o líder...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Gerenciar Membros -->
+    <div class="modal" id="membersModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="membersModalTitle">Membros do Chapter</h3>
+                <button class="modal-close" onclick="closeMembersModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="add-member-form">
+                    <h4>Adicionar Membro</h4>
+                    <form id="addMemberForm">
+                        <input type="hidden" id="currentChapterId">
+                        <div class="form-row">
+                            <select id="memberUserId" class="form-control" required style="flex: 2;">
+                                <option value="">Selecione usuário...</option>
+                            </select>
+                            <select id="memberRole" class="form-control" required>
+                                <option value="lead">Lead</option>
+                                <option value="member" selected>Member</option>
+                                <option value="guest">Guest</option>
+                            </select>
+                            <button type="submit" class="btn btn-primary">Adicionar</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="members-list">
+                    <h4>Membros Atuais</h4>
+                    <div id="membersList">
+                        <p class="loading">Carregando...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="chapters.js"></script>
+</body>
+</html>
