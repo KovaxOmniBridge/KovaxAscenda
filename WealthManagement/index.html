@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Patrimônio - Ascenda</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1>💼 Gestão de Patrimônio</h1>
+                <button class="btn btn-primary" onclick="location.href='add-asset.html'">
+                    <span>+</span> Adicionar Ativo
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Filtros -->
+    <section class="filters">
+        <div class="container">
+            <div class="filter-group">
+                <label>Empresa:</label>
+                <select id="companyFilter" onchange="filterAssets()">
+                    <option value="">Todas as empresas</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Tipo:</label>
+                <select id="typeFilter" onchange="filterAssets()">
+                    <option value="">Todos os tipos</option>
+                    <option value="STORE">🏪 Loja</option>
+                    <option value="WAREHOUSE">📦 Estoque/Depósito</option>
+                    <option value="REAL_ESTATE">🏢 Imóvel</option>
+                    <option value="CLINIC">🏥 Clínica</option>
+                    <option value="VEHICLE">🚗 Veículo</option>
+                    <option value="EQUIPMENT">⚙️ Equipamento</option>
+                    <option value="FURNITURE">🪑 Mobília</option>
+                    <option value="OTHER">📋 Outro</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Status:</label>
+                <select id="statusFilter" onchange="filterAssets()">
+                    <option value="">Todos os status</option>
+                    <option value="ACTIVE">✅ Ativo</option>
+                    <option value="INACTIVE">⏸️ Inativo</option>
+                    <option value="MAINTENANCE">🔧 Manutenção</option>
+                    <option value="RENTED">🔑 Alugado</option>
+                    <option value="FOR_SALE">💰 À Venda</option>
+                    <option value="SOLD">✔️ Vendido</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Buscar:</label>
+                <input type="text" id="searchInput" placeholder="Nome, descrição, tags..." oninput="filterAssets()">
+            </div>
+        </div>
+    </section>
+
+    <!-- Cards de Estatísticas -->
+    <section class="stats-cards" id="statsCards">
+        <div class="container">
+            <div class="cards-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-content">
+                        <h3 id="totalAssets">0</h3>
+                        <p>Total de Ativos</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-content">
+                        <h3 id="totalValue">R$ 0,00</h3>
+                        <p>Valor Total</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-content">
+                        <h3 id="activeAssets">0</h3>
+                        <p>Ativos Ativos</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💸</div>
+                    <div class="stat-content">
+                        <h3 id="monthlyExpenses">R$ 0,00</h3>
+                        <p>Despesas Mensais</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lista de Ativos -->
+    <section class="assets-section">
+        <div class="container">
+            <div class="assets-grid" id="assetsGrid">
+                <!-- Assets serão inseridos aqui dinamicamente -->
+            </div>
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-icon">📦</div>
+                <h2>Nenhum ativo encontrado</h2>
+                <p>Comece adicionando seu primeiro ativo físico</p>
+                <button class="btn btn-primary" onclick="location.href='add-asset.html'">
+                    Adicionar Ativo
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="scripts/api.js"></script>
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/main.js"></script>
+</body>
+</html>

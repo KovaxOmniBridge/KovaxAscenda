@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Executivo - Ascenda</title>
+    <link rel="stylesheet" href="styles/executive-dashboard.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-left">
+                <h1>Dashboard Executivo</h1>
+                <p class="subtitle">Visão consolidada de todas as empresas</p>
+            </div>
+            <div class="header-right">
+                <div class="user-info" id="userInfo">
+                    <span class="user-name" id="userName">Carregando...</span>
+                    <span class="user-role" id="userRole"></span>
+                </div>
+                <button class="btn-secondary" onclick="logout()">Sair</button>
+            </div>
+        </header>
+
+        <nav class="main-nav">
+            <a href="#" class="nav-link active">Dashboard</a>
+            <a href="../HumanManagement/dashboard.html" class="nav-link">Gestão de Pessoas</a>
+            <a href="../WealthManagement/assets.html" class="nav-link">Gestão Patrimonial</a>
+            <a href="../CompanyManagement/companies.html" class="nav-link">Gestão Empresarial</a>
+        </nav>
+
+        <div id="loadingState" class="loading-state">
+            <div class="spinner"></div>
+            <p>Carregando dados...</p>
+        </div>
+
+        <div id="errorState" class="error-state" style="display: none;">
+            <div class="error-icon">⚠️</div>
+            <h2>Erro ao carregar dados</h2>
+            <p id="errorMessage"></p>
+            <button class="btn-primary" onclick="loadDashboard()">Tentar novamente</button>
+        </div>
+
+        <div id="dashboardContent" style="display: none;">
+            <!-- Resumo Financeiro -->
+            <section class="summary-section">
+                <h2>Resumo Financeiro Consolidado</h2>
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <div class="card-icon">🏢</div>
+                        <div class="card-content">
+                            <p class="card-label">Empresas Participantes</p>
+                            <p class="card-value" id="totalCompanies">0</p>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-icon">💼</div>
+                        <div class="card-content">
+                            <p class="card-label">Participações Ativas</p>
+                            <p class="card-value" id="activeParticipations">0</p>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-icon">📊</div>
+                        <div class="card-content">
+                            <p class="card-label">Participação Total</p>
+                            <p class="card-value" id="totalEquity">0%</p>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-icon">💰</div>
+                        <div class="card-content">
+                            <p class="card-label">Renda Mensal</p>
+                            <p class="card-value" id="totalIncome">R$ 0</p>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-icon">👥</div>
+                        <div class="card-content">
+                            <p class="card-label">Total de Funcionários</p>
+                            <p class="card-value" id="totalEmployees">0</p>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-icon">🏗️</div>
+                        <div class="card-content">
+                            <p class="card-label">Total de Ativos</p>
+                            <p class="card-value" id="totalAssets">0</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Distribuição de Papéis -->
+            <section class="roles-section">
+                <h2>Seus Papéis nas Empresas</h2>
+                <div class="roles-distribution" id="rolesDistribution">
+                    <!-- Roles badges will be inserted here -->
+                </div>
+            </section>
+
+            <!-- Lista de Empresas -->
+            <section class="companies-section">
+                <h2>Empresas Participantes</h2>
+                <div class="companies-grid" id="companiesGrid">
+                    <!-- Company cards will be inserted here -->
+                </div>
+            </section>
+
+            <!-- Modal de Detalhes da Empresa -->
+            <div id="companyModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 id="modalCompanyName">Empresa</h2>
+                        <span class="close" onclick="closeModal()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="modal-section">
+                            <h3>Informações Gerais</h3>
+                            <div class="info-grid" id="modalGeneralInfo">
+                                <!-- General info will be inserted here -->
+                            </div>
+                        </div>
+                        
+                        <div class="modal-section">
+                            <h3>Recursos Humanos</h3>
+                            <div class="hr-stats" id="modalHRStats">
+                                <!-- HR stats will be inserted here -->
+                            </div>
+                        </div>
+
+                        <div class="modal-section">
+                            <h3>Patrimônio</h3>
+                            <div class="assets-stats" id="modalAssetsStats">
+                                <!-- Assets stats will be inserted here -->
+                            </div>
+                        </div>
+
+                        <div class="modal-section">
+                            <h3>Unidades Físicas</h3>
+                            <div class="units-stats" id="modalUnitsStats">
+                                <!-- Physical units will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts/executive-dashboard.js"></script>
+</body>
+</html>
