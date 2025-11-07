@@ -128,6 +128,27 @@ const listSquadGoals = (req, res) => {
     });
 };
 
+// Listar todos os squads (para administradores)
+const listAllSquads = (req, res) => {
+    const companyId = req.user.companyId;
+    
+    db.all(`
+        SELECT s.*, 
+            (SELECT COUNT(*) FROM squad_members WHERE squad_id = s.id AND left_at IS NULL) as member_count,
+            u.name as created_by_name
+        FROM squads s
+        LEFT JOIN users u ON s.created_by = u.id
+        WHERE s.company_id = ?
+        ORDER BY s.status DESC, s.created_at DESC
+    `, [companyId], (err, squads) => {
+        if (err) {
+            console.error('Erro ao buscar squads:', err);
+            return res.status(500).json({ error: 'Erro ao buscar squads' });
+        }
+        res.json(squads);
+    });
+};
+
 module.exports = {
     listSquadsByCompany,
     createSquad,
@@ -137,5 +158,6 @@ module.exports = {
     addSquadMember,
     updateSquadMember,
     removeSquadMember,
-    listSquadGoals
+    listSquadGoals,
+    listAllSquads
 };

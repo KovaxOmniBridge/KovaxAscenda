@@ -198,10 +198,74 @@ const deleteUser = (req, res) => {
     });
 };
 
+/**
+ * Obter todos os usuários (para administradores)
+ * GET /api/users
+ */
+const listAllUsers = (req, res) => {
+    // Verificar se é administrador de nível 0 ou 1
+    if (req.user.nivel > 1) {
+        return res.status(403).json({ error: 'Sem permissão para acessar todos os usuários' });
+    }
+    
+    const companyId = req.user.companyId;
+    
+    db.all(`
+        SELECT 
+            u.id, 
+            u.name, 
+            u.email, 
+            u.phone, 
+            u.department, 
+            u.access_key, 
+            u.role, 
+            u.nivel, 
+            u.is_primary,
+            u.created_at,
+            c.name as company_name
+        FROM users u
+        LEFT JOIN companies c ON u.company_id = c.id
+        WHERE u.company_id = ?
+        ORDER BY u.nivel ASC, u.is_primary DESC, u.name ASC
+    `, [companyId], (err, users) => {
+        if (err) {
+            console.error('Erro ao buscar usuários:', err);
+            return res.status(500).json({ error: 'Erro ao buscar usuários' });
+        }
+        res.json(users);
+    });
+};
+
+/**
+ * Obter estatísticas de usuários por nível
+ * GET /api/users/stats/by-level
+ */
+const getUserStatsByLevel = (req, res) => {
+    const companyId = req.user.companyId;
+    
+    db.all(`
+        SELECT 
+            nivel,
+            COUNT(*) as count
+        FROM users
+        WHERE company_id = ?
+        GROUP BY nivel
+        ORDER BY nivel
+    `, [companyId], (err, stats) => {
+        if (err) {
+            console.error('Erro ao buscar estatísticas:', err);
+            return res.status(500).json({ error: 'Erro ao buscar estatísticas' });
+        }
+        res.json(stats);
+    });
+};
+
 module.exports = {
     listUsersByCompany,
     getUser,
     createUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    listAllUsers,
+    getUserStatsByLevel
 };

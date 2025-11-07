@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Dashboard</title>
+</head>
+<body>
+    <h1>Teste de Dashboard</h1>
+    <div id="results"></div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000/api';
+        const resultsDiv = document.getElementById('results');
+        
+        async function testDashboard() {
+            try {
+                // Simular login
+                resultsDiv.innerHTML += '<p><strong>1. Testando Login...</strong></p>';
+                const loginResponse = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        companyId: 9,
+                        accessKey: 'TS-0002',
+                        password: 'senha123'
+                    })
+                });
+                
+                const loginData = await loginResponse.json();
+                if (loginData.token) {
+                    resultsDiv.innerHTML += `<p style="color: green;">✅ Login OK - Token obtido</p>`;
+                    resultsDiv.innerHTML += `<p>Usuário: ${loginData.user.name}, Nível: ${loginData.user.nivel}</p>`;
+                    
+                    const token = loginData.token;
+                    const headers = {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    };
+                    
+                    // Testar endpoints
+                    resultsDiv.innerHTML += '<p><strong>2. Testando /users...</strong></p>';
+                    const usersResponse = await fetch(`${API_BASE}/users`, { headers });
+                    const usersData = await usersResponse.json();
+                    resultsDiv.innerHTML += `<p style="color: green;">✅ ${usersData.length} usuários carregados</p>`;
+                    
+                    resultsDiv.innerHTML += '<p><strong>3. Testando /squads...</strong></p>';
+                    const squadsResponse = await fetch(`${API_BASE}/squads`, { headers });
+                    const squadsData = await squadsResponse.json();
+                    resultsDiv.innerHTML += `<p style="color: green;">✅ ${squadsData.length} squads carregados</p>`;
+                    
+                    resultsDiv.innerHTML += '<p><strong>4. Testando /chapters...</strong></p>';
+                    const chaptersResponse = await fetch(`${API_BASE}/chapters`, { headers });
+                    const chaptersData = await chaptersResponse.json();
+                    resultsDiv.innerHTML += `<p style="color: green;">✅ ${chaptersData.length} chapters carregados</p>`;
+                    
+                    resultsDiv.innerHTML += '<p><strong>5. Testando /countries...</strong></p>';
+                    const countriesResponse = await fetch(`${API_BASE}/countries`, { headers });
+                    const countriesData = await countriesResponse.json();
+                    resultsDiv.innerHTML += `<p style="color: green;">✅ ${countriesData.length} países carregados</p>`;
+                    
+                    resultsDiv.innerHTML += '<hr><p style="color: green; font-weight: bold;">🎉 Todos os testes passaram!</p>';
+                } else {
+                    resultsDiv.innerHTML += `<p style="color: red;">❌ Erro no login: ${loginData.error}</p>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML += `<p style="color: red;">❌ Erro: ${error.message}</p>`;
+                console.error('Erro:', error);
+            }
+        }
+        
+        testDashboard();
+    </script>
+</body>
+</html>

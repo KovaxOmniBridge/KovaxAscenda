@@ -15,6 +15,7 @@ const squadRoutes = require('./squad.routes');
 const chapterRoutes = require('./chapter.routes');
 const templateRoutes = require('./template.routes');
 const approvalRoutes = require('./approval.routes');
+const countryRoutes = require('./country.routes');
 const devRoutes = require('./dev.routes');
 
 // Usar rotas
@@ -26,6 +27,7 @@ router.use('/squads', squadRoutes);
 router.use('/chapters', chapterRoutes);
 router.use('/templates', templateRoutes);
 router.use('/approvals', approvalRoutes);
+router.use('/countries', countryRoutes);
 router.use('/dev', devRoutes);
 
 // Rota de health check

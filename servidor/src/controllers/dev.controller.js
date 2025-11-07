@@ -207,8 +207,8 @@ const impersonateUser = (req, res) => {
             return res.status(404).json({ error: 'Usuário não encontrado' });
         }
         
-        // Buscar nome do desenvolvedor
-        const devName = req.developer.name || 'Desenvolvedor';
+        // Buscar nome do desenvolvedor (req.dev vem do devAuth.middleware)
+        const devName = req.dev?.email || 'Desenvolvedor';
         
         // Gerar token JWT como se fosse o usuário
         const userToken = jwt.sign(
@@ -218,7 +218,7 @@ const impersonateUser = (req, res) => {
                 accessKey: user.access_key,
                 role: user.role,
                 nivel: user.nivel || 1,
-                impersonatedBy: req.developer.devId,  // Registra quem personificou
+                impersonatedBy: req.dev?.id || req.dev?.email,  // Registra quem personificou
                 isDevMode: true
             },
             process.env.JWT_SECRET,
@@ -378,8 +378,8 @@ const createExplorerSession = (req, res) => {
             return res.status(404).json({ error: 'Empresa não encontrada' });
         }
         
-        // Buscar nome do desenvolvedor
-        const devName = req.developer.name || 'Desenvolvedor';
+        // Buscar nome do desenvolvedor (req.dev vem do devAuth.middleware)
+        const devName = req.dev?.email || req.developer?.name || 'Desenvolvedor';
         
         // Gerar token JWT temporário para sessão do explorador
         const explorerToken = jwt.sign(
@@ -390,7 +390,7 @@ const createExplorerSession = (req, res) => {
                 role: role,
                 nivel: nivel,
                 isExplorer: true, // Flag identificando sessão do explorador
-                impersonatedBy: req.developer.devId,
+                impersonatedBy: req.dev?.id || req.dev?.email,
                 isDevMode: true
             },
             process.env.JWT_SECRET,

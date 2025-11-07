@@ -111,6 +111,26 @@ const removeChapterMember = (req, res) => {
     });
 };
 
+// Listar todos os chapters (para administradores)
+const listAllChapters = (req, res) => {
+    const companyId = req.user.companyId;
+    
+    db.all(`
+        SELECT c.*, u.name as lead_name,
+               (SELECT COUNT(*) FROM chapter_members WHERE chapter_id = c.id) as member_count
+        FROM chapters c
+        LEFT JOIN users u ON c.lead_user_id = u.id
+        WHERE c.company_id = ?
+        ORDER BY c.created_at DESC
+    `, [companyId], (err, chapters) => {
+        if (err) {
+            console.error('Erro ao buscar chapters:', err);
+            return res.status(500).json({ error: 'Erro ao buscar chapters' });
+        }
+        res.json(chapters);
+    });
+};
+
 module.exports = {
     listChaptersByCompany,
     createChapter,
@@ -119,5 +139,6 @@ module.exports = {
     listChapterMembers,
     addChapterMember,
     updateChapterMember,
-    removeChapterMember
+    removeChapterMember,
+    listAllChapters
 };

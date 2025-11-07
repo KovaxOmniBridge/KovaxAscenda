@@ -8,6 +8,7 @@ const squadController = require('../controllers/squad.controller');
 const { authenticateToken } = require('../middlewares/auth.middleware');
 
 // Todas as rotas de squads são protegidas
+router.get('/', authenticateToken, squadController.listAllSquads);
 router.get('/company/:companyId', authenticateToken, squadController.listSquadsByCompany);
 router.post('/', authenticateToken, squadController.createSquad);
 router.put('/:id', authenticateToken, squadController.updateSquad);

@@ -3,454 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Ascenda</title>
-    <link rel="stylesheet" href="dashboard.css">
+    <title>Dashboard Administração - Ascenda Flex</title>
+    <link rel="stylesheet" href="dashboard-admin.css">
 </head>
 <body>
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <h1>Ascenda Flex</h1>
-            <p class="company-name" id="companyName">Nível 1 - Administradores Gerais</p>
-        </div>
-
-        <nav class="sidebar-nav">
-            <a href="#" class="nav-item active" onclick="showSection('overview')">
-                <span class="nav-icon">📊</span>
-                <span class="nav-label">Visão Geral</span>
-            </a>
-            <a href="#" class="nav-item" onclick="showSection('users')">
-                <span class="nav-icon">👥</span>
-                <span class="nav-label">Usuários</span>
-            </a>
-            <a href="#" class="nav-item" onclick="showSection('company')">
-                <span class="nav-icon">🏢</span>
-                <span class="nav-label">Empresa</span>
-            </a>
-            <a href="#" class="nav-item" onclick="showSection('countries')">
-                <span class="nav-icon">🌍</span>
-                <span class="nav-label">Países</span>
-            </a>
-            <a href="templates.html" class="nav-item">
-                <span class="nav-icon">⚙️</span>
-                <span class="nav-label">Template Organizacional</span>
-            </a>
-            <a href="squads.html" class="nav-item">
-                <span class="nav-icon">🚀</span>
-                <span class="nav-label">Squads</span>
-            </a>
-            <a href="chapters.html" class="nav-item">
-                <span class="nav-icon">📚</span>
-                <span class="nav-label">Chapters</span>
-            </a>
-            <a href="#" class="nav-item" onclick="showSection('settings')">
-                <span class="nav-icon">🔧</span>
-                <span class="nav-label">Configurações</span>
-            </a>
-        </nav>
-
-        <div class="sidebar-footer">
-            <button class="btn-logout" onclick="handleLogout()">
-                <span>🚪</span> Sair
-            </button>
-        </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="main-content">
+    <div class="container">
         <!-- Header -->
-        <header class="dashboard-header">
+        <header class="header">
             <div class="header-left">
-                <button class="btn-menu" onclick="toggleSidebar()">☰</button>
-                <h2 id="pageTitle">Visão Geral</h2>
+                <h1>⚙️ Dashboard Administração - Ascenda Flex</h1>
+                <p class="subtitle">Gestão Organizacional Completa · Nível 1 - Administradores Gerais</p>
             </div>
             <div class="header-right">
-                <div class="user-info">
-                    <span class="user-name" id="userName">Carregando...</span>
-                    <span class="user-role" id="userRole"></span>
-                </div>
-                <div class="user-avatar" id="userAvatar">A</div>
+                <span class="company-name" id="companyName">Carregando...</span>
+                <span class="user-info" id="userName">Usuário</span>
+                <button class="btn-logout" onclick="logout()">Sair</button>
             </div>
         </header>
 
-        <!-- Content Area -->
-        <div class="content-area">
-            
-            <!-- Seção: Visão Geral -->
-            <section id="section-overview" class="content-section active">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon">👥</div>
-                        <div class="stat-info">
-                            <h3 id="totalUsers">0</h3>
-                            <p>Total de Usuários</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">🌍</div>
-                        <div class="stat-info">
-                            <h3 id="totalCountries">0</h3>
-                            <p>Países Ativos</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">👑</div>
-                        <div class="stat-info">
-                            <h3 id="totalAdmins">0</h3>
-                            <p>Administradores</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">📅</div>
-                        <div class="stat-info">
-                            <h3 id="companyAge">-</h3>
-                            <p>Anos de Operação</p>
-                        </div>
-                    </div>
+        <!-- Indicadores Principais -->
+        <section class="kpi-section">
+            <div class="kpi-card">
+                <div class="kpi-icon">👥</div>
+                <div class="kpi-content">
+                    <h3>Total de Usuários</h3>
+                    <p class="kpi-value" id="totalUsers">0</p>
+                    <span class="kpi-trend neutral">ativos na plataforma</span>
                 </div>
-
-                <div class="welcome-card">
-                    <h2>Bem-vindo ao Dashboard Ascenda! 🎉</h2>
-                    <p>Gerencie sua empresa, usuários e operações de forma simples e eficiente.</p>
-                </div>
-
-                <div class="quick-actions">
-                    <h3>Ações Rápidas</h3>
-                    <div class="actions-grid">
-                        <button class="action-btn" onclick="showSection('users'); openAddUserModal()">
-                            <span class="action-icon">➕</span>
-                            <span>Adicionar Usuário</span>
-                        </button>
-                        <button class="action-btn" onclick="showSection('countries')">
-                            <span class="action-icon">🌍</span>
-                            <span>Gerenciar Países</span>
-                        </button>
-                        <button class="action-btn" onclick="showSection('company')">
-                            <span class="action-icon">🏢</span>
-                            <span>Editar Empresa</span>
-                        </button>
-                        <button class="action-btn" onclick="showSection('settings')">
-                            <span class="action-icon">⚙️</span>
-                            <span>Configurações</span>
-                        </button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Seção: Usuários -->
-            <section id="section-users" class="content-section">
-                <div class="section-header">
-                    <h2>Gerenciamento de Usuários</h2>
-                    <button class="btn-primary" onclick="openAddUserModal()">
-                        ➕ Novo Usuário
-                    </button>
-                </div>
-
-                <div class="filters-bar">
-                    <input type="text" id="searchUsers" placeholder="Buscar por nome, email ou departamento..." class="search-input">
-                    <select id="filterRole" class="filter-select" onchange="filterUsers()">
-                        <option value="">Todos os Cargos</option>
-                        <option value="Administrador Geral">Administrador Geral</option>
-                        <option value="Gerente">Gerente</option>
-                        <option value="Funcionário">Funcionário</option>
-                    </select>
-                </div>
-
-                <div class="users-table-container">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>Email</th>
-                                <th>Cargo</th>
-                                <th>Departamento</th>
-                                <th>Status</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="usersTableBody">
-                            <tr>
-                                <td colspan="6" class="loading">Carregando usuários...</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- Seção: Empresa -->
-            <section id="section-company" class="content-section">
-                <div class="section-header">
-                    <h2>Informações da Empresa</h2>
-                    <button class="btn-primary" onclick="enableCompanyEdit()">
-                        ✏️ Editar
-                    </button>
-                </div>
-
-                <div class="company-info-card">
-                    <form id="companyForm">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Nome da Empresa</label>
-                                <input type="text" id="companyNameField" disabled>
-                            </div>
-                            <div class="form-group">
-                                <label>Razão Social</label>
-                                <input type="text" id="companyLegalNameField" disabled>
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Ano de Fundação</label>
-                                <input type="number" id="companyFoundedYearField" disabled>
-                            </div>
-                            <div class="form-group">
-                                <label>Porte da Empresa</label>
-                                <select id="companySizeField" disabled>
-                                    <option value="small">Pequena (1-50 funcionários)</option>
-                                    <option value="medium">Média (51-250 funcionários)</option>
-                                    <option value="large">Grande (251-1000 funcionários)</option>
-                                    <option value="enterprise">Corporação (1000+ funcionários)</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Setor de Atuação</label>
-                                <select id="companyIndustryField" disabled>
-                                    <option value="technology">Tecnologia</option>
-                                    <option value="finance">Financeiro</option>
-                                    <option value="healthcare">Saúde</option>
-                                    <option value="retail">Varejo</option>
-                                    <option value="manufacturing">Manufatura</option>
-                                    <option value="services">Serviços</option>
-                                    <option value="education">Educação</option>
-                                    <option value="logistics">Logística</option>
-                                    <option value="energy">Energia</option>
-                                    <option value="other">Outro</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Website Ascenda</label>
-                                <input type="text" id="companyWebsiteField" disabled>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Descrição</label>
-                            <textarea id="companyDescriptionField" rows="4" disabled></textarea>
-                        </div>
-
-                        <div class="form-actions hidden" id="companyFormActions">
-                            <button type="button" class="btn-secondary" onclick="cancelCompanyEdit()">Cancelar</button>
-                            <button type="submit" class="btn-primary">Salvar Alterações</button>
-                        </div>
-                    </form>
-                </div>
-            </section>
-
-            <!-- Seção: Países -->
-            <section id="section-countries" class="content-section">
-                <div class="section-header">
-                    <h2>Países de Atuação</h2>
-                    <button class="btn-primary" onclick="openAddCountryModal()">
-                        ➕ Adicionar País
-                    </button>
-                </div>
-
-                <div class="countries-grid" id="countriesGrid">
-                    <div class="empty-state">
-                        <span class="empty-icon">🌍</span>
-                        <p>Nenhum país cadastrado ainda.</p>
-                        <button class="btn-primary" onclick="openAddCountryModal()">Adicionar Primeiro País</button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Seção: Configurações -->
-            <section id="section-settings" class="content-section">
-                <div class="section-header">
-                    <h2>Configurações</h2>
-                </div>
-
-                <div class="settings-card">
-                    <h3>Meu Perfil</h3>
-                    <form id="profileForm">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Nome Completo</label>
-                                <input type="text" id="profileName">
-                            </div>
-                            <div class="form-group">
-                                <label>Email</label>
-                                <input type="email" id="profileEmail">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Telefone</label>
-                                <input type="tel" id="profilePhone">
-                            </div>
-                            <div class="form-group">
-                                <label>Departamento</label>
-                                <input type="text" id="profileDepartment">
-                            </div>
-                        </div>
-                        <button type="submit" class="btn-primary">Salvar Perfil</button>
-                    </form>
-                </div>
-
-                <div class="settings-card">
-                    <h3>Alterar Senha</h3>
-                    <form id="passwordForm">
-                        <div class="form-group">
-                            <label>Senha Atual</label>
-                            <input type="password" id="currentPassword">
-                        </div>
-                        <div class="form-group">
-                            <label>Nova Senha</label>
-                            <input type="password" id="newPassword">
-                        </div>
-                        <div class="form-group">
-                            <label>Confirmar Nova Senha</label>
-                            <input type="password" id="confirmNewPassword">
-                        </div>
-                        <button type="submit" class="btn-primary">Alterar Senha</button>
-                    </form>
-                </div>
-            </section>
-
-        </div>
-    </main>
-
-    <!-- Modal: Adicionar Usuário -->
-    <div id="addUserModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Adicionar Novo Usuário</h2>
-                <button class="modal-close" onclick="closeAddUserModal()">&times;</button>
             </div>
-            <form id="addUserForm" onsubmit="handleAddUser(event)">
-                <div class="modal-body">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Nome Completo *</label>
-                            <input type="text" id="newUserName" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Email *</label>
-                            <input type="email" id="newUserEmail" required>
-                        </div>
-                    </div>
+            <div class="kpi-card">
+                <div class="kpi-icon">🚀</div>
+                <div class="kpi-content">
+                    <h3>Squads Ativos</h3>
+                    <p class="kpi-value" id="totalSquads">0</p>
+                    <span class="kpi-trend positive">em operação</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon">📚</div>
+                <div class="kpi-content">
+                    <h3>Chapters</h3>
+                    <p class="kpi-value" id="totalChapters">0</p>
+                    <span class="kpi-trend neutral">comunidades ativas</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon">🌍</div>
+                <div class="kpi-content">
+                    <h3>Países Ativos</h3>
+                    <p class="kpi-value" id="totalCountries">0</p>
+                    <span class="kpi-trend neutral">operações globais</span>
+                </div>
+            </div>
+        </section>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Telefone *</label>
-                            <input type="tel" id="newUserPhone" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Departamento *</label>
-                            <input type="text" id="newUserDepartment" required>
-                        </div>
+        <!-- Conteúdo Principal -->
+        <section class="main-content">
+            <div class="content-left">
+                <!-- Distribuição por Nível -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>👥 Distribuição por Nível Hierárquico</h2>
                     </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Nome de Usuário *</label>
-                            <input type="text" id="newUserAccessKey" required>
-                            <small>Nome único para login</small>
+                    <div class="card-body">
+                        <div id="usersByLevelContainer">
+                            <p class="loading">Carregando distribuição...</p>
                         </div>
-                        <div class="form-group">
-                            <label>Cargo *</label>
-                            <select id="newUserRole" required>
-                                <option value="Administrador Geral">Administrador Geral</option>
-                                <option value="Gerente">Gerente</option>
-                                <option value="Funcionário">Funcionário</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Senha *</label>
-                            <input type="password" id="newUserPassword" required>
-                            <small>Mínimo 8 caracteres</small>
-                        </div>
-                        <div class="form-group">
-                            <label>Confirmar Senha *</label>
-                            <input type="password" id="newUserConfirmPassword" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>
-                            <input type="checkbox" id="newUserIsPrimary">
-                            Administrador Principal
-                        </label>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn-secondary" onclick="closeAddUserModal()">Cancelar</button>
-                    <button type="submit" class="btn-primary">Adicionar Usuário</button>
+
+                <!-- Squads Ativos -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>🚀 Squads Ativos</h2>
+                        <button class="btn-secondary" onclick="navigateToSquads()">Ver Todos</button>
+                    </div>
+                    <div class="card-body">
+                        <div id="squadsContainer">
+                            <p class="loading">Carregando squads...</p>
+                        </div>
+                    </div>
                 </div>
-            </form>
+            </div>
+
+            <div class="content-right">
+                <!-- Chapters -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>📚 Chapters Ativos</h2>
+                        <button class="btn-secondary" onclick="navigateToChapters()">Ver Todos</button>
+                    </div>
+                    <div class="card-body">
+                        <div id="chaptersContainer">
+                            <p class="loading">Carregando chapters...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ações Administrativas -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>⚡ Ações Administrativas</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="admin-actions">
+                            <button class="action-btn" onclick="navigateToUsers()">
+                                <div class="action-icon">👤</div>
+                                <div class="action-text">
+                                    <div class="action-label">Usuários</div>
+                                    <div class="action-desc">Gerenciar acessos</div>
+                                </div>
+                            </button>
+                            <button class="action-btn" onclick="navigateToTemplates()">
+                                <div class="action-icon">📋</div>
+                                <div class="action-text">
+                                    <div class="action-label">Templates</div>
+                                    <div class="action-desc">Modelos e padrões</div>
+                                </div>
+                            </button>
+                            <button class="action-btn" onclick="navigateToSquads()">
+                                <div class="action-icon">➕</div>
+                                <div class="action-text">
+                                    <div class="action-label">Novo Squad</div>
+                                    <div class="action-desc">Criar equipe</div>
+                                </div>
+                            </button>
+                            <button class="action-btn" onclick="navigateToChapters()">
+                                <div class="action-icon">✨</div>
+                                <div class="action-text">
+                                    <div class="action-label">Novo Chapter</div>
+                                    <div class="action-desc">Criar comunidade</div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Menu de Navegação -->
+        <div class="quick-nav">
+            <h3>Acesso Rápido</h3>
+            <div class="nav-grid">
+                <button class="nav-item" onclick="navigateToUsers()">
+                    <span class="nav-icon">👥</span>
+                    <span class="nav-label">Usuários</span>
+                </button>
+                <button class="nav-item" onclick="navigateToSquads()">
+                    <span class="nav-icon">🚀</span>
+                    <span class="nav-label">Squads</span>
+                </button>
+                <button class="nav-item" onclick="navigateToChapters()">
+                    <span class="nav-icon">📚</span>
+                    <span class="nav-label">Chapters</span>
+                </button>
+                <button class="nav-item" onclick="navigateToTemplates()">
+                    <span class="nav-icon">📋</span>
+                    <span class="nav-label">Templates</span>
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Modal: Adicionar País -->
-    <div id="addCountryModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Adicionar País de Atuação</h2>
-                <button class="modal-close" onclick="closeAddCountryModal()">&times;</button>
-            </div>
-            <form id="addCountryForm" onsubmit="handleAddCountry(event)">
-                <div class="modal-body">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>País *</label>
-                            <select id="newCountryName" required></select>
-                        </div>
-                        <div class="form-group">
-                            <label>Documento Fiscal *</label>
-                            <input type="text" id="newCountryTaxId" required placeholder="CNPJ, Tax ID, etc.">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Cidade da Sede *</label>
-                            <input type="text" id="newCountryCity" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Endereço *</label>
-                            <input type="text" id="newCountryAddress" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Telefone de Contato *</label>
-                        <input type="tel" id="newCountryPhone" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>
-                            <input type="checkbox" id="newCountryIsHeadquarters">
-                            Esta é a sede principal (headquarters)
-                        </label>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn-secondary" onclick="closeAddCountryModal()">Cancelar</button>
-                    <button type="submit" class="btn-primary">Adicionar País</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Dev Mode Indicator -->
+    <!-- Scripts -->
+    <script src="../shared/session-manager.js"></script>
+    <script src="../shared/dev-session-handler.js"></script>
+    <script src="../shared/dashboard-common.js"></script>
     <script src="../shared/dev-mode-indicator.js"></script>
-    <script src="dashboard.js"></script>
+    <script src="dashboard-admin.js"></script>
 </body>
 </html>

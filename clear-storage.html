@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limpar Storage - Ascenda Flex</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 500px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .info {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .info h3 {
+            margin-top: 0;
+            color: #667eea;
+        }
+        .info pre {
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #764ba2;
+        }
+        button.danger {
+            background: #e74c3c;
+        }
+        button.danger:hover {
+            background: #c0392b;
+        }
+        .success {
+            color: #27ae60;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 Limpar Storage</h1>
+        <p>Esta ferramenta ajuda a resolver problemas de cache e sessões antigas.</p>
+        
+        <div class="info">
+            <h3>📦 LocalStorage Atual:</h3>
+            <pre id="localStorageContent">Carregando...</pre>
+        </div>
+        
+        <div class="info">
+            <h3>🗂️ SessionStorage Atual:</h3>
+            <pre id="sessionStorageContent">Carregando...</pre>
+        </div>
+        
+        <button onclick="clearAll()">🗑️ Limpar TUDO</button>
+        <button onclick="clearNormalOnly()">💼 Limpar Apenas Normal</button>
+        <button onclick="clearDevOnly()">🔧 Limpar Apenas Dev</button>
+        <button onclick="location.reload()">🔄 Recarregar</button>
+        
+        <div id="message"></div>
+        
+        <hr style="margin: 30px 0;">
+        
+        <button onclick="location.href='index.html'">← Voltar para Login</button>
+    </div>
+
+    <script>
+        function displayStorage() {
+            // LocalStorage
+            const localData = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                localData[key] = localStorage.getItem(key);
+            }
+            document.getElementById('localStorageContent').textContent = 
+                Object.keys(localData).length > 0 ? JSON.stringify(localData, null, 2) : '(vazio)';
+            
+            // SessionStorage
+            const sessionData = {};
+            for (let i = 0; i < sessionStorage.length; i++) {
+                const key = sessionStorage.key(i);
+                sessionData[key] = sessionStorage.getItem(key);
+            }
+            document.getElementById('sessionStorageContent').textContent = 
+                Object.keys(sessionData).length > 0 ? JSON.stringify(sessionData, null, 2) : '(vazio)';
+        }
+
+        function showMessage(text, isSuccess = true) {
+            const msg = document.getElementById('message');
+            msg.className = isSuccess ? 'success' : '';
+            msg.innerHTML = text;
+            setTimeout(() => displayStorage(), 100);
+        }
+
+        function clearAll() {
+            if (!confirm('⚠️ Isso vai limpar TODAS as sessões (normal + dev). Continuar?')) return;
+            
+            localStorage.clear();
+            sessionStorage.clear();
+            showMessage('✅ Todos os dados foram limpos!');
+        }
+
+        function clearNormalOnly() {
+            const keys = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (!key.startsWith('dev_')) {
+                    keys.push(key);
+                }
+            }
+            
+            keys.forEach(key => localStorage.removeItem(key));
+            sessionStorage.removeItem('dev_mode');
+            
+            showMessage(`✅ ${keys.length} itens normais removidos. Dev mode preservado.`);
+        }
+
+        function clearDevOnly() {
+            const keys = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('dev_')) {
+                    keys.push(key);
+                }
+            }
+            
+            keys.forEach(key => localStorage.removeItem(key));
+            sessionStorage.removeItem('dev_mode');
+            
+            showMessage(`✅ ${keys.length} itens dev removidos. Sessão normal preservada.`);
+        }
+
+        // Exibir ao carregar
+        displayStorage();
+    </script>
+</body>
+</html>

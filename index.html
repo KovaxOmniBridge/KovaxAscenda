@@ -77,40 +77,69 @@
         <!-- Formulário de Login -->
         <section class="login-section hidden" id="loginSection">
             <div class="form-container">
-                <h2>Login</h2>
-                <p class="form-description">Acesse sua conta selecionando sua empresa e inserindo suas credenciais</p>
+                <div class="login-header">
+                    <h2>🔐 Acesso ao Sistema</h2>
+                    <p class="form-description">Entre com suas credenciais para acessar a plataforma</p>
+                </div>
                 
                 <form id="loginForm" onsubmit="handleLogin(event)">
                     <div class="form-group">
-                        <label for="companySelect">Selecione sua Empresa</label>
+                        <label for="companySelect">
+                            <span class="label-icon">🏢</span>
+                            Empresa
+                        </label>
                         <select id="companySelect" required>
-                            <option value="">-- Escolha uma empresa --</option>
+                            <option value="">-- Selecione sua empresa --</option>
                         </select>
+                        <small class="form-hint">Escolha a empresa à qual você pertence</small>
                     </div>
 
                     <div class="form-group">
-                        <label for="accessKey">Nome de Usuário</label>
+                        <label for="accessKey">
+                            <span class="label-icon">👤</span>
+                            Chave de Acesso
+                        </label>
                         <input 
                             type="text" 
                             id="accessKey" 
-                            placeholder="Digite seu nome de usuário"
+                            placeholder="Ex: TS-0001, MC-0150, MG-0500"
+                            autocomplete="username"
                             required
                         >
+                        <small class="form-hint">Sua chave de acesso única (fornecida pela empresa)</small>
                     </div>
 
                     <div class="form-group">
-                        <label for="password">Senha</label>
+                        <label for="password">
+                            <span class="label-icon">🔒</span>
+                            Senha
+                        </label>
                         <input 
                             type="password" 
                             id="password" 
                             placeholder="Digite sua senha"
+                            autocomplete="current-password"
                             required
                         >
+                        <small class="form-hint">Senha fornecida no cadastro</small>
                     </div>
 
-                    <button type="submit" class="btn-primary btn-block">Entrar</button>
-                    <button type="button" class="btn-secondary btn-block" onclick="showHero()">Voltar</button>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary btn-block">
+                            <span>🚀</span> Entrar na Plataforma
+                        </button>
+                        <button type="button" class="btn-secondary btn-block" onclick="showHero()">
+                            <span>←</span> Voltar
+                        </button>
+                    </div>
                 </form>
+
+                <div class="login-footer">
+                    <p class="help-text">
+                        <strong>Precisa de ajuda?</strong><br>
+                        Entre em contato com o administrador da sua empresa ou com o suporte técnico.
+                    </p>
+                </div>
             </div>
         </section>
 
@@ -408,11 +437,11 @@
                                         <small>Use letras, números e caracteres especiais</small>
                                     </div>
                                     <div class="form-group">
-                                        <label for="adminDepartment">Departamento/Área *</label>
+                                        <label for="adminPhone">Telefone</label>
                                         <input 
-                                            type="text" 
-                                            id="adminDepartment" 
-                                            placeholder="Ex: TI, Finanças, RH"
+                                            type="tel" 
+                                            id="adminPhone" 
+                                            placeholder="(00) 00000-0000"
                                         >
                                     </div>
                                 </div>
@@ -521,6 +550,8 @@
         </footer>
     </div>
 
+    <!-- Session Manager -->
+    <script src="shared/session-manager.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

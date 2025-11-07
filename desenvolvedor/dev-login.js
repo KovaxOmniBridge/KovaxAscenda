@@ -52,11 +52,15 @@ async function handleLogin(event) {
         const data = await response.json();
         
         if (response.ok) {
+            // Marcar autenticação dev como verificada (para dev-protection.js)
+            window.__devAuthVerified__ = true;
+            
             // Salvar token (API retorna devToken, não token)
             localStorage.setItem('devToken', data.devToken);
             localStorage.setItem('devUser', JSON.stringify(data.developer));
             
-            console.log('✅ Login realizado com sucesso!', data);
+            console.log('✅ Login de desenvolvedor realizado com sucesso!', data);
+            console.log('🔒 Credenciais dev verificadas e salvas');
             showToast('✅ Login realizado com sucesso!', 'success');
             
             // Redirecionar para o painel dev

@@ -18,7 +18,7 @@ const login = (req, res) => {
         return res.status(400).json({ error: 'Dados incompletos' });
     }
 
-    // Buscar usuário com dados da empresa
+    // Buscar usuário com dados da empresa e papéis adicionais
     db.get(`
         SELECT u.*, c.name as company_name, c.website
         FROM users u
@@ -41,6 +41,17 @@ const login = (req, res) => {
             return res.status(401).json({ error: 'Chave de acesso ou senha incorretos' });
         }
 
+        // Parsear additional_roles se existir (JSON string → Array)
+        let additionalRoles = null;
+        if (user.additional_roles) {
+            try {
+                additionalRoles = JSON.parse(user.additional_roles);
+            } catch (e) {
+                console.warn('Erro ao parsear additional_roles:', e);
+                additionalRoles = null;
+            }
+        }
+
         // Gerar token JWT (válido por 24h)
         const token = jwt.sign(
             {
@@ -48,7 +59,7 @@ const login = (req, res) => {
                 companyId: user.company_id,
                 accessKey: user.access_key,
                 role: user.role,
-                nivel: user.nivel || 1
+                nivel: user.nivel !== null ? user.nivel : 1
             },
             process.env.JWT_SECRET,
             { expiresIn: '24h' }
@@ -61,8 +72,11 @@ const login = (req, res) => {
                 id: user.id,
                 name: user.name,
                 email: user.email,
+                access_key: user.access_key,
                 role: user.role,
-                nivel: user.nivel || 1,
+                nivel: user.nivel !== null ? user.nivel : 1,
+                additional_roles: additionalRoles, // Array parseado ou null
+                can_switch_roles: user.can_switch_roles === 1, // Boolean
                 isPrimary: user.is_primary === 1,
                 department: user.department,
                 company: {

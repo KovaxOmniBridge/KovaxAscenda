@@ -2,12 +2,15 @@
  * Rotas do Painel de Desenvolvedor
  * Rotas protegidas por autenticação JWT de desenvolvedor
  * Apenas após login de desenvolvedor
+ * 
+ * IMPORTANTE: Usa devAuth.middleware.js que valida tokens de desenvolvedor
+ * Tokens de usuários normais são REJEITADOS
  */
 
 const express = require('express');
 const router = express.Router();
 const devController = require('../controllers/dev.controller');
-const { authenticateDevToken } = require('../middlewares/auth.middleware');
+const { devAuth } = require('../middlewares/devAuth.middleware');
 const { auditLog } = require('../middlewares/audit.middleware');
 
 // ========================================
@@ -21,10 +24,11 @@ router.post('/auth/login', devController.login);
 // ========================================
 // ROTAS PROTEGIDAS (Requer token de dev)
 // Todas as rotas abaixo são auditadas
+// BLOQUEIO: Usuários normais NÃO podem acessar
 // ========================================
 
-// Aplicar auditoria em todas as rotas protegidas
-router.use(authenticateDevToken);
+// Aplicar proteção de desenvolvedor em todas as rotas abaixo
+router.use(devAuth);  // ← Middleware que bloqueia tokens de usuários normais
 router.use(auditLog);
 
 // Verificação e gestão de desenvolvedores

@@ -20,18 +20,20 @@ if (!fs.existsSync(LOG_DIR)) {
  * Logs incluem: timestamp, devId, email, ação, dados
  */
 function auditLog(req, res, next) {
-    // Só auditar se for desenvolvedor
-    if (!req.developer && !req.isDeveloper) {
+    // Só auditar se for desenvolvedor (req.dev vem do devAuth.middleware)
+    if (!req.dev && !req.developer && !req.isDeveloper) {
         return next();
     }
 
-    // Capturar dados da requisição
+    // Capturar dados da requisição (suporta req.dev e req.developer para compatibilidade)
+    const devInfo = req.dev || req.developer || {};
+    
     const logEntry = {
         timestamp: new Date().toISOString(),
         developer: {
-            id: req.developer?.devId || 'unknown',
-            email: req.developer?.email || 'unknown',
-            role: req.developer?.role || 'unknown'
+            id: devInfo.id || devInfo.devId || 'unknown',
+            email: devInfo.email || 'unknown',
+            role: devInfo.role || 'unknown'
         },
         request: {
             method: req.method,

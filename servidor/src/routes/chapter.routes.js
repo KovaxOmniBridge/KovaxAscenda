@@ -8,6 +8,7 @@ const chapterController = require('../controllers/chapter.controller');
 const { authenticateToken } = require('../middlewares/auth.middleware');
 
 // Todas as rotas de chapters são protegidas
+router.get('/', authenticateToken, chapterController.listAllChapters);
 router.get('/company/:companyId', authenticateToken, chapterController.listChaptersByCompany);
 router.post('/', authenticateToken, chapterController.createChapter);
 router.put('/:id', authenticateToken, chapterController.updateChapter);

@@ -163,64 +163,74 @@ function showTab(tabName) {
     if (tabName === 'requests') loadRequests('pending');
     if (tabName === 'developers') loadDevelopers();
     if (tabName === 'interfaces') loadCompaniesForInterfaces();
+    if (tabName === 'debug-tools') refreshStorageDisplay();
 }
 
 // ==================== ESTATÍSTICAS ====================
 
 async function loadStats() {
     try {
-        console.log('📊 Carregando estatísticas...');
+        console.log('📊 Carregando estatísticas do painel de desenvolvimento...');
         
-        // Empresas
+        // 1. Total de Empresas Cadastradas
         const companiesRes = await fetchWithDevAuth(`${API_BASE}/dev/companies`);
         const companies = await companiesRes.json();
         document.getElementById('totalCompanies').textContent = companies.length;
+        document.getElementById('companiesDetail').textContent = companies.length === 1 ? '1 empresa ativa' : `${companies.length} empresas ativas`;
         console.log(`✅ ${companies.length} empresas encontradas`);
         
-        // Usuários
-        let totalUsers = 0;
-        for (const company of companies) {
-            try {
+        // 2. Total de Desenvolvedores
+        const devsRes = await fetchWithDevAuth(`${API_BASE}/dev/developers`);
+        const developers = await devsRes.json();
+        document.getElementById('totalDevelopers').textContent = developers.length;
+        document.getElementById('developersDetail').textContent = developers.length === 1 ? '1 desenvolvedor cadastrado' : `${developers.length} desenvolvedores cadastrados`;
+        console.log(`✅ ${developers.length} desenvolvedores encontrados`);
+        
+        // 3. Pedidos Pendentes
+        const requestsRes = await fetchWithDevAuth(`${API_BASE}/dev/company-requests?status=pending`);
+        const pendingRequests = await requestsRes.json();
+        const pendingCount = Array.isArray(pendingRequests) ? pendingRequests.length : 0;
+        document.getElementById('pendingRequests').textContent = pendingCount;
+        document.getElementById('requestsDetail').textContent = pendingCount === 0 ? 'Nenhum pendente' : 
+            pendingCount === 1 ? '1 aguardando análise' : `${pendingCount} aguardando análise`;
+        console.log(`✅ ${pendingCount} pedidos pendentes`);
+        
+        // 4. Tamanho do Banco de Dados (estimativa)
+        // Como SQLite não tem API direta via HTTP, vamos estimar baseado nos dados
+        let totalRecords = companies.length + developers.length;
+        
+        // Estimar usuários (opcional - pode ser pesado)
+        try {
+            let userCount = 0;
+            for (const company of companies.slice(0, 5)) { // Apenas 5 primeiras para performance
                 const usersRes = await fetchWithDevAuth(`${API_BASE}/dev/users/company/${company.id}`);
                 const users = await usersRes.json();
-                totalUsers += users.length;
-            } catch (e) {
-                console.error('Erro ao carregar usuários da empresa', company.id, ':', e);
+                userCount += users.length;
             }
+            totalRecords += userCount;
+        } catch (e) {
+            console.warn('Não foi possível contar usuários:', e);
         }
-        document.getElementById('totalUsers').textContent = totalUsers;
-        console.log(`✅ ${totalUsers} usuários encontrados`);
         
-        // Squads
-        let totalSquads = 0;
-        for (const company of companies) {
-            try {
-                const squadsRes = await fetchWithDevAuth(`${API_BASE}/dev/squads/company/${company.id}`);
-                const squads = await squadsRes.json();
-                totalSquads += squads.length;
-            } catch (e) {
-                console.error('Erro ao carregar squads da empresa', company.id, ':', e);
-            }
-        }
-        document.getElementById('totalSquads').textContent = totalSquads;
-        console.log(`✅ ${totalSquads} squads encontrados`);
+        // Estimativa: 1KB por registro (média)
+        const estimatedSizeKB = totalRecords * 1;
+        const sizeDisplay = estimatedSizeKB >= 1024 ? 
+            `${(estimatedSizeKB / 1024).toFixed(1)} MB` : 
+            `${estimatedSizeKB} KB`;
         
-        // Chapters
-        let totalChapters = 0;
-        for (const company of companies) {
-            try {
-                const chaptersRes = await fetchWithDevAuth(`${API_BASE}/dev/chapters/company/${company.id}`);
-                const chapters = await chaptersRes.json();
-                totalChapters += chapters.length;
-            } catch (e) {
-                console.error('Erro ao carregar chapters da empresa', company.id, ':', e);
-            }
-        }
-        document.getElementById('totalChapters').textContent = totalChapters;
-        console.log(`✅ ${totalChapters} chapters encontrados`);
+        document.getElementById('databaseSize').textContent = sizeDisplay;
+        document.getElementById('dbDetail').textContent = `~${totalRecords} registros`;
+        console.log(`✅ Tamanho estimado do banco: ${sizeDisplay}`);
+        
+        console.log('✅ Estatísticas carregadas com sucesso');
         
     } catch (error) {
         console.error('❌ Erro ao carregar estatísticas:', error);
+        // Exibir valores padrão em caso de erro
+        document.getElementById('totalCompanies').textContent = '-';
+        document.getElementById('totalDevelopers').textContent = '-';
+        document.getElementById('pendingRequests').textContent = '-';
+        document.getElementById('databaseSize').textContent = '- KB';
     }
 }
 
@@ -1367,6 +1377,125 @@ async function rejectRequest(requestId) {
     }
 }
 
+// ==================== FERRAMENTAS DE DEBUG ====================
+
+/**
+ * Exibe o conteúdo atual do localStorage e sessionStorage
+ */
+function refreshStorageDisplay() {
+    // LocalStorage
+    const localData = {};
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        let value = localStorage.getItem(key);
+        
+        // Tentar formatar JSON se possível
+        try {
+            const parsed = JSON.parse(value);
+            value = JSON.stringify(parsed, null, 2);
+        } catch (e) {
+            // Se não for JSON, mostrar como está
+        }
+        
+        localData[key] = value;
+    }
+    
+    const localStorageEl = document.getElementById('localStorageContent');
+    if (Object.keys(localData).length > 0) {
+        let output = '';
+        Object.entries(localData).forEach(([key, value]) => {
+            output += `${key}:\n${value}\n\n`;
+        });
+        localStorageEl.textContent = output;
+    } else {
+        localStorageEl.textContent = '(vazio)';
+        localStorageEl.style.color = '#9ca3af';
+    }
+    
+    // SessionStorage
+    const sessionData = {};
+    for (let i = 0; i < sessionStorage.length; i++) {
+        const key = sessionStorage.key(i);
+        let value = sessionStorage.getItem(key);
+        
+        try {
+            const parsed = JSON.parse(value);
+            value = JSON.stringify(parsed, null, 2);
+        } catch (e) {
+            // Se não for JSON, mostrar como está
+        }
+        
+        sessionData[key] = value;
+    }
+    
+    const sessionStorageEl = document.getElementById('sessionStorageContent');
+    if (Object.keys(sessionData).length > 0) {
+        let output = '';
+        Object.entries(sessionData).forEach(([key, value]) => {
+            output += `${key}:\n${value}\n\n`;
+        });
+        sessionStorageEl.textContent = output;
+    } else {
+        sessionStorageEl.textContent = '(vazio)';
+        sessionStorageEl.style.color = '#9ca3af';
+    }
+}
+
+/**
+ * Limpa TUDO do localStorage e sessionStorage
+ */
+function clearStorageAll() {
+    if (!confirm('⚠️ Isso vai limpar TODAS as sessões (normal + dev). Continuar?')) return;
+    
+    localStorage.clear();
+    sessionStorage.clear();
+    
+    alert('✅ Todos os dados de storage foram limpos!');
+    refreshStorageDisplay();
+}
+
+/**
+ * Limpa apenas dados de sessão normal (preserva dev)
+ */
+function clearStorageNormal() {
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!key.startsWith('dev_')) {
+            keys.push(key);
+        }
+    }
+    
+    keys.forEach(key => localStorage.removeItem(key));
+    
+    // Limpar dev_mode do sessionStorage (pode estar contaminando)
+    sessionStorage.removeItem('dev_mode');
+    
+    alert(`✅ ${keys.length} itens de sessão normal removidos. Modo dev preservado.`);
+    refreshStorageDisplay();
+}
+
+/**
+ * Limpa apenas dados de dev mode (preserva normal)
+ */
+function clearStorageDev() {
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('dev_')) {
+            keys.push(key);
+        }
+    }
+    
+    keys.forEach(key => localStorage.removeItem(key));
+    sessionStorage.removeItem('dev_mode');
+    
+    alert(`✅ ${keys.length} itens de modo dev removidos. Sessão normal preservada.`);
+    refreshStorageDisplay();
+}
+
+// ==================== EXPORTS ====================
+
 // Exportar funções para uso global
 window.showTab = showTab;
 window.openCompanyModal = openCompanyModal;
@@ -1389,4 +1518,9 @@ window.filterRequests = filterRequests;
 window.viewRequestDetails = viewRequestDetails;
 window.approveRequest = approveRequest;
 window.rejectRequest = rejectRequest;
+window.refreshStorageDisplay = refreshStorageDisplay;
+window.clearStorageAll = clearStorageAll;
+window.clearStorageNormal = clearStorageNormal;
+window.clearStorageDev = clearStorageDev;
+
 

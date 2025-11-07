@@ -1,65 +1,50 @@
-const API_BASE = 'http://localhost:3000/api';
-let currentCompany = null;
+// Variáveis de compatibilidade (usar getUserData() do dashboard-common.js)
 let currentUser = null;
+let currentCompany = null;
 let authToken = null;
+
+// Atualizar variáveis locais baseado em userData
+function updateLocalVariables() {
+    const userData = getUserData();
+    if (userData) {
+        currentUser = userData;
+        currentCompany = userData.company;
+        authToken = localStorage.getItem('token');
+        
+        console.log('✅ Variáveis locais atualizadas:', {
+            user: currentUser.name,
+            company: currentCompany.name,
+            nivel: currentUser.nivel
+        });
+    } else {
+        console.error('❌ Erro: userData não encontrado em updateLocalVariables');
+    }
+}
 
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
-    // O dev-mode-indicator.js já configurou o localStorage se veio de impersonation
-    checkAuth();
+    console.log('🔄 Iniciando dashboard de Presidentes...');
+    
+    // Inicializar com o arquivo comum
+    const userData = initDashboard(0); // Requer nível 0 (Presidentes)
+    
+    if (userData) {
+        console.log('✅ initDashboard retornou userData:', userData);
+        updateLocalVariables(); // Atualizar variáveis locais
+        
+        // Verificar se elementos existem
+        const userNameEl = document.getElementById('userName');
+        const companyNameEl = document.getElementById('companyName');
+        console.log('📍 Elementos DOM:', {
+            userName: userNameEl ? userNameEl.textContent : 'NÃO ENCONTRADO',
+            companyName: companyNameEl ? companyNameEl.textContent : 'NÃO ENCONTRADO'
+        });
+        
+        loadDashboardData();
+    } else {
+        console.error('❌ initDashboard retornou null');
+    }
 });
-
-// Verificar autenticação
-async function checkAuth() {
-    // Buscar dados do localStorage (configurado pelo dev-mode-indicator.js ou login normal)
-    authToken = localStorage.getItem('token');
-    const userDataString = localStorage.getItem('user');
-    const companyDataString = localStorage.getItem('company');
-    
-    if (!authToken || !userDataString || !companyDataString) {
-        alert('❌ Sessão inválida. Redirecionando para login...');
-        window.location.href = '/index.html';
-        return;
-    }
-    
-    try {
-        currentUser = JSON.parse(userDataString);
-        currentCompany = JSON.parse(companyDataString);
-        
-        console.log('✅ Usuário autenticado:', currentUser);
-        console.log('✅ Empresa:', currentCompany);
-        
-        // Verificar se é nível 0 (Presidente) ou modo explorador
-        if (currentUser.nivel !== 0 && !currentUser.isExplorer) {
-            alert('❌ Acesso negado. Apenas Presidentes (Nível 0) podem acessar este painel.');
-            window.location.href = '/index.html';
-            return;
-        }
-        
-        // Atualizar interface
-        document.getElementById('userName').textContent = currentUser.name;
-        document.getElementById('companyName').textContent = currentCompany.name;
-        
-        // Carregar dados
-        await loadDashboardData();
-        
-    } catch (error) {
-        console.error('❌ Erro ao processar autenticação:', error);
-        alert('Erro ao carregar dados da sessão');
-        window.location.href = '/index.html';
-    }
-}
-
-// Função auxiliar para fazer requisições autenticadas
-async function fetchWithAuth(url, options = {}) {
-    const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${authToken}`,
-        ...options.headers
-    };
-    
-    return fetch(url, { ...options, headers });
-}
 
 // Carregar todos os dados do dashboard
 async function loadDashboardData() {
@@ -98,9 +83,8 @@ async function loadKPIs() {
         const usersInSquads = new Set();
         for (const squad of squads) {
             try {
-                const response = await fetchWithAuth(`${API_BASE}/squads/${squad.id}/members`);
-                if (response.ok) {
-                    const members = await response.json();
+                const members = await fetchAPI(`/squads/${squad.id}/members`);
+                if (members && Array.isArray(members)) {
                     members.forEach(m => usersInSquads.add(m.user_id));
                 }
             } catch (error) {
@@ -164,13 +148,13 @@ async function loadSquads() {
     if (!container) return [];
     
     try {
-        const response = await fetchWithAuth(`${API_BASE}/squads/company/${currentCompany.id}`);
+        const squads = await fetchAPI(`/squads/company/${currentCompany.id}`);
         
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
+        if (!squads || !Array.isArray(squads)) {
+            console.warn('⚠️ Resposta de squads inválida');
+            container.innerHTML = '<p class="loading">Nenhum squad cadastrado. <a href="../Nivel01-AdministradoresGerais/squads.html">Criar primeiro squad</a></p>';
+            return [];
         }
-        
-        const squads = await response.json();
         
         console.log(`✅ ${squads.length} squads carregados`);
         
@@ -184,9 +168,8 @@ async function loadSquads() {
         // Carregar membros de cada squad para exibir contagem real
         for (const squad of squads.slice(0, 6)) {
             try {
-                const membersResponse = await fetchWithAuth(`${API_BASE}/squads/${squad.id}/members`);
-                const members = membersResponse.ok ? await membersResponse.json() : [];
-                squad.member_count = members.length;
+                const members = await fetchAPI(`/squads/${squad.id}/members`);
+                squad.member_count = (members && Array.isArray(members)) ? members.length : 0;
             } catch (error) {
                 squad.member_count = 0;
             }
@@ -225,13 +208,12 @@ async function loadSquads() {
 // Carregar usuários da empresa
 async function loadUsers() {
     try {
-        const response = await fetchWithAuth(`${API_BASE}/users/company/${currentCompany.id}`);
+        const users = await fetchAPI(`/users/company/${currentCompany.id}`);
         
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
+        if (!users || !Array.isArray(users)) {
+            console.warn('⚠️ Resposta de usuários inválida');
+            return [];
         }
-        
-        const users = await response.json();
         
         console.log(`✅ ${users.length} usuários carregados`);
         
@@ -256,13 +238,12 @@ async function loadUsers() {
 // Carregar chapters
 async function loadChapters() {
     try {
-        const response = await fetchWithAuth(`${API_BASE}/chapters/company/${currentCompany.id}`);
+        const chapters = await fetchAPI(`/chapters/company/${currentCompany.id}`);
         
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
+        if (!chapters || !Array.isArray(chapters)) {
+            console.warn('⚠️ Resposta de chapters inválida');
+            return [];
         }
-        
-        const chapters = await response.json();
         
         console.log(`✅ ${chapters.length} chapters carregados`);
         
@@ -281,18 +262,18 @@ async function loadSquadGoals() {
     
     try {
         // Buscar todos os squads
-        const squadsResponse = await fetchWithAuth(`${API_BASE}/squads/company/${currentCompany.id}`);
-        if (!squadsResponse.ok) throw new Error('Erro ao carregar squads');
+        const squads = await fetchAPI(`/squads/company/${currentCompany.id}`);
+        if (!squads || !Array.isArray(squads)) {
+            throw new Error('Erro ao carregar squads');
+        }
         
-        const squads = await squadsResponse.json();
         const allGoals = [];
         
         // Buscar goals de cada squad
         for (const squad of squads) {
             try {
-                const goalsResponse = await fetchWithAuth(`${API_BASE}/squads/${squad.id}/goals`);
-                if (goalsResponse.ok) {
-                    const goals = await goalsResponse.json();
+                const goals = await fetchAPI(`/squads/${squad.id}/goals`);
+                if (goals && Array.isArray(goals)) {
                     goals.forEach(goal => {
                         goal.squad_name = squad.name;
                         allGoals.push(goal);
@@ -357,13 +338,15 @@ async function loadUrgentApprovals() {
     if (!container) return;
     
     try {
-        const response = await fetchWithAuth(`${API_BASE}/approvals/company/${currentCompany.id}?status=pending`);
+        const approvals = await fetchAPI(`/approvals/company/${currentCompany.id}?status=pending`);
         
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
+        if (!approvals || !Array.isArray(approvals)) {
+            console.warn('⚠️ Resposta de aprovações inválida');
+            if (container) {
+                container.innerHTML = `<p class="loading" style="color: #10b981;">✅ Nenhuma aprovação crítica pendente</p>`;
+            }
+            return;
         }
-        
-        const approvals = await response.json();
         
         // Filtrar apenas as urgentes e de alta prioridade
         const urgentApprovals = approvals
@@ -438,7 +421,7 @@ async function generateExecutiveAlerts() {
             loadUsers(),
             loadSquads(),
             loadChapters(),
-            fetchWithAuth(`${API_BASE}/approvals/company/${currentCompany.id}`).then(r => r.ok ? r.json() : [])
+            fetchAPI(`/approvals/company/${currentCompany.id}`).catch(() => [])
         ]);
         
         // ALERTA 1: Squads sem membros
@@ -453,11 +436,11 @@ async function generateExecutiveAlerts() {
         }
         
         // ALERTA 2: Aprovações urgentes pendentes há muito tempo
-        const oldUrgentApprovals = approvals.filter(a => {
+        const oldUrgentApprovals = Array.isArray(approvals) ? approvals.filter(a => {
             if (a.status !== 'pending' || a.priority !== 'urgent') return false;
             const daysAgo = Math.floor((new Date() - new Date(a.created_at)) / (1000 * 60 * 60 * 24));
             return daysAgo >= 3;
-        });
+        }) : [];
         
         if (oldUrgentApprovals.length > 0) {
             alerts.push({
@@ -472,9 +455,8 @@ async function generateExecutiveAlerts() {
         const usersInSquads = new Set();
         for (const squad of squads) {
             try {
-                const response = await fetchWithAuth(`${API_BASE}/squads/${squad.id}/members`);
-                if (response.ok) {
-                    const members = await response.json();
+                const members = await fetchAPI(`/squads/${squad.id}/members`);
+                if (members && Array.isArray(members)) {
                     members.forEach(m => usersInSquads.add(m.user_id));
                 }
             } catch (error) {

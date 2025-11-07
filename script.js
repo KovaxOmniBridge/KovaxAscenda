@@ -14,6 +14,7 @@ let registrationData = {
 // Inicialização
 document.addEventListener('DOMContentLoaded', function() {
     loadCompanies();
+    setupLoginFormEnhancements();
 });
 
 // Função para carregar empresas no select
@@ -28,7 +29,9 @@ async function loadCompanies() {
         companies = await response.json();
         
         const select = document.getElementById('companySelect');
-        select.innerHTML = '<option value="">-- Escolha uma empresa --</option>';
+        if (!select) return; // Proteção se o elemento não existir
+        
+        select.innerHTML = '<option value="">-- Selecione sua empresa --</option>';
         
         companies.forEach(company => {
             const option = document.createElement('option');
@@ -36,10 +39,71 @@ async function loadCompanies() {
             option.textContent = company.name;
             select.appendChild(option);
         });
+        
+        console.log(`✅ ${companies.length} empresas carregadas com sucesso`);
     } catch (error) {
-        console.error('Erro ao carregar empresas:', error);
-        showMessage('Erro ao conectar com o servidor. Verifique se o servidor está rodando.', 'error');
+        console.error('❌ Erro ao carregar empresas:', error);
+        showMessage('⚠️ Não foi possível conectar ao servidor. Verifique se o servidor está rodando.', 'error');
     }
+}
+
+// Melhorias no formulário de login
+function setupLoginFormEnhancements() {
+    const accessKeyInput = document.getElementById('accessKey');
+    const passwordInput = document.getElementById('password');
+    const companySelect = document.getElementById('companySelect');
+    
+    if (!accessKeyInput || !passwordInput || !companySelect) return;
+    
+    // Formatar chave de acesso automaticamente (maiúsculas)
+    accessKeyInput.addEventListener('input', function(e) {
+        e.target.value = e.target.value.toUpperCase();
+    });
+    
+    // Validação em tempo real
+    accessKeyInput.addEventListener('blur', function(e) {
+        const value = e.target.value.trim();
+        if (value && !isValidAccessKey(value)) {
+            showFieldError(accessKeyInput, 'Formato inválido. Exemplo: TS-0001');
+        } else {
+            clearFieldError(accessKeyInput);
+        }
+    });
+    
+    // Limpar erros ao focar
+    [accessKeyInput, passwordInput, companySelect].forEach(field => {
+        field.addEventListener('focus', function() {
+            clearFieldError(field);
+        });
+    });
+}
+
+// Validar formato de chave de acesso
+function isValidAccessKey(key) {
+    // Aceita formatos: XX-0000 ou similar
+    return /^[A-Z]{2,3}-\d{4}$/.test(key);
+}
+
+// Mostrar erro em campo específico
+function showFieldError(field, message) {
+    clearFieldError(field);
+    
+    field.style.borderColor = 'var(--error)';
+    const errorDiv = document.createElement('small');
+    errorDiv.className = 'field-error';
+    errorDiv.style.color = 'var(--error)';
+    errorDiv.style.fontSize = '0.813rem';
+    errorDiv.style.marginTop = '0.25rem';
+    errorDiv.textContent = message;
+    
+    field.parentElement.appendChild(errorDiv);
+}
+
+// Limpar erro de campo
+function clearFieldError(field) {
+    field.style.borderColor = '';
+    const error = field.parentElement.querySelector('.field-error');
+    if (error) error.remove();
 }
 
 // Navegação entre seções
@@ -469,7 +533,7 @@ async function handleLogin(event) {
     event.preventDefault();
     
     const companyId = parseInt(document.getElementById('companySelect').value);
-    const accessKey = document.getElementById('accessKey').value;
+    const accessKey = document.getElementById('accessKey').value.trim();
     const password = document.getElementById('password').value;
     
     // Validação
@@ -481,6 +545,12 @@ async function handleLogin(event) {
         showMessage('Por favor, preencha todos os campos.', 'error');
         return;
     }
+    
+    // Desabilitar botão durante o processamento
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = '🔄 Autenticando...';
     
     try {
         const response = await fetch(`${API_URL}/auth/login`, {
@@ -498,40 +568,88 @@ async function handleLogin(event) {
         const data = await response.json();
         
         if (!response.ok) {
-            showMessage(data.error || 'Erro ao fazer login', 'error');
+            showMessage(data.error || 'Credenciais inválidas', 'error');
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
             return;
         }
         
         // Login bem-sucedido
-        showMessage(`Bem-vindo, ${data.user.name}! Redirecionando...`, 'success');
+        console.log('✅ Login bem-sucedido:', data.user);
+        
+        // ============================================================================
+        // PROTEÇÃO: Limpar qualquer resquício de dev_mode de outras abas
+        // Isso garante que login normal NUNCA seja confundido com dev mode
+        // ============================================================================
+        sessionStorage.removeItem('dev_mode');  // Limpar desta aba
+        // NÃO limpar localStorage.dev_mode pois pode ter outra aba dev ativa
+        
+        console.log('🔒 Login normal: garantindo que dev_mode não está ativo nesta aba');
         
         // Salvar token e dados do usuário
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
+        // Usar SessionManager se disponível, senão fallback para localStorage
+        if (window.SessionManager) {
+            window.SessionManager.setSession('token', data.token, true);
+            window.SessionManager.setSession('userData', JSON.stringify(data.user), true);
+            console.log('💾 Sessão salva via SessionManager (Tab ID:', window.SessionManager.getTabId() + ')');
+        } else {
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('userData', JSON.stringify(data.user));
+            console.log('💾 Sessão salva via localStorage (modo compatibilidade)');
+        }
         
-        // Redirecionar para o dashboard apropriado baseado no nível
-        setTimeout(() => {
-            const nivel = data.user.nivel || 0;
+        // Verificar se o usuário tem múltiplos papéis
+        const hasMultipleRoles = data.user.can_switch_roles && data.user.additional_roles;
+        
+        if (hasMultipleRoles) {
+            // Salvar papel selecionado como o principal
+            if (window.SessionManager) {
+                window.SessionManager.setSession('selectedRole', data.user.nivel.toString(), true);
+            } else {
+                localStorage.setItem('selectedRole', data.user.nivel.toString());
+            }
+            showMessage(`Bem-vindo, ${data.user.name}! Você tem acesso a múltiplos níveis.`, 'success');
             
-            // Mapa de redirecionamento por nível
-            const dashboards = {
-                0: 'Nivel01-AdministradoresGerais/dashboard.html',
-                1: 'Nivel01-AdministradoresGerais/dashboard.html',
-                2: 'Nivel02-DiretoresExecutivos/dashboard.html',
-                3: 'Nivel03-Gerentes/dashboard.html',
-                4: 'Nivel04-Coordenadores/dashboard.html',
-                5: 'Nivel05-Supervisores/dashboard.html',
-                6: 'Nivel06-Analistas/dashboard.html',
-                7: 'Nivel07-Assistentes/dashboard.html'
-            };
+            // Redirecionar para seletor de papéis
+            setTimeout(() => {
+                window.location.href = '/shared/role-switcher.html';
+            }, 1500);
+        } else {
+            // Usuário com papel único - redirecionar direto para dashboard
+            if (window.SessionManager) {
+                window.SessionManager.setSession('selectedRole', data.user.nivel.toString(), true);
+            } else {
+                localStorage.setItem('selectedRole', data.user.nivel.toString());
+            }
+            showMessage(`Bem-vindo, ${data.user.name}!`, 'success');
             
-            const dashboardUrl = dashboards[nivel] || 'Nivel01-AdministradoresGerais/dashboard.html';
-            window.location.href = dashboardUrl;
-        }, 1500);
+            setTimeout(() => {
+                const dashboardUrl = getDashboardUrl(data.user.nivel);
+                window.location.href = dashboardUrl;
+            }, 1200);
+        }
     } catch (error) {
-        console.error('Erro ao fazer login:', error);
-        showMessage('Erro ao conectar com o servidor.', 'error');
+        console.error('❌ Erro ao fazer login:', error);
+        showMessage('Erro ao conectar com o servidor. Verifique sua conexão.', 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
     }
+}
+
+// Função auxiliar para obter URL do dashboard baseado no nível
+function getDashboardUrl(nivel) {
+    const dashboards = {
+        0: '/Nivel00-Presidentes/dashboard-presidentes.html',
+        1: '/Nivel01-AdministradoresGerais/dashboard-admin.html',
+        2: '/Nivel02-DiretoresExecutivos/dashboard-diretores.html',
+        3: '/Nivel03-Gerentes/dashboard-gerentes.html',
+        4: '/Nivel04-Coordenadores/dashboard-coordenadores.html',
+        5: '/Nivel05-Supervisores/dashboard-supervisores.html',
+        6: '/Nivel06-Especialistas/dashboard-especialistas.html',
+        7: '/Nivel07-Operacional/dashboard-operacional.html'
+    };
+    
+    return dashboards[nivel] || '/Nivel01-AdministradoresGerais/dashboard-admin.html';
 }
 
 // Função de Cadastro de Empresa (agora envia pedido)

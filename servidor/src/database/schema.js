@@ -47,6 +47,8 @@ function initializeSchema() {
                         is_primary INTEGER DEFAULT 0,
                         nivel INTEGER DEFAULT 1,
                         superior_id INTEGER,
+                        additional_roles TEXT,
+                        can_switch_roles INTEGER DEFAULT 0,
                         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                         FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE,

@@ -44,14 +44,38 @@
         }
     }
     
-    // Verificar se está em modo dev (após configuração ou já configurado)
-    const devMode = localStorage.getItem('devMode') === 'true';
-    const impersonatedBy = localStorage.getItem('impersonatedBy');
-    const user = localStorage.getItem('user');
+    // ============================================================================
+    // VERIFICAÇÃO CRÍTICA: Detectar se ESTA ABA está em modo desenvolvedor
+    // ============================================================================
+    // REGRA 1: Deve ter sessionStorage.dev_mode = 'true' (tab-specific)
+    // REGRA 2: NÃO pode ter SessionManager com token normal ativo
+    // REGRA 3: Deve ter dados de impersonation válidos
     
-    if (!devMode && !impersonatedBy) {
-        return; // Não está em modo dev, não fazer nada
+    const isThisTabDevMode = sessionStorage.getItem('dev_mode') === 'true';
+    const hasDevToken = !!localStorage.getItem('dev_token');
+    const hasDevUserData = !!localStorage.getItem('dev_userData');
+    const hasNormalSession = window.SessionManager && window.SessionManager.getSession('token');
+    
+    // PROTEÇÃO 1: Se não tem dev_mode no sessionStorage, NÃO é dev mode
+    if (!isThisTabDevMode) {
+        console.log('ℹ️  Dev Mode Indicator: Sessão normal detectada (sem dev_mode em sessionStorage)');
+        return;
     }
+    
+    // PROTEÇÃO 2: Se tem SessionManager ativo, é login normal (mesmo com dev_mode no localStorage de outra aba)
+    if (hasNormalSession) {
+        console.log('ℹ️  Dev Mode Indicator: Login normal detectado (SessionManager ativo)');
+        return;
+    }
+    
+    // PROTEÇÃO 3: Validar dados de impersonation
+    if (!hasDevToken || !hasDevUserData) {
+        console.warn('⚠️  Dev Mode Indicator: dev_mode ativo mas sem dados válidos. Limpando...');
+        sessionStorage.removeItem('dev_mode');
+        return;
+    }
+    
+    console.log('✅ Dev Mode Indicator: Modo desenvolvedor confirmado (exibindo banner)');
     
     // Aguardar DOM carregar
     if (document.readyState === 'loading') {
@@ -67,7 +91,8 @@
     }
     
     function createDevBanner() {
-        const userData = user ? JSON.parse(user) : null;
+        // Obter userData do namespace correto
+        const userData = window.getDevUserData ? window.getDevUserData() : null;
         
         const banner = document.createElement('div');
         banner.id = 'dev-mode-banner';
@@ -77,8 +102,9 @@
                     <span class="dev-icon">🛠️</span>
                     <div class="dev-info">
                         <strong>MODO DESENVOLVEDOR</strong>
-                        ${userData ? `<span class="dev-user">Visualizando como: <strong>${userData.name}</strong> (Nível ${userData.nivel})</span>` : ''}
+                        ${userData ? `<span class="dev-user">Visualizando como: <strong>${userData.name}</strong> (Nível ${userData.nivel}) · ${userData.company.name}</span>` : ''}
                         ${impersonatedBy ? `<span class="dev-impersonator">Por: ${impersonatedBy}</span>` : ''}
+                        <span class="dev-namespace">🔒 Sessão isolada (namespace: dev_*)</span>
                     </div>
                 </div>
                 <div class="dev-banner-right">
@@ -288,16 +314,21 @@
             },
             
             exitDevMode: function() {
-                if (confirm('Sair do modo desenvolvedor? A sessão será encerrada.')) {
-                    localStorage.removeItem('devMode');
-                    localStorage.removeItem('impersonatedBy');
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('user');
-                    localStorage.removeItem('company');
-                    window.close();
-                    setTimeout(() => {
-                        window.location.href = '/index.html';
-                    }, 100);
+                if (confirm('Sair do modo desenvolvedor e retornar à área de desenvolvimento?')) {
+                    // Limpar APENAS namespace de desenvolvedor
+                    sessionStorage.removeItem('dev_mode');  // ← Tab-specific (CRÍTICO!)
+                    localStorage.removeItem('dev_mode');
+                    localStorage.removeItem('dev_impersonatedBy');
+                    localStorage.removeItem('dev_token');
+                    localStorage.removeItem('dev_userData');
+                    localStorage.removeItem('dev_selectedRole');
+                    localStorage.removeItem('dev_sessionTimestamp');
+                    
+                    console.log('✅ Sessão de desenvolvedor encerrada');
+                    console.log('🔙 Retornando à área do desenvolvedor...');
+                    
+                    // Redirecionar para área do desenvolvedor
+                    window.location.href = '/desenvolvedor/dev-dashboard.html';
                 }
             }
         };

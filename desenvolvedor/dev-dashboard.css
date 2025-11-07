@@ -94,6 +94,14 @@ body {
 .stat-info p {
     color: #6c757d;
     font-size: 0.9rem;
+    margin: 0.25rem 0;
+}
+
+.stat-detail {
+    display: block;
+    font-size: 0.75rem;
+    color: #9ca3af;
+    margin-top: 0.25rem;
 }
 
 /* Main Content */
@@ -1007,5 +1015,55 @@ tr:hover {
 .request-actions button {
     flex: 1;
     min-width: 120px;
+}
+
+/* ==================== DEBUG TOOLS ==================== */
+
+.debug-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.debug-section h3 {
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.debug-section p {
+    color: #718096;
+    margin-bottom: 1rem;
+}
+
+.storage-box h4 {
+    color: #4a5568;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.storage-content {
+    background: #f9fafb !important;
+    padding: 15px !important;
+    border-radius: 8px !important;
+    max-height: 300px !important;
+    overflow-y: auto !important;
+    font-family: 'Courier New', monospace !important;
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+    white-space: pre-wrap !important;
+    word-break: break-all !important;
+    border: 1px solid #e2e8f0;
+    color: #2d3748;
+}
+
+.storage-content:empty::before {
+    content: '(vazio)';
+    color: #9ca3af;
+    font-style: italic;
 }
 
