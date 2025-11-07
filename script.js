@@ -546,6 +546,39 @@ async function handleLogin(event) {
         return;
     }
     
+    // ============================================================================
+    // LIMPEZA PREVENTIVA: Remover dados antigos antes de novo login
+    // ============================================================================
+    console.log('🧹 Limpando dados de sessões anteriores...');
+    
+    // Limpar sessionStorage completamente
+    sessionStorage.clear();
+    
+    // Limpar dados de usuário normal antigos do localStorage
+    localStorage.removeItem('token');
+    localStorage.removeItem('userData');
+    localStorage.removeItem('selectedRole');
+    
+    // Limpar dados de dev mode antigos (NÃO limpar devToken/devUser para não deslogar desenvolvedor)
+    localStorage.removeItem('dev_token');
+    localStorage.removeItem('dev_userData');
+    localStorage.removeItem('dev_selectedRole');
+    localStorage.removeItem('dev_mode');
+    localStorage.removeItem('dev_impersonatedBy');
+    localStorage.removeItem('dev_sessionTimestamp');
+    
+    // Limpar prefixos de abas antigas (SessionManager)
+    const keysToRemove = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('tab_') && !key.includes('devToken') && !key.includes('devUser')) {
+            keysToRemove.push(key);
+        }
+    }
+    keysToRemove.forEach(key => localStorage.removeItem(key));
+    
+    console.log('✅ Limpeza concluída');
+    
     // Desabilitar botão durante o processamento
     const submitBtn = event.target.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;

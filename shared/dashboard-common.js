@@ -385,6 +385,7 @@ function navigateTo(url) {
 
 /**
  * Realiza logout do usuário
+ * LIMPA COMPLETAMENTE o localStorage para evitar acúmulo de dados
  * Se estiver em modo dev, limpa apenas sessão dev e volta para painel
  * Se usar SessionManager, limpa apenas sessão da aba atual
  */
@@ -403,6 +404,7 @@ function logout() {
             localStorage.removeItem('dev_sessionTimestamp');
             
             console.log('✅ Logout do modo desenvolvedor realizado');
+            console.log('🧹 Dados de impersonação limpos');
             console.log('ℹ️  Sessão normal do usuário (se existir) foi preservada');
             
             // Redirecionar para painel dev
@@ -415,14 +417,21 @@ function logout() {
         
         const message = hasMultipleSessions 
             ? `Deseja sair desta sessão?\n\n(${sessions.length - 1} outra(s) sessão(ões) ativa(s) serão preservadas)`
-            : 'Deseja realmente sair?';
+            : 'Deseja realmente sair?\n\nTodos os dados locais serão removidos.';
         
         if (confirm(message)) {
             // Limpar apenas sessão desta aba
             window.SessionManager.clearSession();
             
             console.log('✅ Logout realizado (sessão da aba)');
-            if (hasMultipleSessions) {
+            
+            // Se for a última sessão, limpar TUDO do localStorage
+            if (!hasMultipleSessions) {
+                console.log('🧹 Limpando localStorage completamente...');
+                localStorage.clear();
+                sessionStorage.clear();
+                console.log('✅ Todos os dados locais foram removidos');
+            } else {
                 console.log(`ℹ️  ${sessions.length - 1} outra(s) sessão(ões) preservada(s)`);
             }
             
@@ -431,13 +440,15 @@ function logout() {
         }
     } else {
         // Fallback: modo tradicional
-        if (confirm('Deseja realmente sair?')) {
-            // Limpar dados de autenticação normal
-            localStorage.removeItem('token');
-            localStorage.removeItem('userData');
-            localStorage.removeItem('selectedRole');
+        if (confirm('Deseja realmente sair?\n\nTodos os dados locais serão removidos.')) {
+            console.log('🧹 Limpando localStorage completamente...');
+            
+            // Limpar TUDO do localStorage e sessionStorage
+            localStorage.clear();
+            sessionStorage.clear();
             
             console.log('✅ Logout realizado com sucesso');
+            console.log('✅ Todos os dados locais foram removidos');
             
             // Redirecionar para página inicial
             window.location.href = '/index.html';

@@ -128,9 +128,25 @@ function getRoleLabel(role) {
 }
 
 function logout() {
-    if (confirm('Deseja realmente sair do painel de desenvolvedor?')) {
+    if (confirm('Deseja realmente sair do painel de desenvolvedor?\n\nTodos os dados da sessão serão removidos.')) {
+        console.log('🧹 Limpando dados de desenvolvedor...');
+        
+        // Limpar dados específicos de desenvolvedor
         localStorage.removeItem('devToken');
         localStorage.removeItem('devUser');
+        
+        // Limpar qualquer resíduo de sessões dev (impersonation)
+        localStorage.removeItem('dev_token');
+        localStorage.removeItem('dev_userData');
+        localStorage.removeItem('dev_selectedRole');
+        localStorage.removeItem('dev_mode');
+        localStorage.removeItem('dev_impersonatedBy');
+        localStorage.removeItem('dev_sessionTimestamp');
+        sessionStorage.removeItem('dev_mode');
+        
+        console.log('✅ Logout realizado com sucesso');
+        console.log('✅ Todos os dados de desenvolvedor foram removidos');
+        
         window.location.href = 'dev-login.html';
     }
 }
@@ -174,22 +190,35 @@ async function loadStats() {
         
         // 1. Total de Empresas Cadastradas
         const companiesRes = await fetchWithDevAuth(`${API_BASE}/dev/companies`);
+        if (!companiesRes.ok) throw new Error(`Erro ao carregar empresas: ${companiesRes.status}`);
         const companies = await companiesRes.json();
         document.getElementById('totalCompanies').textContent = companies.length;
         document.getElementById('companiesDetail').textContent = companies.length === 1 ? '1 empresa ativa' : `${companies.length} empresas ativas`;
         console.log(`✅ ${companies.length} empresas encontradas`);
         
         // 2. Total de Desenvolvedores
-        const devsRes = await fetchWithDevAuth(`${API_BASE}/dev/developers`);
+        const devsRes = await fetchWithDevAuth(`${API_BASE}/dev/auth/users`);
+        if (!devsRes.ok) throw new Error(`Erro ao carregar desenvolvedores: ${devsRes.status}`);
         const developers = await devsRes.json();
         document.getElementById('totalDevelopers').textContent = developers.length;
         document.getElementById('developersDetail').textContent = developers.length === 1 ? '1 desenvolvedor cadastrado' : `${developers.length} desenvolvedores cadastrados`;
         console.log(`✅ ${developers.length} desenvolvedores encontrados`);
         
         // 3. Pedidos Pendentes
-        const requestsRes = await fetchWithDevAuth(`${API_BASE}/dev/company-requests?status=pending`);
-        const pendingRequests = await requestsRes.json();
-        const pendingCount = Array.isArray(pendingRequests) ? pendingRequests.length : 0;
+        let pendingCount = 0;
+        try {
+            // Rota pública (não precisa de autenticação dev)
+            const requestsRes = await fetch(`${API_BASE}/company-requests?status=pending`);
+            if (requestsRes.ok) {
+                const pendingRequests = await requestsRes.json();
+                pendingCount = Array.isArray(pendingRequests) ? pendingRequests.length : 0;
+            } else {
+                console.warn('⚠️ Não foi possível carregar pedidos pendentes');
+            }
+        } catch (e) {
+            console.warn('⚠️ Erro ao carregar pedidos:', e.message);
+        }
+        
         document.getElementById('pendingRequests').textContent = pendingCount;
         document.getElementById('requestsDetail').textContent = pendingCount === 0 ? 'Nenhum pendente' : 
             pendingCount === 1 ? '1 aguardando análise' : `${pendingCount} aguardando análise`;
@@ -197,19 +226,27 @@ async function loadStats() {
         
         // 4. Tamanho do Banco de Dados (estimativa)
         // Como SQLite não tem API direta via HTTP, vamos estimar baseado nos dados
-        let totalRecords = companies.length + developers.length;
+        let totalRecords = companies.length + developers.length + pendingCount;
         
         // Estimar usuários (opcional - pode ser pesado)
+        let userCount = 0;
         try {
-            let userCount = 0;
-            for (const company of companies.slice(0, 5)) { // Apenas 5 primeiras para performance
-                const usersRes = await fetchWithDevAuth(`${API_BASE}/dev/users/company/${company.id}`);
-                const users = await usersRes.json();
-                userCount += users.length;
+            // Apenas 3 primeiras empresas para não sobrecarregar
+            for (const company of companies.slice(0, 3)) {
+                try {
+                    const usersRes = await fetchWithDevAuth(`${API_BASE}/dev/users/company/${company.id}`);
+                    if (usersRes.ok) {
+                        const users = await usersRes.json();
+                        userCount += users.length;
+                    }
+                } catch (e) {
+                    console.warn(`Não foi possível contar usuários da empresa ${company.id}:`, e.message);
+                }
             }
             totalRecords += userCount;
+            console.log(`📊 Usuários contados (amostra): ${userCount}`);
         } catch (e) {
-            console.warn('Não foi possível contar usuários:', e);
+            console.warn('⚠️ Erro ao contar usuários:', e.message);
         }
         
         // Estimativa: 1KB por registro (média)

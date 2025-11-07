@@ -45,8 +45,42 @@
     window.addEventListener('beforeunload', function() {
         const tabs = JSON.parse(localStorage.getItem(activeTabsKey) || '[]');
         const filtered = tabs.filter(id => id !== tabId);
-        localStorage.setItem(activeTabsKey, JSON.stringify(filtered));
-        console.log('👋 Aba fechada. ID:', tabId);
+        
+        console.log('👋 Aba fechando. ID:', tabId);
+        
+        // Se for a última aba, limpar localStorage completamente
+        if (filtered.length === 0) {
+            console.log('🧹 Última aba fechando - Limpando localStorage...');
+            
+            // Preservar apenas dados críticos se necessário
+            const devToken = localStorage.getItem('devToken');
+            const devUser = localStorage.getItem('devUser');
+            
+            // Limpar tudo
+            localStorage.clear();
+            
+            // Restaurar dados de dev se existirem (para não deslogar desenvolvedor)
+            if (devToken) {
+                localStorage.setItem('devToken', devToken);
+                localStorage.setItem('devUser', devUser);
+                console.log('ℹ️  Sessão de desenvolvedor preservada');
+            }
+            
+            console.log('✅ localStorage limpo');
+        } else {
+            // Limpar apenas dados desta aba
+            const keysToRemove = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith(`${tabId}_`)) {
+                    keysToRemove.push(key);
+                }
+            }
+            keysToRemove.forEach(key => localStorage.removeItem(key));
+            
+            localStorage.setItem(activeTabsKey, JSON.stringify(filtered));
+            console.log(`� ${filtered.length} aba(s) ainda ativa(s)`);
+        }
     });
     
     /**

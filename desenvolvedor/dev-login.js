@@ -36,6 +36,26 @@ async function handleLogin(event) {
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
     
+    // ============================================================================
+    // LIMPEZA: Remover dados antigos de desenvolvedor antes de novo login
+    // ============================================================================
+    console.log('🧹 Limpando dados de sessões dev anteriores...');
+    
+    // Limpar tokens antigos
+    localStorage.removeItem('devToken');
+    localStorage.removeItem('devUser');
+    
+    // Limpar dados de impersonation antigos
+    localStorage.removeItem('dev_token');
+    localStorage.removeItem('dev_userData');
+    localStorage.removeItem('dev_selectedRole');
+    localStorage.removeItem('dev_mode');
+    localStorage.removeItem('dev_impersonatedBy');
+    localStorage.removeItem('dev_sessionTimestamp');
+    sessionStorage.removeItem('dev_mode');
+    
+    console.log('✅ Limpeza concluída');
+    
     const submitBtn = event.target.querySelector('button[type="submit"]');
     submitBtn.disabled = true;
     submitBtn.textContent = '🔄 Autenticando...';
