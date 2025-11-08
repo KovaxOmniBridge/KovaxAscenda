@@ -4,69 +4,28 @@ let currentUser = null;
 let allApprovals = [];
 let currentApprovalId = null;
 
-// Inicialização
-document.addEventListener('DOMContentLoaded', () => {
-    loadUserData();
-    loadCompanyData();
-    loadApprovals();
-});
+// Aguardar CSS carregar antes de inicializar
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApprovalsDashboard);
+} else {
+    initApprovalsDashboard();
+}
 
-// ==================== AUTENTICAÇÃO ====================
-
-async function loadUserData() {
-    const companyId = localStorage.getItem('companyId');
-    const userId = localStorage.getItem('userId');
-    const devToken = localStorage.getItem('devToken');
-    
-    if (devToken) {
-        document.getElementById('userName').textContent = 'Desenvolvedor (God Mode)';
-        return;
-    }
-    
-    if (!companyId || !userId) {
-        alert('❌ Sessão inválida. Redirecionando para login...');
-        window.location.href = '/index.html';
-        return;
-    }
-
-    try {
-        const response = await fetch(`${API_BASE}/users/${userId}`);
-        if (response.ok) {
-            currentUser = await response.json();
-            document.getElementById('userName').textContent = currentUser.name;
+function initApprovalsDashboard() {
+    // Aguardar CSS aplicar
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            const userData = initDashboard(0); // Requer nível 0 (Presidentes)
             
-            if (currentUser.hierarchical_level !== 0) {
-                alert('❌ Acesso negado. Apenas Presidentes podem acessar este painel.');
-                window.location.href = '/index.html';
+            if (userData) {
+                currentUser = userData;
+                currentCompany = userData.company;
+                loadApprovals();
+            } else {
+                console.error('❌ Falha ao inicializar painel de aprovações');
             }
-        }
-    } catch (error) {
-        console.error('Erro ao carregar usuário:', error);
-    }
-}
-
-async function loadCompanyData() {
-    const companyId = localStorage.getItem('companyId');
-    
-    if (!companyId) {
-        document.getElementById('companyName').textContent = 'Empresa não definida';
-        return;
-    }
-    
-    try {
-        const response = await fetch(`${API_BASE}/companies/${companyId}`);
-        if (response.ok) {
-            currentCompany = await response.json();
-            document.getElementById('companyName').textContent = currentCompany.name;
-        }
-    } catch (error) {
-        console.error('Erro ao carregar empresa:', error);
-    }
-}
-
-function logout() {
-    localStorage.clear();
-    window.location.href = '/index.html';
+        }, 50);
+    });
 }
 
 // ==================== CARREGAR APROVAÇÕES ====================
@@ -91,7 +50,6 @@ async function loadApprovals() {
         
         if (response.ok) {
             allApprovals = await response.json();
-            console.log(`✅ ${allApprovals.length} aprovações carregadas`);
         } else {
             throw new Error(`HTTP ${response.status}`);
         }

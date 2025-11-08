@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport"="width=device-width, initial-scale=1.0">
     <title>Relatórios Executivos - Ascenda Flex</title>
-    <link rel="stylesheet" href="relatorios.css">
+    <link rel="stylesheet" href="styles/relatorios.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -241,8 +241,13 @@
         </section>
     </div>
 
-    <!-- Dev Mode Indicator -->
+    <!-- Scripts Compartilhados -->
+    <script src="../shared/session-manager.js"></script>
+    <script src="../shared/dev-session-handler.js"></script>
+    <script src="../shared/dashboard-common.js"></script>
     <script src="../shared/dev-mode-indicator.js"></script>
-    <script src="relatorios.js"></script>
+    
+    <!-- Script específico da página -->
+    <script src="scripts/relatorios.js"></script>
 </body>
 </html>

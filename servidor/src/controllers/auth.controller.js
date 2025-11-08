@@ -14,7 +14,14 @@ const db = require('../config/database');
 const login = (req, res) => {
     const { companyId, accessKey, password } = req.body;
 
+    console.log('🔐 Tentativa de login:', {
+        companyId,
+        accessKey,
+        hasPassword: !!password
+    });
+
     if (!companyId || !accessKey || !password) {
+        console.log('❌ Dados incompletos');
         return res.status(400).json({ error: 'Dados incompletos' });
     }
 
@@ -26,20 +33,26 @@ const login = (req, res) => {
         WHERE u.company_id = ? AND u.access_key = ?
     `, [companyId, accessKey], (err, user) => {
         if (err) {
-            console.error('Erro ao buscar usuário:', err);
+            console.error('❌ Erro ao buscar usuário:', err);
             return res.status(500).json({ error: 'Erro ao processar login' });
         }
 
         if (!user) {
+            console.log('❌ Usuário não encontrado:', { companyId, accessKey });
             return res.status(401).json({ error: 'Chave de acesso ou senha incorretos' });
         }
+
+        console.log('✅ Usuário encontrado:', user.name, `(${user.access_key})`);
 
         // Verificar senha com bcrypt
         const isValidPassword = bcrypt.compareSync(password, user.password);
         
         if (!isValidPassword) {
+            console.log('❌ Senha incorreta para usuário:', user.access_key);
             return res.status(401).json({ error: 'Chave de acesso ou senha incorretos' });
         }
+
+        console.log('✅ Senha válida, gerando token...');
 
         // Parsear additional_roles se existir (JSON string → Array)
         let additionalRoles = null;

@@ -18,15 +18,26 @@ const app = express();
 // CORS: Permite requisições de qualquer origem (desenvolvimento)
 app.use(cors());
 
-// Body Parser: Permite receber JSON nas requisições
-app.use(express.json());
+// Body Parser: Permite receber JSON nas requisições com charset UTF-8
+app.use(express.json({ charset: 'utf-8' }));
 
 // Static Files: Serve arquivos HTML/CSS/JS da raiz do projeto (pasta pai)
+// IMPORTANTE: Deve vir ANTES do middleware de JSON para não interferir nos arquivos estáticos
 app.use(express.static(path.join(__dirname, '..', '..')));
 
 // Logger: Log simples de todas as requisições para debug
 app.use((req, res, next) => {
     console.log(`${req.method} ${req.path}`);
+    next();
+});
+
+// Middleware para garantir UTF-8 em respostas JSON (apenas para rotas /api)
+app.use('/api', (req, res, next) => {
+    const originalJson = res.json;
+    res.json = function(data) {
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        return originalJson.call(this, data);
+    };
     next();
 });
 

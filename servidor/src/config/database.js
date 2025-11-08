@@ -21,4 +21,7 @@ const db = new sqlite3.Database(DB_PATH, (err) => {
 // Habilitar foreign keys
 db.run('PRAGMA foreign_keys = ON');
 
+// Garantir encoding UTF-8
+db.run('PRAGMA encoding = "UTF-8"');
+
 module.exports = db;

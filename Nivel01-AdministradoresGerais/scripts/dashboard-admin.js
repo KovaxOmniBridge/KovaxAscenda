@@ -1,31 +1,36 @@
 // ==================== INICIALIZAÇÃO ====================
-console.log('🚀 Iniciando dashboard-admin.js');
-
 let currentUser = null;
 let allUsers = [];
 let allSquads = [];
 let allChapters = [];
 let allCountries = [];
 
-document.addEventListener('DOMContentLoaded', async function() {
-    console.log('📄 DOM carregado - Iniciando dashboard Nível 01');
-    
-    // Inicializar dashboard usando dashboard-common.js
-    currentUser = initDashboard(1); // Requer nível 1 (Administradores)
-    
-    if (currentUser) {
-        console.log('✅ Usuário autenticado:', currentUser);
-        await loadDashboardData();
-    } else {
-        console.error('❌ Falha na inicialização do dashboard');
-    }
-});
+// Aguardar CSS carregar antes de inicializar (evita flash de conteúdo sem estilo)
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAdminDashboard);
+} else {
+    initAdminDashboard();
+}
+
+function initAdminDashboard() {
+    // Aguardar um frame para garantir que CSS foi aplicado
+    requestAnimationFrame(() => {
+        setTimeout(async () => {
+            // Inicializar dashboard usando dashboard-common.js
+            currentUser = initDashboard(1); // Requer nível 1 (Administradores)
+            
+            if (currentUser) {
+                await loadDashboardData();
+            } else {
+                console.error('❌ Falha na inicialização do dashboard');
+            }
+        }, 50);
+    });
+}
 
 
 // ==================== CARREGAR DADOS DO DASHBOARD ====================
 async function loadDashboardData() {
-    console.log('📊 Carregando dados do dashboard...');
-    
     try {
         // Carregar dados em paralelo
         await Promise.all([
@@ -38,8 +43,6 @@ async function loadDashboardData() {
         // Atualizar estatísticas
         updateKPIs();
         updateUsersByLevel();
-        
-        console.log('✅ Dashboard carregado com sucesso');
     } catch (error) {
         console.error('❌ Erro ao carregar dashboard:', error);
         showToast('Erro ao carregar dados do dashboard', 'error');
@@ -49,15 +52,12 @@ async function loadDashboardData() {
 // ==================== CARREGAR USUÁRIOS ====================
 async function loadUsers() {
     try {
-        console.log('👥 Carregando usuários...');
         const response = await fetchAPI('/users');
         
         if (response && Array.isArray(response)) {
             allUsers = response;
-            console.log(`✅ ${allUsers.length} usuários carregados`);
             return allUsers;
         } else {
-            console.warn('⚠️ Resposta de usuários inválida:', response);
             allUsers = [];
             return [];
         }
@@ -71,16 +71,13 @@ async function loadUsers() {
 // ==================== CARREGAR SQUADS ====================
 async function loadSquads() {
     try {
-        console.log('🚀 Carregando squads...');
         const response = await fetchAPI('/squads');
         
         if (response && Array.isArray(response)) {
             allSquads = response;
-            console.log(`✅ ${allSquads.length} squads carregados`);
             displaySquads();
             return allSquads;
         } else {
-            console.warn('⚠️ Resposta de squads inválida:', response);
             allSquads = [];
             return [];
         }
@@ -98,16 +95,13 @@ async function loadSquads() {
 // ==================== CARREGAR CHAPTERS ====================
 async function loadChapters() {
     try {
-        console.log('📚 Carregando chapters...');
         const response = await fetchAPI('/chapters');
         
         if (response && Array.isArray(response)) {
             allChapters = response;
-            console.log(`✅ ${allChapters.length} chapters carregados`);
             displayChapters();
             return allChapters;
         } else {
-            console.warn('⚠️ Resposta de chapters inválida:', response);
             allChapters = [];
             return [];
         }
@@ -125,15 +119,12 @@ async function loadChapters() {
 // ==================== CARREGAR PAÍSES ====================
 async function loadCountries() {
     try {
-        console.log('🌍 Carregando países...');
         const response = await fetchAPI('/countries');
         
         if (response && Array.isArray(response)) {
             allCountries = response;
-            console.log(`✅ ${allCountries.length} países carregados`);
             return allCountries;
         } else {
-            console.warn('⚠️ Resposta de países inválida:', response);
             allCountries = [];
             return [];
         }
@@ -146,41 +137,33 @@ async function loadCountries() {
 
 // ==================== ATUALIZAR KPIs ====================
 function updateKPIs() {
-    console.log('📈 Atualizando KPIs...');
-    
     // Total de usuários
     const totalUsersEl = document.getElementById('totalUsers');
     if (totalUsersEl) {
         totalUsersEl.textContent = allUsers.length;
-        console.log('✅ Total de usuários:', allUsers.length);
     }
     
     // Total de squads
     const totalSquadsEl = document.getElementById('totalSquads');
     if (totalSquadsEl) {
         totalSquadsEl.textContent = allSquads.length;
-        console.log('✅ Total de squads:', allSquads.length);
     }
     
     // Total de chapters
     const totalChaptersEl = document.getElementById('totalChapters');
     if (totalChaptersEl) {
         totalChaptersEl.textContent = allChapters.length;
-        console.log('✅ Total de chapters:', allChapters.length);
     }
     
-    // Total de países (contar empresas únicas por país)
+    // Total de países
     const totalCountriesEl = document.getElementById('totalCountries');
     if (totalCountriesEl) {
         totalCountriesEl.textContent = allCountries.length;
-        console.log('✅ Total de países:', allCountries.length);
     }
 }
 
 // ==================== ATUALIZAR DISTRIBUIÇÃO POR NÍVEL ====================
 function updateUsersByLevel() {
-    console.log('📊 Atualizando distribuição por nível...');
-    
     const container = document.getElementById('usersByLevelContainer');
     if (!container) {
         console.warn('⚠️ Container de níveis não encontrado');

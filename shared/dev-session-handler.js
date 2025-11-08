@@ -17,8 +17,8 @@
         console.log('🎭 Parâmetro de impersonation detectado!');
         
         try {
-            // Decodificar Base64
-            const jsonString = atob(decodeURIComponent(impersonateData));
+            // Decodificar Base64 com suporte UTF-8
+            const jsonString = decodeURIComponent(escape(atob(impersonateData)));
             const sessionData = JSON.parse(jsonString);
             
             console.log('✅ Dados de sessão decodificados:', {

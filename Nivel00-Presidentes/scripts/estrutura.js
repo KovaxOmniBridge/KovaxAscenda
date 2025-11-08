@@ -6,44 +6,29 @@ let allUsers = [];
 let allSquads = [];
 let allChapters = [];
 
-document.addEventListener('DOMContentLoaded', () => {
-    checkAuth();
-});
+// Aguardar CSS carregar antes de inicializar
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initEstruturaDashboard);
+} else {
+    initEstruturaDashboard();
+}
 
-async function checkAuth() {
-    authToken = localStorage.getItem('token');
-    const userDataString = localStorage.getItem('user');
-    const companyDataString = localStorage.getItem('company');
-    
-    if (!authToken || !userDataString || !companyDataString) {
-        alert('❌ Sessão inválida. Redirecionando para login...');
-        window.location.href = '/index.html';
-        return;
-    }
-    
-    try {
-        currentUser = JSON.parse(userDataString);
-        currentCompany = JSON.parse(companyDataString);
-        
-        // Verificar se é nível 0 (Presidente) ou modo explorador
-        if (currentUser.nivel !== 0 && !currentUser.isExplorer) {
-            alert('❌ Acesso negado. Apenas Presidentes (Nível 0) podem acessar este painel.');
-            window.location.href = '/index.html';
-            return;
-        }
-        
-        // Atualizar interface
-        document.getElementById('userName').textContent = currentUser.name;
-        document.getElementById('companyName').textContent = currentCompany.name;
-        
-        // Carregar dados
-        await loadOrganizationData();
-        
-    } catch (error) {
-        console.error('❌ Erro ao processar autenticação:', error);
-        alert('Erro ao carregar dados da sessão');
-        window.location.href = '/index.html';
-    }
+function initEstruturaDashboard() {
+    // Aguardar CSS aplicar
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            const userData = initDashboard(0); // Requer nível 0 (Presidentes)
+            
+            if (userData) {
+                currentUser = userData;
+                currentCompany = userData.company;
+                authToken = localStorage.getItem('token');
+                loadOrganizationData();
+            } else {
+                console.error('❌ Falha ao inicializar estrutura organizacional');
+            }
+        }, 50);
+    });
 }
 
 function fetchWithAuth(url, options = {}) {
@@ -91,8 +76,6 @@ async function loadOrganizationData() {
                 chapter.member_count = 0;
             }
         }
-        
-        console.log(`✅ Dados carregados: ${allUsers.length} usuários, ${allSquads.length} squads, ${allChapters.length} chapters`);
     } catch (error) {
         console.error('❌ Erro ao carregar dados:', error);
         allUsers = [];
@@ -176,7 +159,7 @@ function renderSquads() {
         container.innerHTML = `
             <p class="empty-state">
                 Nenhum squad cadastrado.<br>
-                <a href="../Nivel01-AdministradoresGerais/squads.html">Criar primeiro squad</a>
+                <a href="/Nivel01-AdministradoresGerais/squads.html">Criar primeiro squad</a>
             </p>
         `;
         return;
@@ -207,7 +190,7 @@ function renderChapters() {
         container.innerHTML = `
             <p class="empty-state">
                 Nenhum chapter cadastrado.<br>
-                <a href="../Nivel01-AdministradoresGerais/chapters.html">Criar primeiro chapter</a>
+                <a href="/Nivel01-AdministradoresGerais/chapters.html">Criar primeiro chapter</a>
             </p>
         `;
         return;

@@ -1,50 +1,39 @@
-// Variáveis de compatibilidade (usar getUserData() do dashboard-common.js)
+// Variáveis globais
 let currentUser = null;
 let currentCompany = null;
 let authToken = null;
 
-// Atualizar variáveis locais baseado em userData
-function updateLocalVariables() {
-    const userData = getUserData();
-    if (userData) {
-        currentUser = userData;
-        currentCompany = userData.company;
-        authToken = localStorage.getItem('token');
-        
-        console.log('✅ Variáveis locais atualizadas:', {
-            user: currentUser.name,
-            company: currentCompany.name,
-            nivel: currentUser.nivel
-        });
-    } else {
-        console.error('❌ Erro: userData não encontrado em updateLocalVariables');
-    }
+// Aguardar CSS carregar antes de inicializar (evita flash de conteúdo sem estilo)
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDashboardSafe);
+} else {
+    // DOM já carregado
+    initDashboardSafe();
 }
 
-// Inicialização
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('🔄 Iniciando dashboard de Presidentes...');
-    
-    // Inicializar com o arquivo comum
-    const userData = initDashboard(0); // Requer nível 0 (Presidentes)
-    
-    if (userData) {
-        console.log('✅ initDashboard retornou userData:', userData);
-        updateLocalVariables(); // Atualizar variáveis locais
-        
-        // Verificar se elementos existem
-        const userNameEl = document.getElementById('userName');
-        const companyNameEl = document.getElementById('companyName');
-        console.log('📍 Elementos DOM:', {
-            userName: userNameEl ? userNameEl.textContent : 'NÃO ENCONTRADO',
-            companyName: companyNameEl ? companyNameEl.textContent : 'NÃO ENCONTRADO'
-        });
-        
-        loadDashboardData();
-    } else {
-        console.error('❌ initDashboard retornou null');
-    }
-});
+function initDashboardSafe() {
+    // Aguardar um frame para garantir que CSS foi aplicado
+    requestAnimationFrame(() => {
+        setTimeout(async () => {
+            console.log('🚀 Iniciando dashboard-presidentes.js');
+            console.log('📄 DOM carregado - Inicializando dashboard Nível 00');
+            
+            // Inicializar dashboard usando dashboard-common.js
+            const userData = initDashboard(0); // Requer nível 0 (Presidentes)
+            
+            if (userData) {
+                console.log('✅ Usuário autenticado:', userData);
+                currentUser = userData;
+                currentCompany = userData.company;
+                authToken = localStorage.getItem('token');
+                
+                await loadDashboardData();
+            } else {
+                console.error('❌ Falha ao inicializar dashboard');
+            }
+        }, 50); // 50ms para garantir que CSS foi aplicado
+    });
+}
 
 // Carregar todos os dados do dashboard
 async function loadDashboardData() {
@@ -107,13 +96,6 @@ async function loadKPIs() {
         }
         updateKPICard('nps', 'Chapters Ativos', activeChapters, `${chapters.length} total`, 'positive');
         
-        console.log('✅ KPIs reais carregados:', {
-            colaboradores: users.length,
-            squadsAtivos: activeSquads,
-            alocacaoSquads: `${squadParticipation}%`,
-            chaptersAtivos: activeChapters
-        });
-        
     } catch (error) {
         console.error('❌ Erro ao carregar KPIs:', error);
     }
@@ -151,15 +133,12 @@ async function loadSquads() {
         const squads = await fetchAPI(`/squads/company/${currentCompany.id}`);
         
         if (!squads || !Array.isArray(squads)) {
-            console.warn('⚠️ Resposta de squads inválida');
-            container.innerHTML = '<p class="loading">Nenhum squad cadastrado. <a href="../Nivel01-AdministradoresGerais/squads.html">Criar primeiro squad</a></p>';
+            container.innerHTML = '<p class="loading">Nenhum squad cadastrado. <a href="/Nivel01-AdministradoresGerais/squads.html">Criar primeiro squad</a></p>';
             return [];
         }
         
-        console.log(`✅ ${squads.length} squads carregados`);
-        
         if (squads.length === 0) {
-            container.innerHTML = '<p class="loading">Nenhum squad cadastrado. <a href="../Nivel01-AdministradoresGerais/squads.html">Criar primeiro squad</a></p>';
+            container.innerHTML = '<p class="loading">Nenhum squad cadastrado. <a href="/Nivel01-AdministradoresGerais/squads.html">Criar primeiro squad</a></p>';
             return [];
         }
         
@@ -189,7 +168,7 @@ async function loadSquads() {
             moreCard.className = 'squad-mini-card more-squads';
             moreCard.innerHTML = `
                 <h4>+${squads.length - 6} squads</h4>
-                <p><a href="../Nivel01-AdministradoresGerais/squads.html">Ver todos os squads</a></p>
+                <p><a href="/Nivel01-AdministradoresGerais/squads.html">Ver todos os squads</a></p>
             `;
             container.appendChild(moreCard);
         }
@@ -211,11 +190,8 @@ async function loadUsers() {
         const users = await fetchAPI(`/users/company/${currentCompany.id}`);
         
         if (!users || !Array.isArray(users)) {
-            console.warn('⚠️ Resposta de usuários inválida');
             return [];
         }
-        
-        console.log(`✅ ${users.length} usuários carregados`);
         
         // Atualizar contador de colaboradores
         const totalEmployeesElement = document.getElementById('totalEmployees');
@@ -241,11 +217,8 @@ async function loadChapters() {
         const chapters = await fetchAPI(`/chapters/company/${currentCompany.id}`);
         
         if (!chapters || !Array.isArray(chapters)) {
-            console.warn('⚠️ Resposta de chapters inválida');
             return [];
         }
-        
-        console.log(`✅ ${chapters.length} chapters carregados`);
         
         return chapters;
         
@@ -284,8 +257,6 @@ async function loadSquadGoals() {
             }
         }
         
-        console.log(`✅ ${allGoals.length} metas estratégicas carregadas`);
-        
         // Atualizar interface com metas reais
         const goalsSection = document.querySelector('.card-body');
         if (goalsSection && allGoals.length > 0) {
@@ -311,7 +282,7 @@ async function loadSquadGoals() {
                 goalsSection.innerHTML += `
                     <div class="goal-item">
                         <p style="text-align: center; color: #666;">
-                            <a href="../Nivel01-AdministradoresGerais/squads.html">Ver todas as ${allGoals.length} metas estratégicas</a>
+                            <a href="/Nivel01-AdministradoresGerais/squads.html">Ver todas as ${allGoals.length} metas estratégicas</a>
                         </p>
                     </div>
                 `;
@@ -320,7 +291,7 @@ async function loadSquadGoals() {
             goalsSection.innerHTML = `
                 <p class="loading">
                     Nenhuma meta estratégica definida.<br>
-                    <a href="../Nivel01-AdministradoresGerais/squads.html">Criar metas para os squads</a>
+                    <a href="/Nivel01-AdministradoresGerais/squads.html">Criar metas para os squads</a>
                 </p>
             `;
         }
@@ -341,7 +312,6 @@ async function loadUrgentApprovals() {
         const approvals = await fetchAPI(`/approvals/company/${currentCompany.id}?status=pending`);
         
         if (!approvals || !Array.isArray(approvals)) {
-            console.warn('⚠️ Resposta de aprovações inválida');
             if (container) {
                 container.innerHTML = `<p class="loading" style="color: #10b981;">✅ Nenhuma aprovação crítica pendente</p>`;
             }
@@ -352,8 +322,6 @@ async function loadUrgentApprovals() {
         const urgentApprovals = approvals
             .filter(a => a.priority === 'urgent' || a.priority === 'high')
             .slice(0, 3);
-        
-        console.log(`✅ ${urgentApprovals.length} aprovações urgentes carregadas`);
         
         // Atualizar badge
         if (badge) {
@@ -520,8 +488,6 @@ async function generateExecutiveAlerts() {
             </div>
         `).join('');
         
-        console.log(`✅ ${alerts.length} alertas executivos gerados`);
-        
     } catch (error) {
         console.error('❌ Erro ao gerar alertas:', error);
         if (container) {
@@ -556,7 +522,9 @@ function getAlertBadge(type) {
 // Navegação
 function navigateTo(path) {
     // Manter a sessão ao navegar
-    window.location.href = path;
+    // Se não começar com /, adicionar para ser caminho absoluto da raiz
+    const absolutePath = path.startsWith('/') ? path : '/' + path;
+    window.location.href = absolutePath;
 }
 
 // Logout

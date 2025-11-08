@@ -120,7 +120,10 @@ function initDashboard(requiredLevel = null) {
         }
         
         console.warn('⚠️ Usuário não autenticado. Redirecionando para login...');
-        window.location.href = '/index.html';
+        // Aguardar um pouco para garantir que o CSS carregou (evita flash de conteúdo sem estilo)
+        setTimeout(() => {
+            window.location.href = '/index.html';
+        }, 100);
         return null;
     }
     
@@ -138,25 +141,45 @@ function initDashboard(requiredLevel = null) {
             selectedRoleKey,
             selectedRoleValue,
             'userData.nivel': userData.nivel,
+            'additional_roles': userData.additional_roles,
             isDevMode
         });
         
-        if (userLevel !== requiredLevel) {
-            console.warn(`⚠️ Nível de acesso incompatível. Esperado: ${requiredLevel}, Atual: ${userLevel}`);
-            
-            // Se está em devMode, permitir acesso mesmo com nível diferente
-            if (isDevMode) {
-                console.log('🎭 Modo desenvolvedor: permitindo acesso ao dashboard de nível diferente');
-            } else {
-                console.error('❌ PERMISSÃO NEGADA: Não é dev mode e nível incompatível');
-                console.groupEnd();
-                showToast(`Você não tem permissão para acessar esta página (Nível ${requiredLevel} requerido)`, 'error');
-                setTimeout(() => {
-                    const correctDashboard = getDashboardUrl(userLevel);
-                    window.location.href = correctDashboard;
-                }, 2000);
-                return null;
-            }
+        // NOVA LÓGICA: Hierarquia descendente
+        // Níveis menores (0 = presidente) podem acessar níveis maiores (1 = admin, 2 = diretor, etc)
+        // Verificar se tem permissão:
+        // 1. Se é o nível exato
+        // 2. Se tem o nível em additional_roles
+        // 3. Se é um nível MENOR (mais alto na hierarquia) que o requerido
+        const hasExactLevel = userLevel === requiredLevel;
+        const hasAdditionalRole = userData.additional_roles && Array.isArray(userData.additional_roles) && userData.additional_roles.includes(requiredLevel);
+        const hasHigherAuthority = userLevel < requiredLevel; // Nível 0 pode acessar 1, 2, 3... etc
+        
+        const hasPermission = hasExactLevel || hasAdditionalRole || hasHigherAuthority || isDevMode;
+        
+        console.log('📊 Análise de Permissão:', {
+            hasExactLevel,
+            hasAdditionalRole,
+            hasHigherAuthority,
+            hasPermission
+        });
+        
+        if (!hasPermission) {
+            console.error('❌ PERMISSÃO NEGADA');
+            console.groupEnd();
+            showToast(`Você não tem permissão para acessar esta página (Nível ${requiredLevel} requerido)`, 'error');
+            setTimeout(() => {
+                const correctDashboard = getDashboardUrl(userLevel);
+                window.location.href = correctDashboard;
+            }, 2000);
+            return null;
+        } else {
+            console.log('✅ PERMISSÃO CONCEDIDA:', 
+                hasExactLevel ? 'Nível exato' : 
+                hasAdditionalRole ? 'Papel adicional' : 
+                hasHigherAuthority ? 'Hierarquia superior' : 
+                'Modo desenvolvedor'
+            );
         }
     }
     
