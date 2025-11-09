@@ -1,557 +1,377 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ascenda - Plataforma de Gerenciamento Empresarial</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ascenda - Eleve sua Gestão 🔥</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+  <link rel="stylesheet" href="client/css/variables.css">
+  <link rel="stylesheet" href="client/css/reset.css">
+  <link rel="stylesheet" href="client/css/global.css">
+  <link rel="stylesheet" href="client/css/landing-flame.css">
 </head>
-<body>
+<body class="landing">
+  <!-- Header -->
+  <header class="landing-header">
     <div class="container">
-        <!-- Header -->
-        <header class="header">
-            <div class="logo">
-                <h1>✨ Ascenda Flex</h1>
-                <p class="tagline">Gestão Organizacional Híbrida Inteligente</p>
-            </div>
-            <nav class="nav">
-                <button class="btn-secondary" onclick="showLoginForm()">
-                    <span>🔓</span> Login
-                </button>
-                <button class="btn-primary-outline" onclick="showRegisterForm()">
-                    <span>📝</span> Solicitar Cadastro
-                </button>
-            </nav>
-        </header>
-
-        <!-- Apresentação da Empresa -->
-        <section class="hero" id="hero">
-            <div class="hero-content">
-                <h2>Transforme a Gestão da Sua Organização</h2>
-                <p class="hero-subtitle">Ascenda Flex é uma plataforma completa de gestão organizacional híbrida que combina hierarquia tradicional, squads multifuncionais e chapters (comunidades de prática). Organize sua empresa de forma flexível e potencialize resultados.</p>
-                
-                <div class="hero-features">
-                    <div class="feature">
-                        <span class="feature-icon">📊</span>
-                        <h3>Hierarquia de 8 Níveis</h3>
-                        <p>Do presidente ao operacional</p>
-                    </div>
-                    <div class="feature">
-                        <span class="feature-icon">🚀</span>
-                        <h3>Squads Flexíveis</h3>
-                        <p>Equipes multifuncionais temporárias</p>
-                    </div>
-                    <div class="feature">
-                        <span class="feature-icon">📚</span>
-                        <h3>Chapters</h3>
-                        <p>Comunidades de prática permanentes</p>
-                    </div>
-                    <div class="feature">
-                        <span class="feature-icon">🔒</span>
-                        <h3>Segurança</h3>
-                        <p>Controle de acesso robusto</p>
-                    </div>
-                    <div class="feature">
-                        <span class="feature-icon">�</span>
-                        <h3>Análise de Dados</h3>
-                        <p>Tratamento inteligente de informações</p>
-                    </div>
-                    <div class="feature">
-                        <span class="feature-icon">🎯</span>
-                        <h3>Gestão de Objetivos</h3>
-                        <p>Acompanhamento e metas claras</p>
-                    </div>
-                </div>
-
-                <div class="hero-actions">
-                    <button class="btn-primary" onclick="showLoginForm()">
-                        <span>🔓</span> Acessar Plataforma
-                    </button>
-                    <button class="btn-outline" onclick="showRegisterForm()">
-                        <span>📝</span> Solicitar Cadastro
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Formulário de Login -->
-        <section class="login-section hidden" id="loginSection">
-            <div class="form-container">
-                <div class="login-header">
-                    <h2>🔐 Acesso ao Sistema</h2>
-                    <p class="form-description">Entre com suas credenciais para acessar a plataforma</p>
-                </div>
-                
-                <form id="loginForm" onsubmit="handleLogin(event)">
-                    <div class="form-group">
-                        <label for="companySelect">
-                            <span class="label-icon">🏢</span>
-                            Empresa
-                        </label>
-                        <select id="companySelect" required>
-                            <option value="">-- Selecione sua empresa --</option>
-                        </select>
-                        <small class="form-hint">Escolha a empresa à qual você pertence</small>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="accessKey">
-                            <span class="label-icon">👤</span>
-                            Chave de Acesso
-                        </label>
-                        <input 
-                            type="text" 
-                            id="accessKey" 
-                            placeholder="Ex: TS-0001, MC-0150, MG-0500"
-                            autocomplete="username"
-                            required
-                        >
-                        <small class="form-hint">Sua chave de acesso única (fornecida pela empresa)</small>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password">
-                            <span class="label-icon">🔒</span>
-                            Senha
-                        </label>
-                        <input 
-                            type="password" 
-                            id="password" 
-                            placeholder="Digite sua senha"
-                            autocomplete="current-password"
-                            required
-                        >
-                        <small class="form-hint">Senha fornecida no cadastro</small>
-                    </div>
-
-                    <div class="form-actions">
-                        <button type="submit" class="btn-primary btn-block">
-                            <span>🚀</span> Entrar na Plataforma
-                        </button>
-                        <button type="button" class="btn-secondary btn-block" onclick="showHero()">
-                            <span>←</span> Voltar
-                        </button>
-                    </div>
-                </form>
-
-                <div class="login-footer">
-                    <p class="help-text">
-                        <strong>Precisa de ajuda?</strong><br>
-                        Entre em contato com o administrador da sua empresa ou com o suporte técnico.
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Formulário de Cadastro de Empresa -->
-        <section class="register-section hidden" id="registerSection">
-            <div class="form-container-large">
-                <h2>Solicitar Cadastro de Empresa</h2>
-                <p class="form-description">Envie um pedido para cadastrar sua empresa na plataforma Ascenda. Nossa equipe analisará as informações e documentos antes de aprovar.</p>
-                
-                <!-- Indicador de Progresso -->
-                <div class="progress-steps">
-                    <div class="step active" data-step="1">
-                        <div class="step-number">1</div>
-                        <div class="step-label">Dados da Empresa</div>
-                    </div>
-                    <div class="step" data-step="2">
-                        <div class="step-number">2</div>
-                        <div class="step-label">Presidente</div>
-                    </div>
-                    <div class="step" data-step="3">
-                        <div class="step-number">3</div>
-                        <div class="step-label">Administradores Gerais</div>
-                    </div>
-                    <div class="step" data-step="4">
-                        <div class="step-number">4</div>
-                        <div class="step-label">Revisão</div>
-                    </div>
-                </div>
-
-                <form id="registerForm" onsubmit="handleRegister(event)">
-                    
-                    <!-- Etapa 1: Dados da Empresa -->
-                    <div class="form-step active" id="step1">
-                        <h3 class="step-title">Informações Básicas da Empresa</h3>
-                        
-                        <div class="form-group">
-                            <label for="companyName">Nome da Empresa *</label>
-                            <input 
-                                type="text" 
-                                id="companyName" 
-                                placeholder="Digite o nome completo da empresa"
-                            >
-                        </div>
-
-                        <div class="form-group">
-                            <label for="companyLegalName">Razão Social *</label>
-                            <input 
-                                type="text" 
-                                id="companyLegalName" 
-                                placeholder="Nome legal/razão social da empresa"
-                            >
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="foundedYear">Ano de Fundação *</label>
-                                <input 
-                                    type="number" 
-                                    id="foundedYear" 
-                                    placeholder="Ex: 2020"
-                                    min="1800"
-                                    max="2025"
-                                >
-                            </div>
-
-                            <div class="form-group">
-                                <label for="companySize">Porte da Empresa *</label>
-                                <select id="companySize">
-                                    <option value="">Selecione</option>
-                                    <option value="small">Pequena (1-50 funcionários)</option>
-                                    <option value="medium">Média (51-250 funcionários)</option>
-                                    <option value="large">Grande (251-1000 funcionários)</option>
-                                    <option value="enterprise">Corporação (1000+ funcionários)</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="industry">Setor de Atuação *</label>
-                            <select id="industry">
-                                <option value="">Selecione o setor</option>
-                                <option value="technology">Tecnologia</option>
-                                <option value="finance">Financeiro</option>
-                                <option value="healthcare">Saúde</option>
-                                <option value="retail">Varejo</option>
-                                <option value="manufacturing">Manufatura</option>
-                                <option value="services">Serviços</option>
-                                <option value="education">Educação</option>
-                                <option value="logistics">Logística</option>
-                                <option value="energy">Energia</option>
-                                <option value="other">Outro</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="companyDescription">Descrição da Empresa *</label>
-                            <textarea 
-                                id="companyDescription" 
-                                rows="4"
-                                placeholder="Descreva brevemente as atividades e objetivos da empresa"
-                            ></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="documents">Documentos da Empresa *</label>
-                            <input 
-                                type="file" 
-                                id="documents" 
-                                multiple
-                                accept=".pdf,.jpg,.jpeg,.png"
-                            >
-                            <small style="color: #666; display: block; margin-top: 8px;">
-                                <strong>Envie documentos que comprovem a existência legal da empresa:</strong><br>
-                                • Contrato Social / Estatuto Social<br>
-                                • CNPJ (Certificado de Registro)<br>
-                                • Comprovante de Endereço da Sede<br>
-                                • Documento de Identificação do Presidente (RG/CNH/Passaporte)<br>
-                                Formatos aceitos: PDF, JPG, PNG (Máx. 10 arquivos)
-                            </small>
-                        </div>
-                        
-                        <div class="info-box" style="background: #fef3c7; border-color: #fbbf24;">
-                            <span class="info-icon">⚠️</span>
-                            <p><strong>Processo de Aprovação:</strong> Após o envio, nossa equipe analisará os documentos e informações. Você receberá um email com a decisão em até 3 dias úteis.</p>
-                        </div>
-
-                        <div class="form-navigation">
-                            <button type="button" class="btn-secondary" onclick="showHero()">Cancelar</button>
-                            <button type="button" class="btn-primary" onclick="nextStep()">Próximo</button>
-                        </div>
-                    </div>
-
-                    <!-- Etapa 2: Presidente (Nível 0) -->
-                    <div class="form-step" id="step2">
-                        <h3 class="step-title">👑 Presidente da Empresa (Nível 0)</h3>
-                        <p class="step-description">Configure o presidente que terá visão estratégica global e aprovações executivas</p>
-
-                        <div class="info-box" style="background: #fef3c7; border-color: #fbbf24;">
-                            <span class="info-icon">💡</span>
-                            <p><strong>Importante:</strong> O Presidente é o nível mais alto da hierarquia (Nível 0). Ele terá acesso a dashboards executivos, aprovações estratégicas e visão global da empresa.</p>
-                        </div>
-
-                        <div class="form-group">
-                            <label>
-                                <input type="checkbox" id="iAmPresident" onchange="togglePresidentFields()">
-                                <strong>Eu sou o presidente desta empresa</strong>
-                            </label>
-                            <small>Marque se você é o presidente e está cadastrando a empresa pessoalmente</small>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="presidentName">Nome Completo *</label>
-                                <input 
-                                    type="text" 
-                                    id="presidentName" 
-                                    placeholder="Nome completo do presidente"
-                                >
-                            </div>
-                            <div class="form-group">
-                                <label for="presidentEmail">Email Corporativo *</label>
-                                <input 
-                                    type="email" 
-                                    id="presidentEmail" 
-                                    placeholder="email@empresa.com"
-                                >
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="presidentPhone">Telefone *</label>
-                                <input 
-                                    type="tel" 
-                                    id="presidentPhone" 
-                                    placeholder="+55 (11) 99999-9999"
-                                >
-                            </div>
-                            <div class="form-group">
-                                <label for="presidentDepartment">Departamento/Área</label>
-                                <input 
-                                    type="text" 
-                                    id="presidentDepartment" 
-                                    placeholder="Ex: Presidência, Diretoria Executiva"
-                                    value="Presidência"
-                                >
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="presidentAccessKey">Nome de Usuário *</label>
-                                <input 
-                                    type="text" 
-                                    id="presidentAccessKey" 
-                                    placeholder="Nome de usuário único"
-                                >
-                                <small>Será usado para login na plataforma</small>
-                            </div>
-                            <div class="form-group">
-                                <label for="presidentRole">Cargo/Título</label>
-                                <input 
-                                    type="text" 
-                                    id="presidentRole" 
-                                    placeholder="Ex: CEO, Presidente, Founder"
-                                    value="Presidente"
-                                >
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="presidentPassword">Senha *</label>
-                                <input 
-                                    type="password" 
-                                    id="presidentPassword" 
-                                    placeholder="Senha segura"
-                                >
-                                <small>Mínimo 8 caracteres</small>
-                            </div>
-                            <div class="form-group">
-                                <label for="presidentConfirmPassword">Confirmar Senha *</label>
-                                <input 
-                                    type="password" 
-                                    id="presidentConfirmPassword" 
-                                    placeholder="Digite a senha novamente"
-                                >
-                            </div>
-                        </div>
-
-                        <div class="info-box">
-                            <span class="info-icon">🔒</span>
-                            <p>As credenciais do presidente serão criadas com segurança. Após o cadastro, o presidente poderá fazer login e acessar o dashboard executivo.</p>
-                        </div>
-
-                        <div class="form-navigation">
-                            <button type="button" class="btn-secondary" onclick="previousStep()">Voltar</button>
-                            <button type="button" class="btn-primary" onclick="nextStep()">Próximo</button>
-                        </div>
-                    </div>
-
-                    <!-- Etapa 3: Administradores Gerais -->
-                    <div class="form-step" id="step3">
-                        <h3 class="step-title">⚙️ Administradores Gerais (Nível 1)</h3>
-                        <p class="step-description">Configure os administradores que terão acesso total à plataforma</p>
-
-                        <div class="admins-container">
-                            <div class="add-admin-form">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="adminName">Nome Completo *</label>
-                                        <input 
-                                            type="text" 
-                                            id="adminName" 
-                                            placeholder="Nome do administrador"
-                                        >
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="adminEmail">Email Corporativo *</label>
-                                        <input 
-                                            type="email" 
-                                            id="adminEmail" 
-                                            placeholder="email@empresa.com"
-                                        >
-                                    </div>
-                                </div>
-
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="adminPhone">Telefone *</label>
-                                        <input 
-                                            type="tel" 
-                                            id="adminPhone" 
-                                            placeholder="+55 (11) 99999-9999"
-                                        >
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="adminDepartment">Departamento/Área *</label>
-                                        <input 
-                                            type="text" 
-                                            id="adminDepartment" 
-                                            placeholder="Ex: TI, Finanças, RH"
-                                        >
-                                    </div>
-                                </div>
-
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="adminAccessKey">Nome de Usuário *</label>
-                                        <input 
-                                            type="text" 
-                                            id="adminAccessKey" 
-                                            placeholder="Nome de usuário único"
-                                        >
-                                        <small>Use letras, números e caracteres especiais</small>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="adminPhone">Telefone</label>
-                                        <input 
-                                            type="tel" 
-                                            id="adminPhone" 
-                                            placeholder="(00) 00000-0000"
-                                        >
-                                    </div>
-                                </div>
-
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="adminPassword">Senha *</label>
-                                        <input 
-                                            type="password" 
-                                            id="adminPassword" 
-                                            placeholder="Senha segura"
-                                        >
-                                        <small>Mínimo 8 caracteres</small>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="adminConfirmPassword">Confirmar Senha *</label>
-                                        <input 
-                                            type="password" 
-                                            id="adminConfirmPassword" 
-                                            placeholder="Digite a senha novamente"
-                                        >
-                                        <small>As senhas devem ser iguais</small>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>
-                                        <input type="checkbox" id="isPrimaryAdmin">
-                                        Administrador Principal (responsável pela conta)
-                                    </label>
-                                </div>
-
-                                <button type="button" class="btn-secondary btn-block" onclick="addAdmin()">
-                                    + Adicionar Administrador
-                                </button>
-                            </div>
-
-                            <div class="admins-list" id="adminsList">
-                                <h4>Administradores Cadastrados:</h4>
-                                <div id="adminsItems" class="empty-state">
-                                    Nenhum administrador adicionado. Adicione pelo menos um administrador para continuar.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-navigation">
-                            <button type="button" class="btn-secondary" onclick="previousStep()">Voltar</button>
-                            <button type="button" class="btn-primary" onclick="nextStep()">Próximo</button>
-                        </div>
-                    </div>
-
-                    <!-- Etapa 4: Revisão -->
-                    <div class="form-step" id="step4">
-                        <h3 class="step-title">📋 Revisão e Envio do Pedido</h3>
-                        <p class="step-description">Revise todas as informações e documentos antes de enviar seu pedido de cadastro</p>
-
-                        <div class="info-box" style="background: #dbeafe; border-color: #3b82f6;">
-                            <span class="info-icon">📬</span>
-                            <p><strong>O que acontece depois?</strong><br>
-                            1. Seu pedido será enviado à equipe Ascenda<br>
-                            2. Analisaremos os documentos e informações (até 3 dias úteis)<br>
-                            3. Você receberá um email com a aprovação ou solicitação de correções<br>
-                            4. Após aprovação, você poderá fazer login com as credenciais cadastradas</p>
-                        </div>
-
-                        <div class="review-container" id="reviewContainer">
-                            <!-- Conteúdo será gerado dinamicamente -->
-                        </div>
-
-                        <div class="form-navigation">
-                            <button type="button" class="btn-secondary" onclick="previousStep()">Voltar</button>
-                            <button type="submit" class="btn-primary">📤 Enviar Pedido de Cadastro</button>
-                        </div>
-                    </div>
-
-                </form>
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <footer class="footer">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>✨ Ascenda Flex</h3>
-                    <p>Gestão Organizacional Híbrida Inteligente</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Plataforma</h4>
-                    <ul>
-                        <li><a href="#" onclick="showLoginForm()">Login</a></li>
-                        <li><a href="#" onclick="showRegisterForm()">Solicitar Cadastro</a></li>
-                        <li><a href="#" onclick="showHero()">Página Inicial</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Suporte</h4>
-                    <ul>
-                        <li><a href="mailto:contato@ascenda.com">Contato</a></li>
-                        <li><a href="/desenvolvedor/dev-login.html" class="dev-link">🛠️ Painel Dev</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 Ascenda. Todos os direitos reservados.</p>
-            </div>
-        </footer>
+      <nav class="landing-nav">
+        <div class="landing-logo">
+          <div class="landing-logo-icon">🔥</div>
+          <span>Ascenda</span>
+        </div>
+      </nav>
     </div>
+  </header>
 
-    <!-- Session Manager -->
-    <script src="shared/session-manager.js"></script>
-    <script src="script.js"></script>
+  <!-- Hero Section com Chama -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="hero-title">Eleve sua Gestão ao Próximo Nível</h1>
+        <p class="hero-subtitle">
+          Acenda a chama do crescimento com ferramentas inteligentes para cada nível da sua organização
+        </p>
+        
+        <div class="hero-cta">
+          <button id="btn-acessar" class="btn-primary-flame">
+            <span>� Acessar a Plataforma</span>
+          </button>
+          <button id="btn-cadastrar" class="btn-secondary-flame">
+            <span>✨ Cadastrar Empresa</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section" id="features">
+    <div class="container">
+      <h2 class="section-title">Ferramentas que Iluminam o Caminho</h2>
+      <p class="section-subtitle">
+        Da liderança à operação, cada nível tem as ferramentas certas para brilhar
+      </p>
+      
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3 class="feature-title">Liderança Estratégica</h3>
+          <p class="feature-description">
+            Dashboards executivos e planejamento estratégico para decisões que transformam
+          </p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3 class="feature-title">Gestão Inteligente</h3>
+          <p class="feature-description">
+            KPIs, indicadores e compliance em tempo real para governança eficaz
+          </p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3 class="feature-title">Execução Ágil</h3>
+          <p class="feature-description">
+            Ferramentas operacionais que mantêm a energia fluindo em toda organização
+          </p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">👥</div>
+          <h3 class="feature-title">Colaboração Fluida</h3>
+          <p class="feature-description">
+            Coordenação de equipes e projetos com comunicação transparente
+          </p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">💰</div>
+          <h3 class="feature-title">Controle Financeiro</h3>
+          <p class="feature-description">
+            Gestão completa de finanças, orçamentos e recursos com clareza total
+          </p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">🎓</div>
+          <h3 class="feature-title">Desenvolvimento Contínuo</h3>
+          <p class="feature-description">
+            Capacitação e evolução constante para manter o time sempre aceso
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal de Login -->
+  <div class="modal-overlay" id="modal-login">
+    <div class="modal-content">
+      <button class="modal-close" id="close-login">×</button>
+      <h2 class="text-gradient-flame" style="text-align: center; font-size: 2rem; margin-bottom: 2rem;">
+        🔥 Acesse sua Conta
+      </h2>
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label" for="email">E-mail</label>
+          <input 
+            class="form-input" 
+            type="email" 
+            id="email" 
+            name="email" 
+            required 
+            placeholder="seu@email.com"
+            autocomplete="email"
+          >
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password">Senha</label>
+          <input 
+            class="form-input" 
+            type="password" 
+            id="password" 
+            name="password" 
+            required 
+            placeholder="••••••••"
+            autocomplete="current-password"
+          >
+        </div>
+        <div class="form-error d-none" id="login-error" style="color: var(--error); margin-bottom: 1rem; padding: 0.75rem; background: rgba(255, 138, 128, 0.1); border-radius: var(--border-radius-md);"></div>
+        <button type="submit" class="btn-primary-flame" style="width: 100%;">
+          <span>Entrar na Plataforma</span>
+        </button>
+      </form>
+      <div class="login-footer" style="margin-top: 1.5rem; text-align: center; color: var(--text-secondary);">
+        <a href="#" class="footer-link">Esqueceu sua senha?</a>
+        <span style="margin: 0 0.5rem; color: var(--gray-300);">•</span>
+        <a href="#" class="footer-link" id="show-register">Cadastrar Empresa</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Cadastro -->
+  <div class="modal-overlay" id="modal-register">
+    <div class="modal-content">
+      <button class="modal-close" id="close-register">×</button>
+      <h2 class="text-gradient-flame" style="text-align: center; font-size: 2rem; margin-bottom: 2rem;">
+        ✨ Cadastrar Nova Empresa
+      </h2>
+      <form id="register-form">
+        <div class="form-group">
+          <label class="form-label" for="company-name">Nome da Empresa</label>
+          <input 
+            class="form-input" 
+            type="text" 
+            id="company-name" 
+            required 
+            placeholder="Minha Empresa Ltda"
+          >
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="admin-name">Nome do Administrador</label>
+          <input 
+            class="form-input" 
+            type="text" 
+            id="admin-name" 
+            required 
+            placeholder="João Silva"
+          >
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="admin-email">E-mail</label>
+          <input 
+            class="form-input" 
+            type="email" 
+            id="admin-email" 
+            required 
+            placeholder="admin@empresa.com"
+            autocomplete="email"
+          >
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="admin-password">Senha</label>
+          <input 
+            class="form-input" 
+            type="password" 
+            id="admin-password" 
+            required 
+            minlength="6" 
+            placeholder="Mínimo 6 caracteres"
+            autocomplete="new-password"
+          >
+        </div>
+        <div class="form-error d-none" id="register-error" style="color: var(--error); margin-bottom: 1rem; padding: 0.75rem; background: rgba(255, 138, 128, 0.1); border-radius: var(--border-radius-md);"></div>
+        <button type="submit" class="btn-primary-flame" style="width: 100%;">
+          <span>Criar Conta e Começar</span>
+        </button>
+      </form>
+      <div class="login-footer" style="margin-top: 1.5rem; text-align: center;">
+        <a href="#" class="footer-link" id="show-login">← Voltar para login</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Profissional -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section footer-brand">
+          <div class="footer-logo">
+            <span class="footer-logo-icon">🔥</span>
+            <h3 class="footer-logo-text">Ascenda</h3>
+          </div>
+          <p class="footer-tagline">Elevando sua gestão ao próximo nível</p>
+          <div class="footer-social">
+            <a href="#" class="social-link" aria-label="LinkedIn">
+              <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+              </svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Twitter">
+              <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+              </svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Instagram">
+              <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-section">
+          <h4 class="footer-title">Plataforma</h4>
+          <ul class="footer-links">
+            <li><a href="#features">Funcionalidades</a></li>
+            <li><a href="#niveis">Níveis de Gestão</a></li>
+            <li><a href="#ferramentas">Ferramentas</a></li>
+            <li><a href="#integracoes">Integrações</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4 class="footer-title">Recursos</h4>
+          <ul class="footer-links">
+            <li><a href="#documentacao">Documentação</a></li>
+            <li><a href="#blog">Blog</a></li>
+            <li><a href="#tutoriais">Tutoriais</a></li>
+            <li><a href="#suporte">Suporte</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4 class="footer-title">Empresa</h4>
+          <ul class="footer-links">
+            <li><a href="#sobre">Sobre Nós</a></li>
+            <li><a href="#contato">Contato</a></li>
+            <li><a href="#carreiras">Carreiras</a></li>
+            <li><a href="#parceiros">Parceiros</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4 class="footer-title">Legal</h4>
+          <ul class="footer-links">
+            <li><a href="#privacidade">Política de Privacidade</a></li>
+            <li><a href="#termos">Termos de Uso</a></li>
+            <li><a href="#cookies">Política de Cookies</a></li>
+            <li><a href="#lgpd">LGPD</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="footer-copyright">
+          © 2025 Ascenda. Todos os direitos reservados.
+        </p>
+        <div class="footer-bottom-links">
+          <a href="#ajuda">Central de Ajuda</a>
+          <span class="separator">•</span>
+          <a href="#status">Status da Plataforma</a>
+          <span class="separator">•</span>
+          <a href="desenvolvedor/pages/login.html">🔐 Área do Desenvolvedor</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // Controle dos modais de Login e Cadastro
+    document.addEventListener('DOMContentLoaded', function() {
+      const btnAcessar = document.getElementById('btn-acessar');
+      const btnCadastrar = document.getElementById('btn-cadastrar');
+      const modalLogin = document.getElementById('modal-login');
+      const modalRegister = document.getElementById('modal-register');
+      const closeLogin = document.getElementById('close-login');
+      const closeRegister = document.getElementById('close-register');
+      const showRegister = document.getElementById('show-register');
+      const showLogin = document.getElementById('show-login');
+      
+      // Abrir modal de login
+      btnAcessar.addEventListener('click', function() {
+        modalLogin.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+      
+      // Abrir modal de cadastro
+      btnCadastrar.addEventListener('click', function() {
+        modalRegister.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+      
+      // Fechar modal de login
+      closeLogin.addEventListener('click', function() {
+        modalLogin.classList.remove('active');
+        document.body.style.overflow = 'auto';
+      });
+      
+      // Fechar modal de cadastro
+      closeRegister.addEventListener('click', function() {
+        modalRegister.classList.remove('active');
+        document.body.style.overflow = 'auto';
+      });
+      
+      // Trocar de login para cadastro
+      showRegister.addEventListener('click', function(e) {
+        e.preventDefault();
+        modalLogin.classList.remove('active');
+        modalRegister.classList.add('active');
+      });
+      
+      // Voltar de cadastro para login
+      showLogin.addEventListener('click', function(e) {
+        e.preventDefault();
+        modalRegister.classList.remove('active');
+        modalLogin.classList.add('active');
+      });
+      
+      // Fechar modal ao clicar no overlay
+      modalLogin.addEventListener('click', function(e) {
+        if (e.target === modalLogin) {
+          modalLogin.classList.remove('active');
+          document.body.style.overflow = 'auto';
+        }
+      });
+      
+      modalRegister.addEventListener('click', function(e) {
+        if (e.target === modalRegister) {
+          modalRegister.classList.remove('active');
+          document.body.style.overflow = 'auto';
+        }
+      });
+      
+      // Fechar modal com ESC
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          modalLogin.classList.remove('active');
+          modalRegister.classList.remove('active');
+          document.body.style.overflow = 'auto';
+        }
+      });
+    });
+  </script>
+  <script type="module" src="client/js/auth.js"></script>
 </body>
 </html>

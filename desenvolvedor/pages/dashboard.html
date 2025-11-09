@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard DEV - Ascenda Platform 🔥</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+  <link rel="stylesheet" href="../../client/css/variables.css">
+  <link rel="stylesheet" href="../../client/css/reset.css">
+  <link rel="stylesheet" href="../../client/css/global.css">
+  <link rel="stylesheet" href="../style/dev-dashboard.css">
+</head>
+<body>
+  <div id="dev-app">
+    <!-- Sidebar -->
+    <aside class="dev-sidebar">
+      <div class="dev-sidebar-header">
+        <div class="dev-logo">
+          <span class="dev-logo-icon">🔥</span>
+          <span>Ascenda <strong>DEV</strong></span>
+        </div>
+      </div>
+
+      <nav class="dev-nav">
+        <a href="#" class="dev-nav-item active" data-section="organizations">
+          <span class="nav-icon">🏢</span>
+          <span>Empresas</span>
+        </a>
+        <a href="#" class="dev-nav-item" data-section="overview">
+          <span class="nav-icon">�</span>
+          <span>Visão Geral</span>
+        </a>
+        <a href="#" class="dev-nav-item" data-section="tools">
+          <span class="nav-icon">🛠️</span>
+          <span>Ferramentas</span>
+        </a>
+        <a href="#" class="dev-nav-item" data-section="logs">
+          <span class="nav-icon">📋</span>
+          <span>Logs & Auditoria</span>
+        </a>
+        <a href="#" class="dev-nav-item" data-section="settings">
+          <span class="nav-icon">⚙️</span>
+          <span>Configurações</span>
+        </a>
+      </nav>
+
+      <div class="dev-sidebar-footer">
+        <button id="dev-logout-btn" class="dev-logout-btn">
+          <span>🚪</span> Sair
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dev-main">
+      <header class="dev-header">
+        <div class="dev-header-content">
+          <h1 id="dev-section-title">Visão Geral</h1>
+          <div class="dev-user-info" id="dev-user-info"></div>
+        </div>
+      </header>
+
+      <div class="dev-content">
+        <!-- Organizations Section -->
+        <section id="section-organizations" class="dev-section active">
+          <div class="section-header">
+            <div class="section-title">
+              <h2>Empresas Cadastradas</h2>
+              <p class="section-subtitle">Gerencie todas as empresas da plataforma</p>
+            </div>
+            <div class="section-actions">
+              <button class="btn-secondary-flame" onclick="refreshOrganizations()">
+                <span>🔄 Atualizar</span>
+              </button>
+              <button class="btn-primary-flame" onclick="openNewOrgModal()">
+                <span>+ Nova Empresa</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Grid de Células Empresariais -->
+          <div id="organizations-grid" class="organizations-grid">
+            <!-- Células serão carregadas via JavaScript -->
+            <div class="loading-state">
+              <div class="spinner"></div>
+              <p>Carregando empresas...</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Overview Section -->
+        <section id="section-overview" class="dev-section">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon">🏢</div>
+              <div class="stat-info">
+                <div class="stat-value" id="stat-organizations">0</div>
+                <div class="stat-label">Empresas Ativas</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon">�</div>
+              <div class="stat-info">
+                <div class="stat-value" id="stat-users">0</div>
+                <div class="stat-label">Usuários Totais</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon">🛠️</div>
+              <div class="stat-info">
+                <div class="stat-value" id="stat-tools">0</div>
+                <div class="stat-label">Ferramentas</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon">📈</div>
+              <div class="stat-info">
+                <div class="stat-value">99.9%</div>
+                <div class="stat-label">Uptime</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dev-welcome">
+            <h2>Bem-vindo ao Painel de Desenvolvedor 🔥</h2>
+            <p>Você tem acesso total à plataforma Ascenda. Use com responsabilidade.</p>
+          </div>
+        </section>
+
+        <!-- Tools Section -->
+        <section id="section-tools" class="dev-section">
+          <div class="section-actions">
+            <button class="btn-primary-flame">+ Nova Ferramenta</button>
+          </div>
+          <div id="tools-list" class="data-table">
+            <p>Carregando ferramentas...</p>
+          </div>
+        </section>
+
+        <!-- Logs Section -->
+        <section id="section-logs" class="dev-section">
+          <div id="logs-list" class="logs-container">
+            <p>Sistema de logs em desenvolvimento...</p>
+          </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="section-settings" class="dev-section">
+          <div class="settings-container">
+            <h3>Configurações da Plataforma</h3>
+            <p>Painel de configurações em desenvolvimento...</p>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="../script/dev-dashboard.js"></script>
+</body>
+</html>

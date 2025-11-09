@@ -1,0 +1,36 @@
+[
+  {
+    "id": "dev-001",
+    "name": "Admin Desenvolvedor",
+    "email": "dev@ascenda.com",
+    "password": "$2b$10$XVF6QhYMatviYsy2aUFKYeziZUZkD46eU1qPjuDm8rv.Zc.g2My4G",
+    "role": "Senior Developer",
+    "permissions": {
+      "fullAccess": true,
+      "canManageOrganizations": true,
+      "canManageUsers": true,
+      "canManageTools": true,
+      "canViewLogs": true,
+      "canModifySettings": true
+    },
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "lastLogin": null
+  },
+  {
+    "id": "dev-002",
+    "name": "Super Admin",
+    "email": "admin@ascenda.com",
+    "password": "$2b$10$xZBHFc0r3svQ0jZOjEgp5.6IB2xAlfvBJPsVm0CxX9QZM4tis8IAW",
+    "role": "Platform Administrator",
+    "permissions": {
+      "fullAccess": true,
+      "canManageOrganizations": true,
+      "canManageUsers": true,
+      "canManageTools": true,
+      "canViewLogs": true,
+      "canModifySettings": true
+    },
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "lastLogin": null
+  }
+]

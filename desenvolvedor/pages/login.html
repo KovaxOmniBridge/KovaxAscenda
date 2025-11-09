@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ascenda DEV - Login Seguro</title>
+  <link rel="stylesheet" href="../../client/css/variables.css">
+  <link rel="stylesheet" href="../../client/css/reset.css">
+  <link rel="stylesheet" href="../../client/css/global.css">
+  <link rel="stylesheet" href="../style/dev-auth.css">
+</head>
+<body class="dev-login-page">
+  <div class="dev-login-container">
+    <div class="dev-login-card">
+      <div class="dev-header">
+        <div class="dev-logo">
+          <div class="dev-logo-icon">⚙️</div>
+          <h1>Ascenda <span class="dev-badge">DEV</span></h1>
+        </div>
+        <p class="dev-subtitle">Área Restrita - Desenvolvedores</p>
+      </div>
+
+      <form id="dev-login-form" class="dev-form">
+        <div class="form-group">
+          <label for="dev-email">
+            <span class="label-icon">📧</span>
+            E-mail do Desenvolvedor
+          </label>
+          <input 
+            type="email" 
+            id="dev-email" 
+            name="email" 
+            required 
+            placeholder="dev@ascenda.com"
+            autocomplete="email"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="dev-password">
+            <span class="label-icon">🔒</span>
+            Senha Segura
+          </label>
+          <input 
+            type="password" 
+            id="dev-password" 
+            name="password" 
+            required 
+            placeholder="••••••••••"
+            autocomplete="current-password"
+          >
+        </div>
+
+        <div class="security-info">
+          <span class="security-icon">🛡️</span>
+          <span>Conexão segura e criptografada</span>
+        </div>
+
+        <div class="form-error d-none" id="dev-login-error">
+          Credenciais inválidas ou acesso não autorizado
+        </div>
+
+        <button type="submit" class="btn btn-dev btn-block">
+          🔐 Acessar Painel DEV
+        </button>
+      </form>
+
+      <div class="dev-footer">
+        <a href="../../index.html" class="back-link">
+          ← Voltar para área de clientes
+        </a>
+      </div>
+
+      <div class="dev-warning">
+        <p>⚠️ <strong>Área Restrita</strong></p>
+        <p>Acesso exclusivo para desenvolvedores autorizados da Ascenda Platform.</p>
+        <p>Todas as ações são registradas e monitoradas.</p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="../script/dev-auth.js"></script>
+</body>
+</html>

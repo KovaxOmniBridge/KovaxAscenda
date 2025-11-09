@@ -1,0 +1,697 @@
+/**
+ * =====================================================
+ * ASCENDA PLATFORM - SERVIDOR PRINCIPAL
+ * =====================================================
+ * Servidor Express com autenticação e banco de dados JSON
+ */
+
+import express from 'express';
+import cors from 'cors';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+import fs from 'fs/promises';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+
+// Configuração de diretórios
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const DATA_DIR = join(__dirname, 'data');
+
+// Configuração do servidor
+const app = express();
+const PORT = process.env.PORT || 3000;
+const JWT_SECRET = process.env.JWT_SECRET || 'ascenda-secret-key-2024';
+const JWT_EXPIRES_IN = '7d';
+
+// Middlewares
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// =====================================================
+// FUNÇÕES DE BANCO DE DADOS (JSON)
+// =====================================================
+
+/**
+ * Ler dados de um arquivo JSON
+ */
+async function readData(filename) {
+  try {
+    const filePath = join(DATA_DIR, filename);
+    const data = await fs.readFile(filePath, 'utf-8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error(`Erro ao ler ${filename}:`, error.message);
+    return null;
+  }
+}
+
+/**
+ * Escrever dados em um arquivo JSON
+ */
+async function writeData(filename, data) {
+  try {
+    const filePath = join(DATA_DIR, filename);
+    await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8');
+    return true;
+  } catch (error) {
+    console.error(`Erro ao escrever ${filename}:`, error.message);
+    return false;
+  }
+}
+
+/**
+ * Inicializar arquivos de dados se não existirem
+ */
+async function initializeData() {
+  try {
+    // Criar diretório data se não existir
+    await fs.mkdir(DATA_DIR, { recursive: true });
+
+    // Verificar e criar organizations.json
+    const organizationsPath = join(DATA_DIR, 'organizations.json');
+    try {
+      await fs.access(organizationsPath);
+    } catch {
+      const organizations = [
+        {
+          id: '1',
+          name: 'Empresa Modelo S.A.',
+          slug: 'empresa-modelo',
+          createdAt: new Date().toISOString()
+        }
+      ];
+      await writeData('organizations.json', organizations);
+      console.log('✓ organizations.json criado');
+    }
+
+    // Verificar e criar users.json
+    const usersPath = join(DATA_DIR, 'users.json');
+    try {
+      await fs.access(usersPath);
+    } catch {
+      const passwordHash = await bcrypt.hash('senha123', 10);
+      const users = [
+        {
+          id: '1',
+          organizationId: '1',
+          email: 'ceo@empresa.com',
+          password: passwordHash,
+          name: 'CEO Principal',
+          role: 'CEO',
+          permissions: {
+            toolCategories: ['lideranca', 'diretoria', 'administracao', 'coordenacao', 'gerenciamento', 'supervisao', 'operacional'],
+            canAccessDev: false
+          },
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: '2',
+          organizationId: '1',
+          email: 'diretor@empresa.com',
+          password: passwordHash,
+          name: 'Diretor Executivo',
+          role: 'Diretor',
+          permissions: {
+            toolCategories: ['diretoria', 'administracao', 'coordenacao', 'gerenciamento', 'supervisao', 'operacional'],
+            canAccessDev: false
+          },
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: '3',
+          organizationId: '1',
+          email: 'admin@empresa.com',
+          password: passwordHash,
+          name: 'Administrador',
+          role: 'Administrador',
+          permissions: {
+            toolCategories: ['administracao', 'coordenacao', 'gerenciamento', 'supervisao', 'operacional'],
+            canAccessDev: false
+          },
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: '4',
+          organizationId: '1',
+          email: 'dev@empresa.com',
+          password: passwordHash,
+          name: 'Desenvolvedor',
+          role: 'Desenvolvedor',
+          permissions: {
+            toolCategories: ['lideranca', 'diretoria', 'administracao', 'coordenacao', 'gerenciamento', 'supervisao', 'operacional'],
+            canAccessDev: true
+          },
+          createdAt: new Date().toISOString()
+        }
+      ];
+      await writeData('users.json', users);
+      console.log('✓ users.json criado com 4 usuários');
+    }
+
+    // Verificar e criar tools.json
+    const toolsPath = join(DATA_DIR, 'tools.json');
+    try {
+      await fs.access(toolsPath);
+    } catch {
+      const tools = {
+        categories: [
+          { key: 'lideranca', name: 'Liderança', icon: '🎯', description: 'Planejamento estratégico e direcionamento' },
+          { key: 'diretoria', name: 'Diretoria', icon: '📊', description: 'Gestão de indicadores e governança' },
+          { key: 'administracao', name: 'Administração', icon: '⚙️', description: 'Controle administrativo e financeiro' },
+          { key: 'coordenacao', name: 'Coordenação', icon: '🎓', description: 'Coordenação de projetos e equipes' },
+          { key: 'gerenciamento', name: 'Gerenciamento', icon: '📈', description: 'Gestão de recursos e orçamentos' },
+          { key: 'supervisao', name: 'Supervisão', icon: '👥', description: 'Monitoramento e relatórios' },
+          { key: 'operacional', name: 'Operacional', icon: '🔧', description: 'Execução de tarefas operacionais' }
+        ],
+        tools: [
+          { id: '1', categoryKey: 'lideranca', name: 'Dashboard Executivo', description: 'Visão geral da empresa', icon: '📊' },
+          { id: '2', categoryKey: 'lideranca', name: 'Planejamento Estratégico', description: 'Definição de objetivos', icon: '🎯' },
+          { id: '3', categoryKey: 'diretoria', name: 'Gestão de Indicadores', description: 'KPIs e métricas', icon: '📈' },
+          { id: '4', categoryKey: 'diretoria', name: 'Compliance', description: 'Conformidade e auditoria', icon: '✅' },
+          { id: '5', categoryKey: 'administracao', name: 'Gestão Financeira', description: 'Controle de finanças', icon: '💰' },
+          { id: '6', categoryKey: 'administracao', name: 'Recursos Humanos', description: 'Gestão de pessoas', icon: '👥' },
+          { id: '7', categoryKey: 'coordenacao', name: 'Gestão de Projetos', description: 'Coordenação de projetos', icon: '📋' },
+          { id: '8', categoryKey: 'coordenacao', name: 'Gestão de Equipes', description: 'Coordenação de times', icon: '👨‍👩‍👧‍👦' },
+          { id: '9', categoryKey: 'gerenciamento', name: 'Gestão de Recursos', description: 'Controle de recursos', icon: '🔧' },
+          { id: '10', categoryKey: 'gerenciamento', name: 'Orçamento', description: 'Planejamento orçamentário', icon: '💵' },
+          { id: '11', categoryKey: 'supervisao', name: 'Relatórios', description: 'Geração de relatórios', icon: '📄' },
+          { id: '12', categoryKey: 'supervisao', name: 'Monitoramento', description: 'Acompanhamento em tempo real', icon: '👁️' },
+          { id: '13', categoryKey: 'operacional', name: 'Tarefas', description: 'Gestão de tarefas diárias', icon: '✔️' },
+          { id: '14', categoryKey: 'operacional', name: 'Processos', description: 'Controle de processos', icon: '⚙️' }
+        ]
+      };
+      await writeData('tools.json', tools);
+      console.log('✓ tools.json criado com 14 ferramentas');
+    }
+
+    console.log('✓ Banco de dados inicializado com sucesso!\n');
+  } catch (error) {
+    console.error('❌ Erro ao inicializar dados:', error);
+  }
+}
+
+// =====================================================
+// MIDDLEWARE DE AUTENTICAÇÃO
+// =====================================================
+
+/**
+ * Middleware para verificar JWT
+ */
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ message: 'Token não fornecido' });
+  }
+
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ message: 'Token inválido ou expirado' });
+    }
+    req.user = user;
+    next();
+  });
+}
+
+// =====================================================
+// ROTAS DE AUTENTICAÇÃO
+// =====================================================
+
+/**
+ * POST /api/auth/login
+ * Login com email e senha
+ */
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email e senha são obrigatórios' });
+    }
+
+    // Buscar usuário
+    const users = await readData('users.json');
+    const user = users.find(u => u.email === email);
+
+    if (!user) {
+      return res.status(401).json({ message: 'Credenciais inválidas' });
+    }
+
+    // Verificar senha
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) {
+      return res.status(401).json({ message: 'Credenciais inválidas' });
+    }
+
+    // Buscar organização
+    const organizations = await readData('organizations.json');
+    const organization = organizations.find(o => o.id === user.organizationId);
+
+    // Gerar token JWT
+    const token = jwt.sign(
+      { 
+        id: user.id, 
+        email: user.email, 
+        organizationId: user.organizationId 
+      },
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN }
+    );
+
+    // Resposta
+    res.json({
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        organization: organization ? organization.name : 'N/A',
+        permissions: {
+          toolCategories: user.permissions.toolCategories || [],
+          can_access_dev: user.permissions.canAccessDev || false
+        }
+      },
+      token
+    });
+
+  } catch (error) {
+    console.error('Erro no login:', error);
+    res.status(500).json({ message: 'Erro interno do servidor' });
+  }
+});
+
+/**
+ * POST /api/auth/login/client
+ * Login de CLIENTES (usuários de empresas)
+ */
+app.post('/api/auth/login/client', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email e senha são obrigatórios' });
+    }
+
+    // Buscar usuário
+    const users = await readData('users.json');
+    const user = users.find(u => u.email === email);
+
+    if (!user) {
+      return res.status(401).json({ message: 'Credenciais inválidas' });
+    }
+
+    // Verificar senha
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) {
+      return res.status(401).json({ message: 'Credenciais inválidas' });
+    }
+
+    // Buscar organização
+    const organizations = await readData('organizations.json');
+    const organization = organizations.find(o => o.id === user.organizationId);
+
+    // Gerar token JWT
+    const token = jwt.sign(
+      { 
+        id: user.id, 
+        email: user.email, 
+        organizationId: user.organizationId,
+        type: 'client'
+      },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    // Resposta
+    res.json({
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        organization: organization ? organization.name : 'N/A',
+        permissions: {
+          toolCategories: user.permissions.toolCategories || []
+        }
+      },
+      token
+    });
+
+  } catch (error) {
+    console.error('Erro no login de cliente:', error);
+    res.status(500).json({ message: 'Erro interno do servidor' });
+  }
+});
+
+/**
+ * POST /api/auth/login/developer
+ * Login de DESENVOLVEDORES (acesso total à plataforma)
+ */
+app.post('/api/auth/login/developer', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email e senha são obrigatórios' });
+    }
+
+    // Buscar desenvolvedor
+    const developers = await readData('developers.json');
+    const developer = developers.find(d => d.email === email);
+
+    if (!developer) {
+      return res.status(401).json({ message: 'Acesso negado - Credenciais inválidas' });
+    }
+
+    // Verificar senha
+    const validPassword = await bcrypt.compare(password, developer.password);
+    if (!validPassword) {
+      return res.status(401).json({ message: 'Acesso negado - Credenciais inválidas' });
+    }
+
+    // Atualizar último login
+    developer.lastLogin = new Date().toISOString();
+    await writeData('developers.json', developers);
+
+    // Gerar token JWT com tempo menor (2h para segurança)
+    const token = jwt.sign(
+      { 
+        id: developer.id, 
+        email: developer.email,
+        type: 'developer',
+        permissions: developer.permissions
+      },
+      JWT_SECRET,
+      { expiresIn: '2h' }
+    );
+
+    // Log de segurança
+    console.log(`🔐 DEV LOGIN: ${developer.name} (${developer.email}) em ${new Date().toLocaleString('pt-BR')}`);
+
+    // Resposta
+    res.json({
+      user: {
+        id: developer.id,
+        name: developer.name,
+        email: developer.email,
+        role: developer.role,
+        permissions: developer.permissions
+      },
+      token
+    });
+
+  } catch (error) {
+    console.error('Erro no login de desenvolvedor:', error);
+    res.status(500).json({ message: 'Erro interno do servidor' });
+  }
+});
+
+/**
+ * POST /api/auth/logout
+ * Logout (cliente deve descartar o token)
+ */
+app.post('/api/auth/logout', (req, res) => {
+  res.json({ message: 'Logout realizado com sucesso' });
+});
+
+/**
+ * GET /api/auth/verify
+ * Verificar token e retornar dados do usuário
+ */
+app.get('/api/auth/verify', authenticateToken, async (req, res) => {
+  try {
+    const users = await readData('users.json');
+    const user = users.find(u => u.id === req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuário não encontrado' });
+    }
+
+    const organizations = await readData('organizations.json');
+    const organization = organizations.find(o => o.id === user.organizationId);
+
+    res.json({
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        organization: organization ? organization.name : 'N/A',
+        permissions: {
+          toolCategories: user.permissions.toolCategories || [],
+          can_access_dev: user.permissions.canAccessDev || false
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Erro ao verificar token:', error);
+    res.status(500).json({ message: 'Erro interno do servidor' });
+  }
+});
+
+// =====================================================
+// ROTAS DE ORGANIZAÇÕES
+// =====================================================
+
+/**
+ * GET /api/organizations
+ * Listar todas as organizações (apenas desenvolvedores)
+ */
+app.get('/api/organizations', authenticateToken, async (req, res) => {
+  try {
+    // Apenas desenvolvedores podem listar todas as organizações
+    if (req.user.type !== 'developer') {
+      return res.status(403).json({ message: 'Acesso negado' });
+    }
+
+    const organizations = await readData('organizations.json');
+    const users = await readData('users.json');
+
+    // Adicionar contagem de usuários para cada organização
+    const organizationsWithCount = organizations.map(org => ({
+      ...org,
+      userCount: users.filter(u => u.organizationId === org.id).length
+    }));
+
+    res.json(organizationsWithCount);
+  } catch (error) {
+    console.error('Erro ao listar organizações:', error);
+    res.status(500).json({ message: 'Erro interno do servidor' });
+  }
+});
+
+// =====================================================
+// ROTAS DE USUÁRIOS
+// =====================================================
+
+/**
+ * GET /api/users
+ * Listar usuários da organização
+ */
+app.get('/api/users', authenticateToken, async (req, res) => {
+  try {
+    const users = await readData('users.json');
+    const orgUsers = users
+      .filter(u => u.organizationId === req.user.organizationId)
+      .map(u => ({
+        id: u.id,
+        name: u.name,
+        email: u.email,
+        role: u.role,
+        createdAt: u.createdAt
+      }));
+
+    res.json(orgUsers);
+  } catch (error) {
+    console.error('Erro ao listar usuários:', error);
+    res.status(500).json({ message: 'Erro interno do servidor' });
+  }
+});
+
+/**
+ * GET /api/users/:id
+ * Detalhes de um usuário
+ */
+app.get('/api/users/:id', authenticateToken, async (req, res) => {
+  try {
+    const users = await readData('users.json');
+    const user = users.find(u => 
+      u.id === req.params.id && 
+      u.organizationId === req.user.organizationId
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuário não encontrado' });
+    }
+
+    res.json({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      permissions: user.permissions,
+      createdAt: user.createdAt
+    });
+  } catch (error) {
+    console.error('Erro ao buscar usuário:', error);
+    res.status(500).json({ message: 'Erro interno do servidor' });
+  }
+});
+
+// =====================================================
+// ROTAS DE FERRAMENTAS
+// =====================================================
+
+/**
+ * GET /api/tools/categories
+ * Listar categorias de ferramentas
+ */
+app.get('/api/tools/categories', async (req, res) => {
+  try {
+    const tools = await readData('tools.json');
+    res.json(tools.categories);
+  } catch (error) {
+    console.error('Erro ao listar categorias:', error);
+    res.status(500).json({ message: 'Erro interno do servidor' });
+  }
+});
+
+/**
+ * GET /api/tools
+ * Listar todas as ferramentas
+ */
+app.get('/api/tools', async (req, res) => {
+  try {
+    const tools = await readData('tools.json');
+    res.json(tools.tools);
+  } catch (error) {
+    console.error('Erro ao listar ferramentas:', error);
+    res.status(500).json({ message: 'Erro interno do servidor' });
+  }
+});
+
+/**
+ * GET /api/tools/category/:categoryKey
+ * Ferramentas de uma categoria específica
+ */
+app.get('/api/tools/category/:categoryKey', async (req, res) => {
+  try {
+    const tools = await readData('tools.json');
+    const categoryTools = tools.tools.filter(t => t.categoryKey === req.params.categoryKey);
+    res.json(categoryTools);
+  } catch (error) {
+    console.error('Erro ao buscar ferramentas da categoria:', error);
+    res.status(500).json({ message: 'Erro interno do servidor' });
+  }
+});
+
+/**
+ * GET /api/tools/user/:userId
+ * Ferramentas disponíveis para um usuário
+ */
+app.get('/api/tools/user/:userId', authenticateToken, async (req, res) => {
+  try {
+    const users = await readData('users.json');
+    const user = users.find(u => 
+      u.id === req.params.userId && 
+      u.organizationId === req.user.organizationId
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuário não encontrado' });
+    }
+
+    const tools = await readData('tools.json');
+    const allowedCategories = user.permissions.toolCategories || [];
+    
+    const userTools = tools.tools.filter(t => 
+      allowedCategories.includes(t.categoryKey)
+    );
+
+    res.json(userTools);
+  } catch (error) {
+    console.error('Erro ao buscar ferramentas do usuário:', error);
+    res.status(500).json({ message: 'Erro interno do servidor' });
+  }
+});
+
+// =====================================================
+// ROTAS GERAIS
+// =====================================================
+
+/**
+ * GET /health
+ * Health check
+ */
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'ok',
+    database: 'json',
+    timestamp: new Date().toISOString() 
+  });
+});
+
+/**
+ * GET /api
+ * Informações da API
+ */
+app.get('/api', (req, res) => {
+  res.json({
+    message: 'Ascenda API v1.0',
+    endpoints: {
+      auth: '/api/auth',
+      users: '/api/users',
+      tools: '/api/tools'
+    },
+    database: 'JSON Files'
+  });
+});
+
+// =====================================================
+// INICIALIZAÇÃO DO SERVIDOR
+// =====================================================
+
+/**
+ * Iniciar servidor
+ */
+async function startServer() {
+  // Inicializar dados
+  await initializeData();
+
+  // Iniciar servidor
+  app.listen(PORT, () => {
+    console.log('╔════════════════════════════════════════════════════════════╗');
+    console.log('║                                                            ║');
+    console.log('║       ✅ ASCENDA PLATFORM - SERVIDOR INICIADO             ║');
+    console.log('║                                                            ║');
+    console.log('╚════════════════════════════════════════════════════════════╝');
+    console.log('');
+    console.log(`🚀 Servidor rodando em: http://localhost:${PORT}`);
+    console.log(`📊 Health check: http://localhost:${PORT}/health`);
+    console.log(`📚 API Info: http://localhost:${PORT}/api`);
+    console.log('');
+    console.log('📦 Banco de dados: JSON Files (./data)');
+    console.log('');
+    console.log('👥 Usuários disponíveis:');
+    console.log('   • ceo@empresa.com / senha123 (CEO - 7 categorias)');
+    console.log('   • diretor@empresa.com / senha123 (Diretor - 6 categorias)');
+    console.log('   • admin@empresa.com / senha123 (Admin - 5 categorias)');
+    console.log('   • dev@empresa.com / senha123 (Dev - Todas + Dev Mode)');
+    console.log('');
+    console.log('🎯 Para testar:');
+    console.log('   1. Abra client/index.html com Live Server');
+    console.log('   2. Faça login com qualquer usuário acima');
+    console.log('');
+    console.log('═══════════════════════════════════════════════════════════');
+    console.log('');
+  });
+}
+
+// Iniciar
+startServer().catch(error => {
+  console.error('❌ Erro ao iniciar servidor:', error);
+  process.exit(1);
+});

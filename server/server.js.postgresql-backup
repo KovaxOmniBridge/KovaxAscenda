@@ -1,0 +1,684 @@
+/**
+ * =====================================================
+ * ASCENDA PLATFORM - SERVIDOR PRINCIPAL
+ * =====================================================
+ * Servidor Express com autenticação e PostgreSQL
+ */
+
+import express from 'express';
+import cors from 'cors';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import pkg from 'pg';
+const { Pool } = pkg;
+import dotenv from 'dotenv';
+
+// Carregar variáveis de ambiente
+dotenv.config();
+
+// Configuração de diretórios
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Configuração do servidor
+const app = express();
+const PORT = process.env.PORT || 3000;
+const JWT_SECRET = process.env.JWT_SECRET || 'ascenda-secret-key-2024';
+
+// Configuração do PostgreSQL
+const pool = new Pool({
+  host: process.env.DB_HOST || 'localhost',
+  port: process.env.DB_PORT || 5432,
+  database: process.env.DB_NAME || 'ascenda_db',
+  user: process.env.DB_USER || 'postgres',
+  password: process.env.DB_PASSWORD || 'postgres',
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
+});
+
+// Event listeners do pool
+pool.on('connect', () => {
+  console.log('✓ Conectado ao PostgreSQL');
+});
+
+pool.on('error', (err) => {
+  console.error('Erro no pool PostgreSQL:', err);
+  process.exit(-1);
+});
+
+// Middlewares
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Logging middleware
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+  next();
+});
+
+// =====================================================
+// MIDDLEWARE DE AUTENTICAÇÃO
+// =====================================================
+
+/**
+ * Middleware para verificar JWT
+ */
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ 
+      success: false, 
+      message: 'Token não fornecido' 
+    });
+  }
+
+  jwt.verify(token, JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ 
+        success: false, 
+        message: 'Token inválido ou expirado' 
+      });
+    }
+    req.user = decoded;
+    next();
+  });
+}
+
+// =====================================================
+// ROTAS DE AUTENTICAÇÃO
+// =====================================================
+
+/**
+ * POST /api/auth/login/client
+ * Login de clientes (usuários de organizações)
+ */
+app.post('/api/auth/login/client', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email e senha são obrigatórios'
+      });
+    }
+
+    // Buscar usuário no banco
+    const result = await pool.query(
+      `SELECT u.*, o.name as organization_name, o.slug as organization_slug
+       FROM users u
+       INNER JOIN organizations o ON u.organization_id = o.id
+       WHERE u.email = $1 AND u.is_active = true`,
+      [email.toLowerCase()]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({
+        success: false,
+        message: 'Email ou senha incorretos'
+      });
+    }
+
+    const user = result.rows[0];
+
+    // Verificar senha
+    const passwordMatch = await bcrypt.compare(password, user.password_hash);
+    if (!passwordMatch) {
+      return res.status(401).json({
+        success: false,
+        message: 'Email ou senha incorretos'
+      });
+    }
+
+    // Atualizar último login
+    await pool.query(
+      'UPDATE users SET last_login_at = CURRENT_TIMESTAMP WHERE id = $1',
+      [user.id]
+    );
+
+    // Gerar token JWT (24 horas para clientes)
+    const token = jwt.sign(
+      {
+        userId: user.id,
+        email: user.email,
+        organizationId: user.organization_id,
+        type: 'client'
+      },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    console.log(`✓ Login bem-sucedido (CLIENT): ${email}`);
+
+    res.json({
+      success: true,
+      message: 'Login realizado com sucesso',
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        organizationId: user.organization_id,
+        organizationName: user.organization_name,
+        organizationSlug: user.organization_slug,
+        type: 'client'
+      }
+    });
+
+  } catch (error) {
+    console.error('Erro no login de cliente:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erro ao processar login'
+    });
+  }
+});
+
+/**
+ * POST /api/auth/login/developer
+ * Login de desenvolvedores (acesso à plataforma)
+ */
+app.post('/api/auth/login/developer', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email e senha são obrigatórios'
+      });
+    }
+
+    // Buscar desenvolvedor no banco
+    const result = await pool.query(
+      'SELECT * FROM developers WHERE email = $1 AND is_active = true',
+      [email.toLowerCase()]
+    );
+
+    if (result.rows.length === 0) {
+      console.log(`⚠ Tentativa de login com email não encontrado: ${email}`);
+      return res.status(401).json({
+        success: false,
+        message: 'Email ou senha incorretos'
+      });
+    }
+
+    const developer = result.rows[0];
+
+    // Verificar senha
+    const passwordMatch = await bcrypt.compare(password, developer.password_hash);
+    if (!passwordMatch) {
+      console.log(`⚠ Tentativa de login com senha incorreta: ${email}`);
+      return res.status(401).json({
+        success: false,
+        message: 'Email ou senha incorretos'
+      });
+    }
+
+    // Atualizar último login
+    await pool.query(
+      'UPDATE developers SET last_login_at = CURRENT_TIMESTAMP WHERE id = $1',
+      [developer.id]
+    );
+
+    // Gerar token JWT (2 horas para desenvolvedores - mais seguro)
+    const token = jwt.sign(
+      {
+        developerId: developer.id,
+        email: developer.email,
+        role: developer.role,
+        type: 'developer'
+      },
+      JWT_SECRET,
+      { expiresIn: '2h' }
+    );
+
+    console.log(`🔐 Login DEVELOPER bem-sucedido: ${email} | Role: ${developer.role}`);
+
+    res.json({
+      success: true,
+      message: 'Login de desenvolvedor realizado com sucesso',
+      token,
+      user: {
+        id: developer.id,
+        name: developer.name,
+        email: developer.email,
+        role: developer.role,
+        permissions: developer.permissions,
+        type: 'developer'
+      }
+    });
+
+  } catch (error) {
+    console.error('Erro no login de desenvolvedor:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erro ao processar login'
+    });
+  }
+});
+
+/**
+ * POST /api/auth/logout
+ * Logout (apenas limpa o token no cliente)
+ */
+app.post('/api/auth/logout', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Logout realizado com sucesso'
+  });
+});
+
+/**
+ * GET /api/auth/verify
+ * Verificar se o token é válido e retornar dados do usuário
+ */
+app.get('/api/auth/verify', authenticateToken, async (req, res) => {
+  try {
+    let userData = null;
+
+    if (req.user.type === 'developer') {
+      const result = await pool.query(
+        'SELECT id, name, email, role, permissions FROM developers WHERE id = $1 AND is_active = true',
+        [req.user.developerId]
+      );
+      if (result.rows.length > 0) {
+        userData = {
+          ...result.rows[0],
+          type: 'developer'
+        };
+      }
+    } else {
+      const result = await pool.query(
+        `SELECT u.*, o.name as organization_name, o.slug as organization_slug
+         FROM users u
+         INNER JOIN organizations o ON u.organization_id = o.id
+         WHERE u.id = $1 AND u.is_active = true`,
+        [req.user.userId]
+      );
+      if (result.rows.length > 0) {
+        const user = result.rows[0];
+        userData = {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          organizationId: user.organization_id,
+          organizationName: user.organization_name,
+          organizationSlug: user.organization_slug,
+          type: 'client'
+        };
+      }
+    }
+
+    if (!userData) {
+      return res.status(404).json({
+        success: false,
+        message: 'Usuário não encontrado'
+      });
+    }
+
+    res.json({
+      success: true,
+      user: userData
+    });
+
+  } catch (error) {
+    console.error('Erro ao verificar token:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erro ao verificar autenticação'
+    });
+  }
+});
+
+// =====================================================
+// ROTAS DE ORGANIZAÇÕES
+// =====================================================
+
+/**
+ * GET /api/organizations
+ * Listar todas as organizações (APENAS PARA DESENVOLVEDORES)
+ */
+app.get('/api/organizations', authenticateToken, async (req, res) => {
+  try {
+    // Verificar se é desenvolvedor
+    if (req.user.type !== 'developer') {
+      return res.status(403).json({
+        success: false,
+        message: 'Acesso negado. Apenas desenvolvedores podem listar todas as organizações.'
+      });
+    }
+
+    const result = await pool.query(
+      'SELECT * FROM organizations ORDER BY name'
+    );
+
+    res.json({
+      success: true,
+      organizations: result.rows
+    });
+
+  } catch (error) {
+    console.error('Erro ao listar organizações:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erro ao listar organizações'
+    });
+  }
+});
+
+// =====================================================
+// ROTAS DE USUÁRIOS
+// =====================================================
+
+/**
+ * GET /api/users
+ * Listar usuários (desenvolvedores: todos | clientes: da própria organização)
+ */
+app.get('/api/users', authenticateToken, async (req, res) => {
+  try {
+    let result;
+
+    if (req.user.type === 'developer') {
+      // Desenvolvedor vê todos os usuários
+      result = await pool.query(
+        `SELECT u.*, o.name as organization_name
+         FROM users u
+         INNER JOIN organizations o ON u.organization_id = o.id
+         ORDER BY o.name, u.name`
+      );
+    } else {
+      // Cliente vê apenas usuários da própria organização
+      result = await pool.query(
+        `SELECT u.*, o.name as organization_name
+         FROM users u
+         INNER JOIN organizations o ON u.organization_id = o.id
+         WHERE u.organization_id = $1
+         ORDER BY u.name`,
+        [req.user.organizationId]
+      );
+    }
+
+    res.json({
+      success: true,
+      users: result.rows
+    });
+
+  } catch (error) {
+    console.error('Erro ao listar usuários:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erro ao listar usuários'
+    });
+  }
+});
+
+/**
+ * GET /api/users/:id
+ * Obter detalhes de um usuário específico
+ */
+app.get('/api/users/:id', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await pool.query(
+      `SELECT u.*, o.name as organization_name, o.slug as organization_slug
+       FROM users u
+       INNER JOIN organizations o ON u.organization_id = o.id
+       WHERE u.id = $1`,
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Usuário não encontrado'
+      });
+    }
+
+    const user = result.rows[0];
+
+    // Se for cliente, só pode ver usuários da própria organização
+    if (req.user.type !== 'developer' && user.organization_id !== req.user.organizationId) {
+      return res.status(403).json({
+        success: false,
+        message: 'Acesso negado'
+      });
+    }
+
+    res.json({
+      success: true,
+      user: user
+    });
+
+  } catch (error) {
+    console.error('Erro ao buscar usuário:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erro ao buscar usuário'
+    });
+  }
+});
+
+// =====================================================
+// ROTAS DE FERRAMENTAS
+// =====================================================
+
+/**
+ * GET /api/tools/categories
+ * Listar todas as categorias de ferramentas
+ */
+app.get('/api/tools/categories', async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT * FROM tool_categories ORDER BY display_order'
+    );
+
+    res.json({
+      success: true,
+      categories: result.rows
+    });
+
+  } catch (error) {
+    console.error('Erro ao listar categorias:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erro ao listar categorias'
+    });
+  }
+});
+
+/**
+ * GET /api/tools
+ * Listar todas as ferramentas
+ */
+app.get('/api/tools', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT t.*, tc.name as category_name, tc.key as category_key
+       FROM tools t
+       INNER JOIN tool_categories tc ON t.category_id = tc.id
+       WHERE t.is_active = true
+       ORDER BY tc.display_order, t.name`
+    );
+
+    res.json({
+      success: true,
+      tools: result.rows
+    });
+
+  } catch (error) {
+    console.error('Erro ao listar ferramentas:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erro ao listar ferramentas'
+    });
+  }
+});
+
+/**
+ * GET /api/tools/category/:categoryKey
+ * Listar ferramentas de uma categoria específica
+ */
+app.get('/api/tools/category/:categoryKey', async (req, res) => {
+  try {
+    const { categoryKey } = req.params;
+
+    const result = await pool.query(
+      `SELECT t.*, tc.name as category_name, tc.key as category_key
+       FROM tools t
+       INNER JOIN tool_categories tc ON t.category_id = tc.id
+       WHERE tc.key = $1 AND t.is_active = true
+       ORDER BY t.name`,
+      [categoryKey]
+    );
+
+    res.json({
+      success: true,
+      tools: result.rows
+    });
+
+  } catch (error) {
+    console.error('Erro ao listar ferramentas por categoria:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erro ao listar ferramentas'
+    });
+  }
+});
+
+// =====================================================
+// ROTAS DE SAÚDE E INFORMAÇÕES
+// =====================================================
+
+/**
+ * GET /health
+ * Verificar saúde do servidor e banco de dados
+ */
+app.get('/health', async (req, res) => {
+  try {
+    const dbResult = await pool.query('SELECT NOW()');
+    res.json({
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      database: 'connected',
+      dbTime: dbResult.rows[0].now
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'unhealthy',
+      timestamp: new Date().toISOString(),
+      database: 'disconnected',
+      error: error.message
+    });
+  }
+});
+
+/**
+ * GET /api
+ * Informações sobre a API
+ */
+app.get('/api', (req, res) => {
+  res.json({
+    name: 'Ascenda Platform API',
+    version: '2.0.0',
+    database: 'PostgreSQL',
+    endpoints: {
+      auth: {
+        'POST /api/auth/login/client': 'Login de clientes',
+        'POST /api/auth/login/developer': 'Login de desenvolvedores',
+        'POST /api/auth/logout': 'Logout',
+        'GET /api/auth/verify': 'Verificar token'
+      },
+      organizations: {
+        'GET /api/organizations': 'Listar organizações (dev only)'
+      },
+      users: {
+        'GET /api/users': 'Listar usuários',
+        'GET /api/users/:id': 'Obter usuário'
+      },
+      tools: {
+        'GET /api/tools/categories': 'Listar categorias',
+        'GET /api/tools': 'Listar ferramentas',
+        'GET /api/tools/category/:categoryKey': 'Ferramentas por categoria'
+      }
+    }
+  });
+});
+
+// =====================================================
+// INICIALIZAÇÃO DO SERVIDOR
+// =====================================================
+
+/**
+ * Testar conexão com o banco de dados
+ */
+async function testDatabaseConnection() {
+  try {
+    const client = await pool.connect();
+    const result = await client.query('SELECT NOW()');
+    console.log('✓ Conexão com PostgreSQL bem-sucedida:', result.rows[0].now);
+    client.release();
+    return true;
+  } catch (error) {
+    console.error('✗ Erro ao conectar ao PostgreSQL:', error.message);
+    console.error('  Verifique se o PostgreSQL está rodando e as credenciais no .env');
+    return false;
+  }
+}
+
+/**
+ * Iniciar servidor
+ */
+async function startServer() {
+  try {
+    console.log('\n🚀 Iniciando Ascenda Platform Server...\n');
+    
+    // Testar conexão com banco
+    const dbConnected = await testDatabaseConnection();
+    if (!dbConnected) {
+      console.error('\n❌ Não foi possível conectar ao banco de dados');
+      console.log('\n💡 Dica: Execute "node database/init-db.js" para criar o banco\n');
+      process.exit(1);
+    }
+
+    // Iniciar servidor
+    app.listen(PORT, () => {
+      console.log(`\n✓ Servidor rodando na porta ${PORT}`);
+      console.log(`✓ API disponível em http://localhost:${PORT}/api`);
+      console.log(`✓ Health check: http://localhost:${PORT}/health\n`);
+      console.log('📝 Endpoints disponíveis:');
+      console.log('   POST /api/auth/login/client - Login de clientes');
+      console.log('   POST /api/auth/login/developer - Login de desenvolvedores');
+      console.log('   GET  /api/organizations - Listar organizações (dev)');
+      console.log('   GET  /api/users - Listar usuários');
+      console.log('   GET  /api/tools - Listar ferramentas\n');
+    });
+
+  } catch (error) {
+    console.error('❌ Erro ao iniciar servidor:', error);
+    process.exit(1);
+  }
+}
+
+// Graceful shutdown
+process.on('SIGTERM', async () => {
+  console.log('\n⏹ SIGTERM recebido, fechando servidor...');
+  await pool.end();
+  process.exit(0);
+});
+
+process.on('SIGINT', async () => {
+  console.log('\n⏹ SIGINT recebido, fechando servidor...');
+  await pool.end();
+  process.exit(0);
+});
+
+// Iniciar
+startServer();

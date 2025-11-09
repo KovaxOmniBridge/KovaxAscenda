@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Ascenda Platform</title>
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Header do Dashboard -->
+    <header class="dashboard-header">
+      <div class="container">
+        <div class="header-content">
+          <div class="logo">
+            <div class="landing-logo-icon">A</div>
+            <span>Ascenda</span>
+          </div>
+          <div class="header-right">
+            <div id="user-info" class="user-info"></div>
+            <button id="logout-btn" class="btn btn-secondary btn-sm">Sair</button>
+          </div>
+        </div>
+      </div>
+    </header>
+    
+    <!-- Dashboard Principal -->
+    <main class="dashboard-main">
+      <div class="container">
+        <div class="dashboard-welcome">
+          <h1>Bem-vindo ao Dashboard</h1>
+          <p id="welcome-message">Carregando suas ferramentas...</p>
+        </div>
+        
+        <!-- Categorias e Ferramentas -->
+        <div id="dashboard-content" class="dashboard-grid">
+          <!-- Será preenchido dinamicamente pelo JavaScript -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- JavaScript -->
+  <script type="module" src="../js/dashboard.js"></script>
+</body>
+</html>
