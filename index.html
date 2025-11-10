@@ -309,16 +309,14 @@
       const showRegister = document.getElementById('show-register');
       const showLogin = document.getElementById('show-login');
       
-      // Abrir modal de login
+      // Redirecionar para login
       btnAcessar.addEventListener('click', function() {
-        modalLogin.classList.add('active');
-        document.body.style.overflow = 'hidden';
+        window.location.href = 'client/public/login.html';
       });
       
-      // Abrir modal de cadastro
+      // Redirecionar para cadastro de empresa
       btnCadastrar.addEventListener('click', function() {
-        modalRegister.classList.add('active');
-        document.body.style.overflow = 'hidden';
+        window.location.href = 'client/public/cadastro-empresa.html';
       });
       
       // Fechar modal de login

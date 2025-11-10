@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestão de Cargos - Ascenda</title>
+  <link rel="stylesheet" href="../style/dev-dashboard.css">
+  <link rel="stylesheet" href="../style/dev-cargos.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo-section">
+        <h1>🚀 Ascenda</h1>
+        <p class="user-role">Desenvolvedor</p>
+      </div>
+
+      <nav class="main-nav">
+        <a href="dashboard.html" class="nav-item">
+          <span class="nav-icon">🏢</span>
+          <span>Empresas</span>
+        </a>
+        <a href="cargos.html" class="nav-item active">
+          <span class="nav-icon">👔</span>
+          <span>Cargos</span>
+        </a>
+        <a href="usuarios.html" class="nav-item">
+          <span class="nav-icon">👥</span>
+          <span>Usuários</span>
+        </a>
+        <a href="ferramentas.html" class="nav-item">
+          <span class="nav-icon">🛠️</span>
+          <span>Ferramentas</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button id="logout-btn" class="logout-btn">
+          <span>🚪</span> Sair
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      
+      <!-- Header -->
+      <header class="content-header">
+        <div class="header-title">
+          <h2>Gestão de Cargos</h2>
+          <p class="subtitle">Crie e gerencie cargos com permissões de ferramentas</p>
+        </div>
+        <div class="header-actions">
+          <select id="org-select" class="org-selector">
+            <option value="">Carregando empresas...</option>
+          </select>
+          <button id="new-position-btn" class="btn-primary" disabled>
+            <span>➕</span> Novo Cargo
+          </button>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <section class="content-body">
+        
+        <!-- Empty State -->
+        <div id="empty-state" class="empty-state" style="display: none;">
+          <div class="empty-icon">👔</div>
+          <h3>Nenhum cargo cadastrado</h3>
+          <p>Crie o primeiro cargo para começar a organizar permissões</p>
+          <button class="btn-primary" onclick="window.openPositionModal()">
+            Criar Primeiro Cargo
+          </button>
+        </div>
+
+        <!-- Positions Grid -->
+        <div id="positions-grid" class="positions-grid"></div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- Modal: Criar/Editar Cargo -->
+  <div id="position-modal" class="modal">
+    <div class="modal-overlay" onclick="window.closePositionModal()"></div>
+    <div class="modal-content large">
+      
+      <div class="modal-header">
+        <h3 id="modal-title">Novo Cargo</h3>
+        <button class="modal-close" onclick="window.closePositionModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        
+        <!-- Informações Básicas -->
+        <div class="form-section">
+          <h4>📋 Informações Básicas</h4>
+          
+          <div class="form-group">
+            <label for="position-name">Nome do Cargo *</label>
+            <input 
+              type="text" 
+              id="position-name" 
+              placeholder="Ex: Gerente de Vendas"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="position-description">Descrição</label>
+            <textarea 
+              id="position-description" 
+              rows="3" 
+              placeholder="Descreva as responsabilidades deste cargo..."
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Seleção de Ferramentas -->
+        <div class="form-section">
+          <h4>🛠️ Ferramentas Permitidas</h4>
+          <p class="section-hint">Selecione as ferramentas que este cargo pode acessar</p>
+          
+          <div id="tools-selection" class="tools-selection">
+            <div class="loading-tools">Carregando ferramentas...</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="window.closePositionModal()">Cancelar</button>
+        <button id="save-position-btn" class="btn-primary" onclick="window.savePosition()">
+          Salvar Cargo
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal: Confirmação de Exclusão -->
+  <div id="delete-modal" class="modal">
+    <div class="modal-overlay" onclick="window.closeDeleteModal()"></div>
+    <div class="modal-content small">
+      
+      <div class="modal-header danger">
+        <h3>⚠️ Excluir Cargo</h3>
+        <button class="modal-close" onclick="window.closeDeleteModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <p id="delete-message">Tem certeza que deseja excluir este cargo?</p>
+        <p class="warning-text" id="delete-warning"></p>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="window.closeDeleteModal()">Cancelar</button>
+        <button id="confirm-delete-btn" class="btn-danger" onclick="window.confirmDelete()">
+          Excluir
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script type="module" src="../script/dev-cargos.js"></script>
+</body>
+</html>

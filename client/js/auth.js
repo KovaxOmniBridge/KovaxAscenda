@@ -1,104 +1,196 @@
 /* ============================================
-   AUTHENTICATION - LOGIN & SESSION
+   CLIENT AUTHENTICATION - LOGIN & SESSION
    ============================================ */
 
 const API_URL = 'http://localhost:3000/api';
 
-// Login Form Handler
-document.addEventListener('DOMContentLoaded', () => {
-  const loginForm = document.getElementById('loginForm');
-  const loginError = document.getElementById('loginError');
-
-  if (loginForm) {
-    loginForm.addEventListener('submit', handleLogin);
+// Check if user is already logged in
+function checkExistingSession() {
+  const token = localStorage.getItem('token');
+  
+  if (token) {
+    // Verify token is still valid
+    fetch(`${API_URL}/user/my-tools`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    .then(response => {
+      if (response.ok) {
+        // Token is valid, redirect to dashboard
+        window.location.href = '../pages/dashboard.html';
+      } else {
+        // Token is invalid, clear it
+        localStorage.removeItem('token');
+      }
+    })
+    .catch(error => {
+      console.error('Session check error:', error);
+    });
   }
+}
 
-  // Check if already logged in
-  checkAuthStatus();
-});
-
-/**
- * Handle login form submission
- */
+// Handle login form submission
 async function handleLogin(event) {
   event.preventDefault();
 
+  const loginBtn = document.getElementById('login-btn');
+  const errorMessage = document.getElementById('error-message');
+  
+  // Get form data
   const email = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value;
-  const loginError = document.getElementById('loginError');
-  const submitButton = event.target.querySelector('button[type="submit"]');
+  const remember = document.getElementById('remember').checked;
 
   // Clear previous errors
-  loginError.classList.add('d-none');
-  loginError.textContent = '';
+  errorMessage.style.display = 'none';
+  errorMessage.textContent = '';
 
-  // Disable submit button
-  submitButton.disabled = true;
-  submitButton.textContent = 'Entrando...';
+  // Validate inputs
+  if (!email || !password) {
+    showError('Por favor, preencha todos os campos.');
+    return;
+  }
+
+  // Disable button and show loading state
+  loginBtn.disabled = true;
+  loginBtn.textContent = 'Entrando...';
 
   try {
-    const response = await fetch(`${API_URL}/auth/login`, {
+    const response = await fetch(`${API_URL}/auth/login/client`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password })
     });
 
     const data = await response.json();
 
-    if (!response.ok) {
-      throw new Error(data.message || 'Erro ao fazer login');
+    if (response.ok && data.success) {
+      // Store token
+      localStorage.setItem('token', data.data.token);
+      
+      // Store user info
+      localStorage.setItem('user', JSON.stringify({
+        id: data.data.user.id,
+        name: data.data.user.name,
+        email: data.data.user.email,
+        position: data.data.user.position_name,
+        organization: data.data.user.organization_name
+      }));
+
+      // If remember me is checked, store email
+      if (remember) {
+        localStorage.setItem('remembered_email', email);
+      } else {
+        localStorage.removeItem('remembered_email');
+      }
+
+      // Success feedback
+      loginBtn.textContent = '✓ Sucesso!';
+      loginBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+
+      // Redirect to dashboard
+      setTimeout(() => {
+        window.location.href = '../pages/dashboard.html';
+      }, 500);
+
+    } else {
+      // Show error message from server
+      showError(data.message || 'Email ou senha incorretos.');
+      resetButton();
     }
-
-    // Store authentication data
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
-
-    // Show success message briefly
-    showSuccessMessage('Login realizado com sucesso! Redirecionando...');
-
-    // Redirect to dashboard
-    setTimeout(() => {
-      window.location.href = 'client/pages/dashboard.html';
-    }, 1000);
 
   } catch (error) {
     console.error('Login error:', error);
+    showError('Erro ao conectar com o servidor. Tente novamente.');
+    resetButton();
+  }
+}
+
+// Show error message
+function showError(message) {
+  const errorMessage = document.getElementById('error-message');
+  errorMessage.textContent = message;
+  errorMessage.style.display = 'block';
+}
+
+// Reset login button
+function resetButton() {
+  const loginBtn = document.getElementById('login-btn');
+  loginBtn.disabled = false;
+  loginBtn.textContent = 'Entrar';
+  loginBtn.style.background = '';
+}
+
+// Pre-fill email if remembered
+function loadRememberedEmail() {
+  const rememberedEmail = localStorage.getItem('remembered_email');
+  
+  if (rememberedEmail) {
+    const emailInput = document.getElementById('email');
+    const rememberCheckbox = document.getElementById('remember');
     
-    // Show error message
-    loginError.textContent = error.message;
-    loginError.classList.remove('d-none');
-
-    // Re-enable submit button
-    submitButton.disabled = false;
-    submitButton.textContent = 'Entrar na Plataforma';
+    emailInput.value = rememberedEmail;
+    rememberCheckbox.checked = true;
   }
 }
 
-/**
- * Check if user is already authenticated
- */
-function checkAuthStatus() {
-  const token = localStorage.getItem('token');
-  const user = localStorage.getItem('user');
-
-  // If on login page and already authenticated, redirect to dashboard
-  if (token && user && window.location.pathname.includes('index.html')) {
-    window.location.href = 'client/pages/dashboard.html';
+// Handle Enter key in form inputs
+function setupKeyboardShortcuts() {
+  const form = document.getElementById('login-form');
+  
+  if (form) {
+    form.addEventListener('keypress', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        handleLogin(event);
+      }
+    });
   }
 }
 
-/**
- * Show success message
- */
-function showSuccessMessage(message) {
-  const loginError = document.getElementById('loginError');
-  loginError.textContent = message;
-  loginError.classList.remove('alert-error');
-  loginError.classList.add('alert-success');
-  loginError.classList.remove('d-none');
-}
+
+// Initialize on DOM load
+document.addEventListener('DOMContentLoaded', () => {
+  // Check if already logged in
+  checkExistingSession();
+  
+  // Load remembered email
+  loadRememberedEmail();
+  
+  // Setup keyboard shortcuts
+  setupKeyboardShortcuts();
+  
+  // Attach form submit handler
+  const loginForm = document.getElementById('login-form');
+  if (loginForm) {
+    loginForm.addEventListener('submit', handleLogin);
+  }
+  
+  // Focus on email input
+  setTimeout(() => {
+    const emailInput = document.getElementById('email');
+    if (emailInput) {
+      if (!emailInput.value) {
+        emailInput.focus();
+      } else {
+        const passwordInput = document.getElementById('password');
+        if (passwordInput) {
+          passwordInput.focus();
+        }
+      }
+    }
+  }, 100);
+});
+
+// Handle visibility change (detect when user returns to tab)
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) {
+    checkExistingSession();
+  }
+});
 
 /**
  * Logout user
@@ -109,7 +201,7 @@ export function logout() {
   localStorage.removeItem('user');
 
   // Redirect to login page
-  window.location.href = 'index.html';
+  window.location.href = '../../index.html';
 }
 
 /**
@@ -125,36 +217,6 @@ export function getCurrentUser() {
  */
 export function getAuthToken() {
   return localStorage.getItem('token');
-}
-
-/**
- * Check if user has specific permission
- */
-export function hasPermission(permission) {
-  const user = getCurrentUser();
-  if (!user || !user.permissions) return false;
-
-  return user.permissions[permission] === true;
-}
-
-/**
- * Check if user can access a tool category
- */
-export function canAccessCategory(categoryKey) {
-  const user = getCurrentUser();
-  if (!user || !user.permissions || !user.permissions.toolCategories) return false;
-
-  return user.permissions.toolCategories.includes(categoryKey);
-}
-
-/**
- * Get user's accessible tool categories
- */
-export function getAccessibleCategories() {
-  const user = getCurrentUser();
-  if (!user || !user.permissions || !user.permissions.toolCategories) return [];
-
-  return user.permissions.toolCategories;
 }
 
 /**
