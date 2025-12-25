@@ -1,0 +1,53 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  font-family: Arial, sans-serif;
+}
+
+.app-header-cards {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #ddd;
+  flex-shrink: 0; /* Garante que o header não encolha */
+}
+
+.card-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-align: center;
+}
+
+.card-button:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.card-icon {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+
+.card-label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Área de conteúdo com scroll próprio */
+.app-content {
+  flex: 1; /* ocupa todo o espaço restante */
+  overflow-y: auto; /* habilita scroll vertical */
+  padding: 20px;
+  background-color: #f9f9f9;
+}

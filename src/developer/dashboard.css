@@ -1,0 +1,79 @@
+/* ================================
+   DASHBOARD – LAYOUT BASE
+================================ */
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  background-color: #f8fafc;
+  overflow: hidden;
+  font-family: "Inter", "Segoe UI", sans-serif;
+}
+
+/* ================================
+   SIDEBAR
+   (o componente Sidebar controla
+   seu próprio layout interno)
+================================ */
+/* Apenas garante o comportamento no layout */
+.dashboard-container > .sidebar,
+.dashboard-container > aside {
+  flex-shrink: 0;
+}
+
+/* ================================
+   CONTEÚDO PRINCIPAL
+================================ */
+.dashboard-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* evita overflow em flex */
+  background-color: #f8fafc;
+}
+
+/* ================================
+   HEADER DO DASHBOARD
+================================ */
+.dashboard-content > header {
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+/* ================================
+   ÁREA DE ROTAS / PÁGINAS
+================================ */
+.dashboard-content main,
+.dashboard-content > div {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* Conteúdo padrão */
+.dashboard-content h1,
+.dashboard-content h2,
+.dashboard-content h3 {
+  margin-top: 0;
+  color: #0f172a;
+}
+
+/* Texto padrão */
+.dashboard-content p {
+  color: #475569;
+  font-size: 14px;
+}
+
+/* ================================
+   RESPONSIVIDADE
+================================ */
+@media (max-width: 1024px) {
+  .dashboard-container {
+    flex-direction: column;
+  }
+
+  .dashboard-content {
+    width: 100%;
+  }
+}

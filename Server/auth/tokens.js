@@ -1,0 +1,1 @@
+//Responsável por gerenciar a criação e validação de tokens de autenticação.

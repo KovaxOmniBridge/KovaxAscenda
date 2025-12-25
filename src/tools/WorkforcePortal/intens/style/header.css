@@ -1,0 +1,68 @@
+.wf-header {
+  height: 56px;
+  width: 100%;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  box-sizing: border-box;
+  z-index: 80;
+}
+
+/* LEFT */
+.wf-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.wf-header-menu-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.wf-header-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* RIGHT */
+.wf-header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.wf-header-action {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: none;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.wf-header-action:hover {
+  background: #1e40af;
+}
+
+.wf-header-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+}
