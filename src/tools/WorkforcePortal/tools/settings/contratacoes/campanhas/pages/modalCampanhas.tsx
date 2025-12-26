@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./modalCargos.css";
+import "./modalCampanhas.css";
 
 // Import das fases
 import DadosGerais from "./fases/FaseDadosGerais";

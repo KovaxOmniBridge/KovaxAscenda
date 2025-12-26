@@ -1,0 +1,177 @@
+/* Container base de cada fase */
+.fase-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Título principal da fase */
+.fase-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333333;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 6px;
+}
+
+/* Texto de apoio / descrição da fase */
+.fase-description {
+  font-size: 0.9rem;
+  color: #666666;
+  max-width: 700px;
+}
+
+/* Blocos de conteúdo */
+.fase-section {
+  background-color: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Subtítulo dentro de blocos */
+.fase-section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #444444;
+}
+
+/* Grupo de campos */
+.fase-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Labels */
+.fase-field-group label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #333333;
+}
+
+/* Inputs padrões */
+.fase-field-group input[type="text"],
+.fase-field-group input[type="number"],
+.fase-field-group input[type="email"],
+.fase-field-group select,
+.fase-field-group textarea {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #cccccc;
+  font-size: 0.9rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Focus */
+.fase-field-group input:focus,
+.fase-field-group select:focus,
+.fase-field-group textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0,123,255,0.15);
+}
+
+/* Textarea */
+.fase-field-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Grupo horizontal (checkbox / radio) */
+.fase-options {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.fase-option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: #333333;
+}
+
+/* Cards de escolha (ex: fonte de dados) */
+.fase-choice-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.fase-choice-card {
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background-color: #ffffff;
+}
+
+.fase-choice-card:hover {
+  border-color: #007bff;
+}
+
+.fase-choice-card.active {
+  border-color: #007bff;
+  background-color: #eef5ff;
+}
+
+/* Avisos / alertas */
+.fase-alert {
+  padding: 12px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.fase-alert.info {
+  background-color: #e9f5ff;
+  color: #084298;
+  border: 1px solid #b6e0fe;
+}
+
+.fase-alert.warning {
+  background-color: #fff3cd;
+  color: #664d03;
+  border: 1px solid #ffecb5;
+}
+
+/* Resumo final */
+.fase-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fase-summary-item {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dashed #cccccc;
+  padding-bottom: 6px;
+  font-size: 0.9rem;
+}
+
+.fase-summary-item span:first-child {
+  font-weight: 500;
+  color: #444444;
+}
+
+.fase-summary-item span:last-child {
+  color: #666666;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .fase-choice-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .fase-options {
+    flex-direction: column;
+    gap: 10px;
+  }
+}

@@ -6,13 +6,24 @@ import "./settings.css";
 // Módulos atuais implementados:
 
 // Gestão Cargos
-import ModCargos from "./ambiente/cargos/modCargos";
+import ModCargos from "./cargos/modCargos";
 // Serve para o usuário gerenciar os cargos, permissões, etc.
 
 // Gestão Campanhas Contratações
-import ModCampanhas from "./contratacoes/campanhas/modCampanhas";
+import ModSquads from "./squads/modSquads";
 // Serve para o usuário gerenciar campanhas de contratações de novos profissionais para os cargos.
 
+// Gestão Operações
+import ModOperacoes from "./operacoes/modOperacoes";
+// Serve para o usuário gerenciar as operações vinculadas aos serviços oferecidos pela empresa.
+
+// Gestão Infraestrutura
+import ModInfraestrutura from "./infraestrutura/modInfraestrutura";
+// Serve para o usuário gerenciar a infraestrutura, permissões, políticas de auditoria, etc.
+
+// Gestão Ambientes
+import ModAmbientes from "./ambiente/modAmbientes";
+// Serve para o usuário gerenciar os ambientes: Produção, Homologação, Treinamento, etc.
 
 
 // Módulos futuros a serem implementados:
@@ -89,7 +100,7 @@ import ModCampanhas from "./contratacoes/campanhas/modCampanhas";
 
 
 // Tipos de páginas internas
-type PageType = "dashboard" | "cargos" | "campanhas" | "styleMarketplace" | "produtosMarketplace";
+type PageType = "cargos" | "operacoes" | "squads" | "infraestrutura" | "ambientes" |  "styleMarketplace" | "produtosMarketplace";
 
 // Interface de botão
 interface NavButton {
@@ -100,7 +111,7 @@ interface NavButton {
 }
 
 // Mock de permissões do usuário
-const userPermissions: string[] = ["dashboard", "cargos", "campanhas", "styleMarketplace", "produtosMarketplace"];
+const userPermissions: string[] = ["cargos", "operacoes", "squads", "infraestrutura", "ambientes", "styleMarketplace", "produtosMarketplace"];
 
 // Futuramente isso virá do backend ou banco de dados
 
@@ -108,31 +119,39 @@ const userPermissions: string[] = ["dashboard", "cargos", "campanhas", "styleMar
 const Dashboard: React.FC = () => <div>Bem-vindo ao Dashboard</div>;
 
 // Exemplo de ícones simples (pode substituir por SVG ou biblioteca de ícones)
-const DashboardIcon = () => <span role="img" aria-label="dashboard">📊</span>;
 const CargosIcon = () => <span role="img" aria-label="cargos">👥</span>;
-const CampanhasIcon = () => <span role="img" aria-label="campanhas">📣</span>;
+const OperacoesIcon = () => <span role="img" aria-label="operacoes">📣</span>;
+const SquadsIcon = () => <span role="img" aria-label="squads">⚙️</span>;
+const InfraestruturaIcon = () => <span role="img" aria-label="infraestrutura">🏢</span>;
+const AmbientesIcon = () => <span role="img" aria-label="ambientes">🛡️</span>;
 const StyleMarketplaceIcon = () => <span role="img" aria-label="styleMarketplace">🎨</span>;
 const ProdutosMarketplaceIcon = () => <span role="img" aria-label="produtosMarketplace">📦</span>;
 
 const App: React.FC = () => {
-  const [activePage, setActivePage] = useState<PageType>("dashboard");
+  const [activePage, setActivePage] = useState<PageType>("cargos");
 
   const navButtons: NavButton[] = [
-    { label: "Dashboard", page: "dashboard", permissionKey: "dashboard", icon: <DashboardIcon /> },
     { label: "Cargos", page: "cargos", permissionKey: "cargos", icon: <CargosIcon /> },
-    { label: "Campanhas", page: "campanhas", permissionKey: "campanhas", icon: <CampanhasIcon /> },
+    { label: "Operações", page: "operacoes", permissionKey: "operacoes", icon: <OperacoesIcon /> },
+    { label: "Squads", page: "squads", permissionKey: "squads", icon: <SquadsIcon /> },
+    { label: "Infraestrutura", page: "infraestrutura", permissionKey: "infraestrutura", icon: <InfraestruturaIcon /> },
+    { label: "Ambientes", page: "ambientes", permissionKey: "ambientes", icon: <AmbientesIcon /> },
     { label: "Style Marketplace", page: "styleMarketplace", permissionKey: "styleMarketplace", icon: <StyleMarketplaceIcon /> },
     { label: "Produtos Marketplace", page: "produtosMarketplace", permissionKey: "produtosMarketplace", icon: <ProdutosMarketplaceIcon /> },
   ];
 
   const renderPage = () => {
     switch (activePage) {
-      case "dashboard":
-        return <Dashboard />;
       case "cargos":
         return <ModCargos />;
-      case "campanhas":
-        return <ModCampanhas />;
+      case "operacoes":
+        return <ModOperacoes />;
+      case "squads":
+        return <ModSquads />;
+      case "infraestrutura":
+        return <ModInfraestrutura />;
+      case "ambientes":
+        return <ModAmbientes />;
       default:
         return <div>Página não encontrada</div>;
     }
