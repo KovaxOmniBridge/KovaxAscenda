@@ -25,6 +25,14 @@ import ModInfraestrutura from "./infraestrutura/modInfraestrutura";
 import ModAmbientes from "./ambiente/modAmbientes";
 // Serve para o usuário gerenciar os ambientes: Produção, Homologação, Treinamento, etc.
 
+// Style Marketplace
+import ModStyleMarketplace from "./marketplace/modStyleMarketplace";
+// Serve para o usuário definir a aparência do marketplace
+
+// Style Cliente Portal
+import ModStyleClientePortal from "./clientPortal/modStyleClientPortal";
+// Serve para o usuário definir a aparência do portal do cliente final, seus conteúdos e páginas.
+
 
 // Módulos futuros a serem implementados:
 
@@ -100,7 +108,7 @@ import ModAmbientes from "./ambiente/modAmbientes";
 
 
 // Tipos de páginas internas
-type PageType = "cargos" | "operacoes" | "squads" | "infraestrutura" | "ambientes" |  "styleMarketplace" | "produtosMarketplace";
+type PageType = "cargos" | "operacoes" | "squads" | "infraestrutura" | "ambientes" |  "styleMarketplace" | "styleClientePortal";
 
 // Interface de botão
 interface NavButton {
@@ -111,7 +119,7 @@ interface NavButton {
 }
 
 // Mock de permissões do usuário
-const userPermissions: string[] = ["cargos", "operacoes", "squads", "infraestrutura", "ambientes", "styleMarketplace", "produtosMarketplace"];
+const userPermissions: string[] = ["cargos", "operacoes", "squads", "infraestrutura", "ambientes", "styleMarketplace", "styleClientePortal"];
 
 // Futuramente isso virá do backend ou banco de dados
 
@@ -125,7 +133,7 @@ const SquadsIcon = () => <span role="img" aria-label="squads">⚙️</span>;
 const InfraestruturaIcon = () => <span role="img" aria-label="infraestrutura">🏢</span>;
 const AmbientesIcon = () => <span role="img" aria-label="ambientes">🛡️</span>;
 const StyleMarketplaceIcon = () => <span role="img" aria-label="styleMarketplace">🎨</span>;
-const ProdutosMarketplaceIcon = () => <span role="img" aria-label="produtosMarketplace">📦</span>;
+const StyleClientePortalIcon = () => <span role="img" aria-label="produtosMarketplace">🛒</span>;
 
 const App: React.FC = () => {
   const [activePage, setActivePage] = useState<PageType>("cargos");
@@ -137,7 +145,7 @@ const App: React.FC = () => {
     { label: "Infraestrutura", page: "infraestrutura", permissionKey: "infraestrutura", icon: <InfraestruturaIcon /> },
     { label: "Ambientes", page: "ambientes", permissionKey: "ambientes", icon: <AmbientesIcon /> },
     { label: "Style Marketplace", page: "styleMarketplace", permissionKey: "styleMarketplace", icon: <StyleMarketplaceIcon /> },
-    { label: "Produtos Marketplace", page: "produtosMarketplace", permissionKey: "produtosMarketplace", icon: <ProdutosMarketplaceIcon /> },
+    { label: "Style Cliente Portal", page: "styleClientePortal", permissionKey: "styleClientePortal", icon: <StyleClientePortalIcon /> },
   ];
 
   const renderPage = () => {
@@ -152,6 +160,10 @@ const App: React.FC = () => {
         return <ModInfraestrutura />;
       case "ambientes":
         return <ModAmbientes />;
+      case "styleMarketplace":
+        return <ModStyleMarketplace />;
+      case "styleClientePortal":
+        return <ModStyleClientePortal />;
       default:
         return <div>Página não encontrada</div>;
     }

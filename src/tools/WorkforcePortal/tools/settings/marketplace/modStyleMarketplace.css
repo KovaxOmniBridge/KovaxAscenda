@@ -1,0 +1,183 @@
+/* ===============================
+   Container Geral
+================================ */
+
+.style-marketplace-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  background-color: #ffffff;
+}
+
+/* ===============================
+   Header
+================================ */
+
+.style-marketplace-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.style-marketplace-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937; /* gray-800 */
+}
+
+.style-marketplace-header p {
+  font-size: 14px;
+  color: #6b7280; /* gray-500 */
+  max-width: 720px;
+}
+
+/* ===============================
+   Grid de Estilos
+================================ */
+
+.style-marketplace-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+/* ===============================
+   Card de Estilo
+================================ */
+
+.style-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb; /* gray-200 */
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  overflow: hidden;
+}
+
+.style-card:hover {
+  border-color: #2563eb; /* blue-600 */
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.style-card.selected {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+/* ===============================
+   Preview Visual
+================================ */
+
+.style-preview {
+  height: 120px;
+  width: 100%;
+}
+
+/* ===============================
+   Informações do Estilo
+================================ */
+
+.style-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px;
+}
+
+.style-info h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827; /* gray-900 */
+}
+
+.style-info p {
+  font-size: 13px;
+  color: #6b7280; /* gray-500 */
+  line-height: 1.4;
+}
+
+/* ===============================
+   Indicador Selecionado
+================================ */
+
+.style-selected-indicator {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: #2563eb; /* blue-600 */
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+/* ===============================
+   Footer / Ações
+================================ */
+
+.style-marketplace-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb; /* gray-200 */
+}
+
+.style-marketplace-summary {
+  font-size: 14px;
+  color: #374151; /* gray-700 */
+}
+
+.style-marketplace-summary strong {
+  color: #111827; /* gray-900 */
+}
+
+/* ===============================
+   Botão Salvar
+================================ */
+
+.style-marketplace-save-button {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #2563eb; /* blue-600 */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out,
+              box-shadow 0.2s ease-in-out,
+              transform 0.1s ease-in-out;
+}
+
+.style-marketplace-save-button:hover {
+  background-color: #1d4ed8; /* blue-700 */
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25);
+}
+
+.style-marketplace-save-button:active {
+  transform: scale(0.98);
+}
+
+/* ===============================
+   Responsividade
+================================ */
+
+@media (max-width: 768px) {
+  .style-marketplace-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .style-marketplace-save-button {
+    width: 100%;
+    text-align: center;
+  }
+}

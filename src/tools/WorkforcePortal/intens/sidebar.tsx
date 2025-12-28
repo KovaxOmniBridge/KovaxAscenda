@@ -1,33 +1,64 @@
 import React from "react";
 import "./style/sidebar.css";
-import { Ferramenta, permissoesCargo, permissoesUsuario } from "./futurasIntegracoes/permissions";
+import {
+  Ferramenta,
+  permissoesCargo,
+  permissoesUsuario,
+} from "./futurasIntegracoes/permissions";
 
 interface SidebarProps {
-  onSelect: (id: string) => void; // id da ferramenta
+  onSelect: (id: Ferramenta) => void; // tipado com domínio correto
   onClose: () => void;
   asModal?: boolean;
   user: { id: string; cargo: string };
 }
 
-// Apenas a ferramenta que temos
-const todasFerramentas: { id: Ferramenta; label: string }[] = [
+// Catálogo único de ferramentas
+interface FerramentaMenu {
+  id: Ferramenta;
+  label: string;
+}
+
+const todasFerramentas: FerramentaMenu[] = [
   { id: "settings", label: "Configurações" },
+  { id: "operationalPanel", label: "Painel Operacional" },
 ];
 
-const Sidebar: React.FC<SidebarProps> = ({ onSelect, onClose, asModal = false, user }) => {
-  const ferramentasDisponiveis = todasFerramentas.filter(item => {
-    const cargoPermissoes = permissoesCargo[user.cargo] || [];
-    const usuarioPermissoes = permissoesUsuario[user.id] || [];
-    return cargoPermissoes.includes(item.id) || usuarioPermissoes.includes(item.id);
-  });
+// Regra centralizada de permissão (RBAC híbrido)
+const hasPermission = (
+  userId: string,
+  cargo: string,
+  ferramenta: Ferramenta
+): boolean => {
+  const permissoesPorCargo = permissoesCargo[cargo] || [];
+  const permissoesPorUsuario = permissoesUsuario[userId] || [];
+
+  return (
+    permissoesPorCargo.includes(ferramenta) ||
+    permissoesPorUsuario.includes(ferramenta)
+  );
+};
+
+const Sidebar: React.FC<SidebarProps> = ({
+  onSelect,
+  onClose,
+  asModal = false,
+  user,
+}) => {
+  const ferramentasDisponiveis = todasFerramentas.filter((item) =>
+    hasPermission(user.id, user.cargo, item.id)
+  );
 
   return (
     <>
-      {asModal && <div className="wf-sidebar-backdrop" onClick={onClose} />}
+      {asModal && (
+        <div className="wf-sidebar-backdrop" onClick={onClose} />
+      )}
 
       <aside
         className={`wf-sidebar ${asModal ? "wf-sidebar-modal" : ""}`}
         role="navigation"
+        aria-label="Menu lateral"
       >
         <div className="wf-sidebar-header">
           <h3>Menu</h3>
@@ -41,11 +72,17 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect, onClose, asModal = false, u
         </div>
 
         <nav className="wf-sidebar-nav">
+          {ferramentasDisponiveis.length === 0 && (
+            <span className="wf-sidebar-empty">
+              Nenhuma ferramenta disponível
+            </span>
+          )}
+
           {ferramentasDisponiveis.map((item) => (
             <button
               key={item.id}
               className="wf-sidebar-item"
-              onClick={() => onSelect(item.id)} // <- Corrigido aqui
+              onClick={() => onSelect(item.id)}
             >
               {item.label}
             </button>
