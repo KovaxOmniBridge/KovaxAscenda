@@ -1,5 +1,5 @@
 import Settings from "./settings/settings";
-import  OperationsHub from "./callCenter/gestor/OperationsHub";
+import  OperationsHub from "./callCenter/tools/gestorTools/OperationsHub";
 
 export const tools: Record<string, React.FC> = {
   settings: Settings,
