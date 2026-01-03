@@ -1,7 +1,7 @@
 import Settings from "./settings/settings";
-import  OperationPanel from "./callCenter/operationalPainel";
+import  OperationsHub from "./callCenter/OperationsHub";
 
 export const tools: Record<string, React.FC> = {
   settings: Settings,
-  operationalPanel: OperationPanel,
+  operationsHub: OperationsHub,
 };

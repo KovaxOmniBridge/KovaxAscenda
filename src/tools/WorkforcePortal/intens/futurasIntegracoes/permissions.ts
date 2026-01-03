@@ -1,10 +1,10 @@
-import OperationPanel from "../../tools/callCenter/operationalPainel";
-import settin from "../../tools/callCenter/operationalPainel";
+import OperationsHub from "../../tools/callCenter/OperationsHub";
+import settin from "../../tools/settings/settings";
 
 // Ferramentas disponíveis na plataforma
 export type Ferramenta =
   | "settings"
-  | "operationalPanel";
+  | "operationsHub";
 
 // Contrato de permissões por cargo
 export interface PermissoesCargo {
@@ -18,12 +18,12 @@ export interface PermissoesUsuario {
 
 // Permissões por cargo (baseline institucional)
 export const permissoesCargo: PermissoesCargo = {
-  administrador: ["settings", "operationalPanel", "operationalPanel"],
-  gerente: ["operationalPanel"],
+  administrador: ["settings", "operationsHub", "operationsHub"],
+  gerente: ["operationsHub"],
   colaborador: [] // sem acesso por padrão
 };
 
 // Permissões individuais (override estratégico)
 export const permissoesUsuario: PermissoesUsuario = {
-  "123": ["settings", "operationalPanel"], // exceção explícita
+  "123": ["settings", "operationsHub"], // exceção explícita
 };
