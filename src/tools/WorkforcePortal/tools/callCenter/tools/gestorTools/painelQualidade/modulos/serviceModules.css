@@ -1,0 +1,193 @@
+/* ================================
+   BASE GLOBAL
+================================ */
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #f4f6f8;
+  color: #111827;
+}
+
+/* ================================
+   LAYOUT GLOBAL DOS MÓDULOS
+================================ */
+
+.operational-panel-container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 16px;
+}
+
+/* ================================
+   CONTAINER DO MÓDULO
+================================ */
+
+.service-module {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+/* ================================
+   HEADER DO MÓDULO
+================================ */
+
+.module-header {
+  padding: 18px 22px;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+}
+
+.module-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.module-subtitle {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* ================================
+   CONTEÚDO INTERNO DO MÓDULO
+================================ */
+
+.module-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* ================================
+   CARD OPERACIONAL (CANAL / SQUAD)
+================================ */
+
+.channel-card {
+  background-color: #f9fafb;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ================================
+   HEADER DO CARD
+================================ */
+
+.channel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  color: #ffffff;
+}
+
+/* Gradientes semânticos */
+.digital-module .channel-header {
+  background: linear-gradient(135deg, #065f46, #047857);
+}
+
+.realtime-module .channel-header {
+  background: linear-gradient(135deg, #1e3a8a, #1e40af);
+}
+
+.automation-module .channel-header {
+  background: linear-gradient(135deg, #4b5563, #374151);
+}
+
+/* ================================
+   TEXTOS DO HEADER
+================================ */
+
+.channel-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.channel-status {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(4px);
+}
+
+/* ================================
+   STATUS SEMÂNTICO
+================================ */
+
+.status-online {
+  color: #d1fae5;
+}
+
+.status-attention {
+  color: #fef3c7;
+}
+
+.status-offline {
+  color: #fee2e2;
+}
+
+/* ================================
+   GRID DE MÉTRICAS (INTERNO)
+================================ */
+
+.channel-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px;
+  padding: 16px;
+}
+
+/* ================================
+   CARD DE MÉTRICA
+================================ */
+
+.channel-metric {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 14px;
+  border: 1px solid #e5e7eb;
+}
+
+/* ================================
+   TEXTO DA MÉTRICA
+================================ */
+
+.metric-label {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.channel-metric strong {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* ================================
+   RESPONSIVIDADE
+================================ */
+
+@media (max-width: 768px) {
+
+  .channel-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}

@@ -6,6 +6,7 @@ import "./OperationsHub.css";
 // ================================
 
 import MasterCommandPanel from "./painelOperacao/painelOperacao";
+import PainelQualidade from "./painelQualidade/painelQualidade";
 
 // ================================
 // TIPAGENS
@@ -13,6 +14,7 @@ import MasterCommandPanel from "./painelOperacao/painelOperacao";
 
 type PanelKey =
   | "master"
+  | "qualidade"
   | "squads"
   | "workforce"
   | "cx"
@@ -30,13 +32,14 @@ interface PanelConfig {
 // MOCK DE PERMISSÕES
 // ================================
 
-const userPermissions: string[] = ["master"];
+const userPermissions: string[] = ["master", "qualidade"];
 
 // ================================
 // ÍCONES
 // ================================
 
 const MasterIcon = () => <span role="img">🧠</span>;
+const QualityIcon = () => <span role="img">📊</span>;
 
 // ================================
 // REGISTRO DE PAINÉIS
@@ -49,6 +52,13 @@ const PANELS: PanelConfig[] = [
     icon: <MasterIcon />,
     component: MasterCommandPanel,
     permissionKey: "master",
+  },
+  {
+    key: "qualidade",
+    label: "Painel de Qualidade",
+    icon: <QualityIcon />,
+    component: PainelQualidade,
+    permissionKey: "qualidade",
   },
 ];
 
