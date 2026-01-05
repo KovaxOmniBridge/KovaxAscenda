@@ -1,0 +1,44 @@
+.modal-squads {
+  padding: 26px;
+}
+
+.squad-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.squad-efficiency-card {
+  background: #020617;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #1e293b;
+}
+
+.squad-efficiency-card h4 {
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+
+.squad-efficiency-card .efficiency-score {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.squad-efficiency-card.healthy .efficiency-score {
+  color: #22c55e;
+}
+
+.squad-efficiency-card.warning .efficiency-score {
+  color: #facc15;
+}
+
+.squad-efficiency-card.critical .efficiency-score {
+  color: #ef4444;
+}
+
+.squad-efficiency-card p {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: #94a3b8;
+}

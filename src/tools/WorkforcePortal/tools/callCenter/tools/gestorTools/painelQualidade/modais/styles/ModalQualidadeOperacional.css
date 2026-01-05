@@ -1,0 +1,78 @@
+.modal-score {
+  display: flex;
+  gap: 24px;
+  padding: 26px;
+  align-items: center;
+}
+
+.score-circle {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 700;
+  background: #020617;
+  border: 3px solid;
+}
+
+.score-circle.excelente {
+  border-color: #22c55e;
+  color: #22c55e;
+}
+
+.score-circle.bom {
+  border-color: #38bdf8;
+  color: #38bdf8;
+}
+
+.score-circle.alerta {
+  border-color: #facc15;
+  color: #facc15;
+}
+
+.score-circle.critico {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.modal-indicators {
+  padding: 0 26px 26px;
+}
+
+.indicators-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.indicator-card {
+  background: #020617;
+  border-radius: 12px;
+  padding: 18px;
+  border: 1px solid #1e293b;
+}
+
+.indicator-card.excelente {
+  border-left: 4px solid #22c55e;
+}
+
+.indicator-card.bom {
+  border-left: 4px solid #38bdf8;
+}
+
+.indicator-card.alerta {
+  border-left: 4px solid #facc15;
+}
+
+.indicator-card.critico {
+  border-left: 4px solid #ef4444;
+}
+
+.indicator-value {
+  font-size: 1.4rem;
+  margin-top: 6px;
+}

@@ -1,101 +1,133 @@
-import React from "react";
+import React, { useState } from "react";
 import "./painelQualidade.css";
-
-/* ================================
-   IMPORTAÇÃO DOS MÓDULOS
-================================ */
-
-import RealtimeModule from "./modulos/atendimentoTempoReal/RealtimeServiceModule";
-import AutomationModule from "./modulos/atendimentoAutomatizado/AutomationServiceModule";
 
 /* ================================
    TIPAGENS ESTRATÉGICAS
 ================================ */
 
-type SquadStatus = "healthy" | "warning" | "critical";
-type SquadType = "realtime" | "digital" | "automation";
-type SquadObjective = "vendas" | "suporte" | "cobranca";
+type KPIStatus = "healthy" | "warning" | "critical";
 
-/* ================================
-   DEFINIÇÃO DOS SQUADS (META)
-================================ */
-
-type SquadConfig = {
+type KPIComposite = {
   id: string;
-  name: string;
-  type: SquadType;
-  status: SquadStatus;
-  objective: SquadObjective;
-  Module: React.FC;
+  title: string;
+  value: string;
+  delta?: string;
+  status: KPIStatus;
+  description: string;
+  modalKey: string;
 };
 
-const squadsConfig: SquadConfig[] = [
+/* ================================
+   CONFIGURAÇÃO DOS KPIs COMPOSTOS
+================================ */
+
+const KPIS: KPIComposite[] = [
   {
-    id: "squad-rt",
-    name: "Atendimento em Tempo Real",
-    type: "realtime",
-    status: "warning",
-    objective: "suporte",
-    Module: RealtimeModule
+    id: "kpi-lucratividade",
+    title: "Lucratividade Líquida",
+    value: "R$ 1.240.000",
+    delta: "+8.4%",
+    status: "healthy",
+    description: "Resultado financeiro consolidado no período",
+    modalKey: "lucratividade"
   },
   {
-    id: "squad-bot",
-    name: "Atendimento Automatizado",
-    type: "automation",
+    id: "kpi-eficiencia-sistema",
+    title: "Eficiência do Sistema",
+    value: "82%",
+    delta: "+3%",
     status: "healthy",
-    objective: "cobranca",
-    Module: AutomationModule
+    description: "Performance end-to-end do funil operacional",
+    modalKey: "eficienciaSistema"
+  },
+  {
+    id: "kpi-qualidade",
+    title: "Qualidade da Operação",
+    value: "91%",
+    delta: "-1%",
+    status: "warning",
+    description: "Experiência percebida pelo cliente",
+    modalKey: "qualidade"
+  },
+  {
+    id: "kpi-automacao",
+    title: "Efetividade das Automações",
+    value: "64%",
+    delta: "+5%",
+    status: "healthy",
+    description: "Capacidade de escala sem intervenção humana",
+    modalKey: "automacao"
+  },
+  {
+    id: "kpi-risco",
+    title: "Risco Operacional",
+    value: "Baixo",
+    status: "healthy",
+    description: "Probabilidade de impacto negativo na operação",
+    modalKey: "risco"
   }
 ];
-
-/* ================================
-   HELPERS SEMÂNTICOS
-================================ */
-
-const statusLabel = (status: SquadStatus) => {
-  if (status === "healthy") return "Saudável";
-  if (status === "warning") return "Atenção";
-  return "Crítico";
-};
 
 /* ================================
    COMPONENTE PRINCIPAL
 ================================ */
 
 const PainelQualidade: React.FC = () => {
+  const [activeModal, setActiveModal] = useState<string | null>(null);
+
   return (
-    <div className="operational-panel-container">
-      {squadsConfig.map((squad) => {
-        const Module = squad.Module;
+    <section className="quality-panel-container">
+      <header className="quality-panel-header">
+        <h1>Painel Executivo de Qualidade</h1>
+        <p>Visão consolidada da saúde operacional e estratégica</p>
+      </header>
 
-        return (
-          <section
-            key={squad.id}
-            className={`
-              squad-card
-              squad-${squad.type}
-              status-${squad.status}
-            `}
+      <div className="quality-kpi-grid">
+        {KPIS.map((kpi) => (
+          <div
+            key={kpi.id}
+            className={`kpi-card status-${kpi.status}`}
+            onClick={() => setActiveModal(kpi.modalKey)}
           >
-            {/* HEADER DO SQUAD */}
-            <header className="squad-header">
-              <div>
-                <h2 className="squad-title">{squad.name}</h2>
-              </div>
+            <div className="kpi-header">
+              <span className="kpi-title">{kpi.title}</span>
+              {kpi.delta && (
+                <span className={`kpi-delta ${kpi.delta.startsWith("-") ? "negative" : "positive"}`}>
+                  {kpi.delta}
+                </span>
+              )}
+            </div>
 
-              <span className={`squad-status status-${squad.status}`}>
-                {statusLabel(squad.status)}
-              </span>
+            <div className="kpi-value">{kpi.value}</div>
+
+            <p className="kpi-description">{kpi.description}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* ================================
+         MODAIS (PLACEHOLDER)
+      ================================ */}
+      {activeModal && (
+        <div className="modal-overlay" onClick={() => setActiveModal(null)}>
+          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+            <header className="modal-header">
+              <h2>Análise Detalhada</h2>
+              <button onClick={() => setActiveModal(null)}>✕</button>
             </header>
 
-            {/* MÓDULO ESPECIALIZADO */}
-            <div className="squad-module-container">
-              <Module />
+            <div className="modal-content">
+              <p>
+                Modal <strong>{activeModal}</strong> será carregado aqui.
+              </p>
+              <p>
+                Gráficos, correlações, insights e recomendações estratégicas.
+              </p>
             </div>
-          </section>
-        );
-      })}
-    </div>
+          </div>
+        </div>
+      )}
+    </section>
   );
 };
 

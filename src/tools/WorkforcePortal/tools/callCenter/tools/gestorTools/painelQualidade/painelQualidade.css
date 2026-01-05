@@ -1,183 +1,227 @@
 /* =====================================================
-   RESET GLOBAL & BASE CORPORATIVA
-===================================================== */
-
-body {
-  margin: 0;
-  padding: 0;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f4f6f8;
-  color: #111827;
-}
-
-/* =====================================================
    CONTAINER GLOBAL
 ===================================================== */
 
-.operational-panel-container {
+.quality-panel-container {
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  padding: 8px;
+  gap: 28px;
+  padding: 12px;
   background-color: #f4f6f8;
 }
 
 /* =====================================================
-   CARD PRINCIPAL DO SQUAD (MÓDULO)
+   HEADER EXECUTIVO
 ===================================================== */
 
-.squad-card {
-  background-color: #ffffff;
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
-}
-
-/* =====================================================
-   HEADER DO SQUAD (FAIXA SUPERIOR)
-===================================================== */
-
-.squad-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  padding: 16px 20px;
+.quality-panel-header {
+  background: linear-gradient(135deg, #111827, #1f2937);
   color: #ffffff;
+  border-radius: 14px;
+  padding: 20px 24px;
 }
 
-/* Identidade visual por tipo de squad */
-
-.squad-realtime .squad-header {
-  background: linear-gradient(135deg, #1e3a8a, #1e40af);
-}
-
-.squad-digital .squad-header {
-  background: linear-gradient(135deg, #065f46, #047857);
-}
-
-.squad-automation .squad-header {
-  background: linear-gradient(135deg, #374151, #1f2937);
-}
-
-/* =====================================================
-   TEXTOS DO HEADER
-===================================================== */
-
-.squad-title {
+.quality-panel-header h1 {
   margin: 0;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.3px;
 }
 
-.squad-meta {
-  display: block;
-  margin-top: 4px;
+.quality-panel-header p {
+  margin-top: 6px;
   font-size: 13px;
   opacity: 0.85;
 }
 
 /* =====================================================
-   STATUS DO SQUAD
+   GRID DE KPIs
 ===================================================== */
 
-.squad-status {
-  font-size: 12px;
-  font-weight: 600;
-  padding: 6px 12px;
-  border-radius: 999px;
-  text-transform: uppercase;
-  background-color: rgba(255, 255, 255, 0.18);
-}
-
-.status-healthy .squad-status {
-  color: #d1fae5;
-}
-
-.status-warning .squad-status {
-  color: #fef3c7;
-}
-
-.status-critical .squad-status {
-  color: #fee2e2;
-}
-
-/* =====================================================
-   GRID DE MÉTRICAS
-===================================================== */
-
-.metrics-grid {
+.quality-kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-  padding: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
 }
 
 /* =====================================================
-   CARD DE MÉTRICA
+   CARD DE KPI
 ===================================================== */
 
-.metric-card {
-  background-color: #f9fafb;
-  border-radius: 12px;
-  padding: 16px;
+.kpi-card {
+  background-color: #ffffff;
+  border-radius: 14px;
+  padding: 18px;
   border: 1px solid #e5e7eb;
 
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 10px;
+
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+}
+
+.kpi-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
 }
 
 /* =====================================================
-   STATUS VISUAL DA MÉTRICA
+   STATUS VISUAL DO KPI
 ===================================================== */
 
-.metric-card.status-good {
-  border-left: 4px solid #10b981;
+.kpi-card.status-healthy {
+  border-left: 5px solid #10b981;
 }
 
-.metric-card.status-attention {
-  border-left: 4px solid #f59e0b;
+.kpi-card.status-warning {
+  border-left: 5px solid #f59e0b;
 }
 
-.metric-card.status-bad {
-  border-left: 4px solid #ef4444;
+.kpi-card.status-critical {
+  border-left: 5px solid #ef4444;
 }
 
 /* =====================================================
-   CONTEÚDO DA MÉTRICA
+   HEADER DO KPI
 ===================================================== */
 
-.metric-label {
+.kpi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.kpi-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* =====================================================
+   DELTA / VARIAÇÃO
+===================================================== */
+
+.kpi-delta {
   font-size: 13px;
-  color: #6b7280;
-  font-weight: 500;
+  font-weight: 600;
 }
 
-.metric-value {
-  font-size: 22px;
+.kpi-delta.positive {
+  color: #059669;
+}
+
+.kpi-delta.negative {
+  color: #dc2626;
+}
+
+/* =====================================================
+   VALOR PRINCIPAL
+===================================================== */
+
+.kpi-value {
+  font-size: 28px;
   font-weight: 600;
   color: #111827;
 }
 
 /* =====================================================
-   VARIAÇÃO
+   DESCRIÇÃO
 ===================================================== */
 
-.metric-variation {
-  margin-top: 4px;
+.kpi-description {
   font-size: 13px;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+/* =====================================================
+   MODAL OVERLAY
+===================================================== */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(17, 24, 39, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* =====================================================
+   CONTAINER DO MODAL
+===================================================== */
+
+.modal-container {
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 720px;
+  border-radius: 16px;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  animation: modalFadeIn 0.25s ease;
+}
+
+/* =====================================================
+   HEADER DO MODAL
+===================================================== */
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 18px 22px;
+  background: linear-gradient(135deg, #1f2937, #111827);
+  color: #ffffff;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 16px;
   font-weight: 600;
 }
 
-.metric-variation.positive {
-  color: #059669;
+.modal-header button {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 18px;
+  cursor: pointer;
+  opacity: 0.85;
 }
 
-.metric-variation.negative {
-  color: #dc2626;
+.modal-header button:hover {
+  opacity: 1;
+}
+
+/* =====================================================
+   CONTEÚDO DO MODAL
+===================================================== */
+
+.modal-content {
+  padding: 22px;
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.6;
+}
+
+/* =====================================================
+   ANIMAÇÃO
+===================================================== */
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* =====================================================
@@ -185,13 +229,15 @@ body {
 ===================================================== */
 
 @media (max-width: 768px) {
-  .squad-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
+  .quality-panel-header {
+    padding: 16px;
   }
 
-  .metrics-grid {
-    grid-template-columns: 1fr;
+  .kpi-value {
+    font-size: 24px;
+  }
+
+  .modal-container {
+    margin: 16px;
   }
 }
