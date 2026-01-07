@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import PortalAscenda from './pages/portalAscenda';
 import Dashboard from './developer/dashboard';
-import Marketplace from './tools/Marketplace/index';
-import WorkforceDashboard from './tools/WorkforcePortal/dashboard';
+import Marketplace from './portais/Marketplace/index';
+import WorkforceDashboard from './portais/WorkforcePortal/dashboard';
 
 function App() {
 	return (
@@ -14,8 +14,8 @@ function App() {
 				<Route path="/portal" element={<PortalAscenda />} />
 				{/* Outras rotas aqui */}
 				<Route path="/developer/dashboard/*" element={<Dashboard />} />
-				<Route path="/tools/Marketplace/*" element={<Marketplace />} />
-				<Route path="/tools/WorkforcePortal/dashboard/*" element={<WorkforceDashboard />} />
+				<Route path="/portais/tools/Marketplace/*" element={<Marketplace />} />
+				<Route path="/portais/tools/WorkforcePortal/dashboard/*" element={<WorkforceDashboard />} />
 			</Routes>
 		</BrowserRouter>
 	);
