@@ -14,8 +14,8 @@ function App() {
 				<Route path="/portal" element={<PortalAscenda />} />
 				{/* Outras rotas aqui */}
 				<Route path="/developer/dashboard/*" element={<Dashboard />} />
-				<Route path="/portais/tools/Marketplace/*" element={<Marketplace />} />
-				<Route path="/portais/tools/WorkforcePortal/dashboard/*" element={<WorkforceDashboard />} />
+				<Route path="/portais/Marketplace/*" element={<Marketplace />} />
+				<Route path="/portais/WorkforcePortal/dashboard/*" element={<WorkforceDashboard />} />
 			</Routes>
 		</BrowserRouter>
 	);

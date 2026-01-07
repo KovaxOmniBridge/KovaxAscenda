@@ -5,22 +5,15 @@ import "./FincanceHub.css"
 // IMPORTAÇÃO DOS PAINÉIS FINANCEIROS
 // ================================
 
-import DashboardFinanceiro from "./financeiro/painel";
-import DashboardCobranca from "./financeiro/cobranca/painel";
-import DashboardRelatorios from "./financeiro/relatorios/painel";
-import DashboardConfiguracao from "./financeiro/configuracao/painel";
-import DashboardAcoes from "./financeiro/acoes/painel";
+import FinanceConfigPanel from "./Panels/configuracao";
 
 // ================================
 // TIPAGENS
 // ================================
 
 type PanelKey =
-  | "visaoGeral"
-  | "cobranca"
-  | "relatorios"
-  | "configuracao"
-  | "acoes";
+  | "Configuracao"
+
 
 interface PanelConfig {
   key: PanelKey;
@@ -35,10 +28,7 @@ interface PanelConfig {
 // ================================
 
 const userPermissions: string[] = [
-  "visaoGeral",
-  "cobranca",
-  "relatorios",
-  "configuracao",
+  "Configuracao",
 ];
 
 // ================================
@@ -57,39 +47,11 @@ const AcoesIcon = () => <span role="img">🎯</span>;
 
 const FINANCE_PANELS: PanelConfig[] = [
   {
-    key: "visaoGeral",
-    label: "Visão Geral",
-    icon: <OverviewIcon />,
-    component: DashboardFinanceiro,
-    permissionKey: "visaoGeral",
-  },
-  {
-    key: "cobranca",
-    label: "Cobrança",
-    icon: <CobrançaIcon />,
-    component: DashboardCobranca,
-    permissionKey: "cobranca",
-  },
-  {
-    key: "relatorios",
-    label: "Relatórios",
-    icon: <RelatoriosIcon />,
-    component: DashboardRelatorios,
-    permissionKey: "relatorios",
-  },
-  {
-    key: "configuracao",
+    key: "Configuracao",
     label: "Configuração",
     icon: <ConfigIcon />,
-    component: DashboardConfiguracao,
-    permissionKey: "configuracao",
-  },
-  {
-    key: "acoes",
-    label: "Ações Operacionais",
-    icon: <AcoesIcon />,
-    component: DashboardAcoes,
-    permissionKey: "acoes",
+    component: FinanceConfigPanel,
+    permissionKey: "Configuracao",
   },
 ];
 
@@ -99,7 +61,7 @@ const FINANCE_PANELS: PanelConfig[] = [
 
 const FinanceHub: React.FC = () => {
   const [activePanelKey, setActivePanelKey] = useState<PanelKey>(
-    "visaoGeral"
+    "Configuracao"
   );
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState<boolean>(
     false
