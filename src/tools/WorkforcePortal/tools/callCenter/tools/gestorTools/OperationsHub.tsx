@@ -5,8 +5,8 @@ import "./OperationsHub.css";
 // IMPORTAÇÃO DOS PAINÉIS
 // ================================
 
-import MasterCommandPanel from "./painelOperacao/painelOperacao";
-import PainelQualidade from "./painelQualidade/painelQualidade";
+import DashboardAquisicao from "./aquisicao/painel";
+//import PainelQualidade from "./painelQualidade/painelQualidade";
 
 // ================================
 // TIPAGENS
@@ -50,16 +50,16 @@ const PANELS: PanelConfig[] = [
     key: "master",
     label: "Command Center",
     icon: <MasterIcon />,
-    component: MasterCommandPanel,
+    component: DashboardAquisicao,
     permissionKey: "master",
   },
-  {
-    key: "qualidade",
-    label: "Painel de Qualidade",
-    icon: <QualityIcon />,
-    component: PainelQualidade,
-    permissionKey: "qualidade",
-  },
+ // {
+//    key: "qualidade",
+   // label: "Painel de Qualidade",
+// icon: <QualityIcon />,
+   // component: PainelQualidade,
+  //  permissionKey: "qualidade",
+//  },
 ];
 
 // ================================

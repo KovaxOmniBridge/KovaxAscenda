@@ -1,0 +1,223 @@
+/* =========================
+   CONTAINER DO MODAL
+========================= */
+
+.modal-conversao-clientes {
+  max-width: 980px;
+  max-height: 90vh;
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  background: linear-gradient(
+    180deg,
+    var(--bg-secondary),
+    var(--bg-primary)
+  );
+
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-soft);
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.65);
+}
+
+/* =========================
+   CONTEÚDO COM SCROLL ÚNICO
+========================= */
+
+.modal-conversao-clientes .modal-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Scrollbar */
+.modal-conversao-clientes .modal-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-conversao-clientes .modal-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+}
+
+/* =========================
+   BODY
+========================= */
+
+.modal-conversao-clientes .modal-body {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 32px;
+  padding: 32px;
+}
+
+/* =========================
+   BLOCO DO GRÁFICO
+========================= */
+
+.modal-conversao-clientes .pie-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* KPI central */
+.modal-conversao-clientes .pie-kpi {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.modal-conversao-clientes .pie-kpi-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-muted);
+}
+
+.modal-conversao-clientes .pie-kpi-value {
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+/* Valor positivo (clientes) */
+.modal-conversao-clientes .pie-kpi-value.positive {
+  color: #22c55e;
+}
+
+/* Sub KPI */
+.modal-conversao-clientes .pie-kpi-sub {
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #22c55e;
+}
+
+/* Gráfico pizza */
+.modal-conversao-clientes .pie-chart {
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+
+  box-shadow:
+    inset 0 0 0 14px var(--bg-primary),
+    0 12px 30px rgba(0, 0, 0, 0.45);
+}
+
+/* =========================
+   LEGENDA / DETALHAMENTO
+========================= */
+
+.modal-conversao-clientes .legend-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px 24px;
+  width: 100%;
+}
+
+/* Card */
+.modal-conversao-clientes .legend-item {
+  display: flex;
+  gap: 14px;
+  padding: 16px;
+
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-soft);
+
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.modal-conversao-clientes .legend-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.14);
+  transform: translateY(-2px);
+}
+
+/* Indicador de cor */
+.modal-conversao-clientes .color-box {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+/* Conteúdo */
+.modal-conversao-clientes .legend-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.modal-conversao-clientes .legend-info strong {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Receita em destaque */
+.modal-conversao-clientes .legend-info .highlight {
+  margin-top: 6px;
+  font-weight: 600;
+  color: #22c55e;
+}
+
+/* =========================
+   FOOTER EXECUTIVO
+========================= */
+
+.modal-conversao-clientes .modal-footer {
+  padding: 24px 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+  background: linear-gradient(
+    135deg,
+    #1e3a8a,
+    #2563eb
+  );
+}
+
+.modal-conversao-clientes .modal-footer h4 {
+  margin: 0 0 8px 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #f9fafb;
+}
+
+.modal-conversao-clientes .modal-footer p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+/* =========================
+   RESPONSIVO
+========================= */
+
+@media (max-width: 768px) {
+  .modal-conversao-clientes .modal-body {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 24px;
+  }
+
+  .modal-conversao-clientes .pie-chart {
+    width: 220px;
+    height: 220px;
+  }
+
+  .modal-conversao-clientes .pie-kpi-value {
+    font-size: 26px;
+  }
+}
