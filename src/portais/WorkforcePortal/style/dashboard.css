@@ -1,0 +1,53 @@
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.wf-dashboard-layout {
+  display: flex;
+  flex-direction: column;
+  height: 98.5vh;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f4f6f8;
+}
+
+.wf-main-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Header fixo no topo */
+.wf-dashboard-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 55px; /* ajuste conforme seu Header */
+  z-index: 100;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Conteúdo principal abaixo do header */
+.wf-content-area {
+  flex: 1;
+  padding-top: 70px;
+  padding-right: 5px;
+  padding-left: 5px;
+  overflow-y: auto;
+}
+
+/* Placeholder e conteúdo das ferramentas */
+.wf-dashboard-placeholder {
+  color: #888;
+  font-size: 18px;
+  margin-top: 0px;
+  text-align: center;
+}
+
+.wf-dashboard-content h2 {
+  font-size: 22px;
+  margin-bottom: 20px;
+}

@@ -1,0 +1,197 @@
+/* =========================
+   CONTAINER DO MODAL
+========================= */
+
+.modal-conversao {
+  max-width: 960px;
+  max-height: 90vh;
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  background: linear-gradient(
+    180deg,
+    var(--bg-secondary),
+    var(--bg-primary)
+  );
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-soft);
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.65);
+}
+
+/* =========================
+   HEADER (HERDADO)
+========================= */
+/* reutiliza .modal-header sem alterações */
+
+/* =========================
+   CONTEÚDO COM SCROLL ÚNICO
+========================= */
+
+.modal-conversao .modal-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* =========================
+   BODY
+========================= */
+
+.modal-conversao .modal-body {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 32px;
+  padding: 32px;
+}
+
+/* =========================
+   BLOCO DO GRÁFICO
+========================= */
+
+.modal-conversao .pie-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* KPI acima do gráfico */
+.modal-conversao .pie-kpi {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.modal-conversao .pie-kpi-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-muted);
+}
+
+.modal-conversao .pie-kpi-value.positive {
+  font-size: 28px;
+  font-weight: 700;
+  color: #22c55e;
+  line-height: 1.2;
+}
+
+/* Gráfico pizza */
+.modal-conversao .pie-chart {
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 0 14px var(--bg-primary),
+    0 12px 30px rgba(0, 0, 0, 0.45);
+}
+
+/* =========================
+   LEGENDA / DETALHES
+========================= */
+
+.modal-conversao .legend-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px 24px;
+  width: 100%;
+}
+
+.modal-conversao .legend-item {
+  display: flex;
+  gap: 14px;
+  padding: 16px;
+
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-soft);
+
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.modal-conversao .legend-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.modal-conversao .color-box {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.modal-conversao .legend-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.modal-conversao .legend-info strong {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Destaque semântico da taxa de conversão */
+.modal-conversao .legend-info .highlight.positive {
+  margin-top: 4px;
+  font-weight: 600;
+  color: #22c55e;
+}
+
+/* =========================
+   FOOTER EXECUTIVO
+========================= */
+
+.modal-conversao .modal-footer {
+  padding: 24px 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+  background: linear-gradient(
+    135deg,
+    #065f46,
+    #16a34a
+  );
+}
+
+.modal-conversao .modal-footer h4 {
+  margin: 0 0 8px 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ecfdf5;
+}
+
+.modal-conversao .modal-footer p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(236, 253, 245, 0.9);
+}
+
+/* =========================
+   RESPONSIVO
+========================= */
+
+@media (max-width: 768px) {
+  .modal-conversao .modal-body {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 24px;
+  }
+
+  .modal-conversao .pie-chart {
+    width: 220px;
+    height: 220px;
+  }
+
+  .modal-conversao .pie-kpi-value {
+    font-size: 24px;
+  }
+}

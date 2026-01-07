@@ -5,7 +5,6 @@ import PortalAscenda from './pages/portalAscenda';
 import Dashboard from './developer/dashboard';
 import Marketplace from './tools/Marketplace/index';
 import WorkforceDashboard from './tools/WorkforcePortal/dashboard';
-import Settings from './tools/WorkforcePortal/tools/settings/settings';
 
 function App() {
 	return (
@@ -17,7 +16,6 @@ function App() {
 				<Route path="/developer/dashboard/*" element={<Dashboard />} />
 				<Route path="/tools/Marketplace/*" element={<Marketplace />} />
 				<Route path="/tools/WorkforcePortal/dashboard/*" element={<WorkforceDashboard />} />
-				<Route path="/tools/WorkforcePortal/tools/settings/settings" element={<Settings />} />
 			</Routes>
 		</BrowserRouter>
 	);

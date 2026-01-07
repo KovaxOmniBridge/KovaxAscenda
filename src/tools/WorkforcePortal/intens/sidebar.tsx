@@ -22,6 +22,7 @@ interface FerramentaMenu {
 const todasFerramentas: FerramentaMenu[] = [
   { id: "settings", label: "Configurações" },
   { id: "operationsHub", label: "Painel Operacional" },
+  { id: "financeHub", label: "Painel Financeiro" },
 ];
 
 // Regra centralizada de permissão (RBAC híbrido)
@@ -87,6 +88,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               {item.label}
             </button>
           ))}
+
         </nav>
       </aside>
     </>

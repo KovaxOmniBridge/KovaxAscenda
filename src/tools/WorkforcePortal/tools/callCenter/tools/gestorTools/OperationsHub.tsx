@@ -6,7 +6,7 @@ import "./OperationsHub.css";
 // ================================
 
 import DashboardAquisicao from "./aquisicao/painel";
-//import PainelQualidade from "./painelQualidade/painelQualidade";
+import DashboardCobranca from "./cobranca/painel";
 
 // ================================
 // TIPAGENS
@@ -53,13 +53,13 @@ const PANELS: PanelConfig[] = [
     component: DashboardAquisicao,
     permissionKey: "master",
   },
- // {
-//    key: "qualidade",
-   // label: "Painel de Qualidade",
-// icon: <QualityIcon />,
-   // component: PainelQualidade,
-  //  permissionKey: "qualidade",
-//  },
+  {
+    key: "qualidade",
+    label: "Painel de Cobranças",
+    icon: <QualityIcon />,
+    component: DashboardCobranca,
+    permissionKey: "qualidade",
+  },
 ];
 
 // ================================
