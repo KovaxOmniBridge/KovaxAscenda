@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./modalCampanhas.css";
+import "./modalCampanhasDados.css";
 
 // Import das fases
 import DadosGerais from "./fases/FaseDadosGerais";
@@ -10,21 +10,32 @@ import Documentos from "./fases/FaseDocumentos";
 import Resumo from "./fases/FaseResumo";
 
 // Tipos de fases
-type Fase = "dadosGerais" | "dados" | "permissoes" | "auditoria" | "documentos" | "resumo";
+type Fase =
+  | "dadosGerais"
+  | "dados"
+  | "permissoes"
+  | "auditoria"
+  | "documentos"
+  | "resumo";
 
-// Tipo de cargo
-interface Cargo {
+// Tipo de campanha
+export interface Campanha {
   id?: number;
   nome: string;
   status?: "ativo" | "paralisado" | "desativado";
 }
 
+// 🔹 Modos operacionais do modal
+type ModalMode = "view" | "edit" | "create";
+
 interface ModalProps {
-  cargo: Cargo | null;
+  campanha: Campanha | null;
+  mode: ModalMode;
   onClose: () => void;
 }
 
-const fasesMap: Record<Fase, React.FC<{cargo: Cargo | null}>> = {
+// Mapeamento de fases
+const fasesMap: Record<Fase, React.FC<{ campanha: Campanha | null }>> = {
   dadosGerais: DadosGerais,
   dados: Dados,
   permissoes: Permissoes,
@@ -33,69 +44,94 @@ const fasesMap: Record<Fase, React.FC<{cargo: Cargo | null}>> = {
   resumo: Resumo,
 };
 
-const ModalCargo: React.FC<ModalProps> = ({ cargo, onClose }) => {
+const fasesOrdem: Fase[] = [
+  "dadosGerais",
+  "dados",
+  "permissoes",
+  "auditoria",
+  "documentos",
+  "resumo",
+];
+
+const ModalCampanhas: React.FC<ModalProps> = ({
+  campanha,
+  mode,
+  onClose,
+}) => {
   const [fase, setFase] = useState<Fase>("dadosGerais");
 
-  // Para a fase 'dados' definimos se usuário vai criar/importar (simulação de state)
-  const [usarFonteExterna, setUsarFonteExterna] = useState<boolean | null>(null);
+  // Simulação de escolha de fonte na fase "dados"
+  const [usarFonteExterna, setUsarFonteExterna] =
+    useState<boolean | null>(null);
 
   const FaseComponente = fasesMap[fase];
-
-  const fasesOrdem: Fase[] = ["dadosGerais","dados","permissoes","auditoria","documentos","resumo"];
   const faseIndex = fasesOrdem.indexOf(fase);
 
   const handleProsseguir = () => {
+    if (mode === "view") return;
+
     if (fase === "dados" && usarFonteExterna !== null) {
-      // Se usuário já selecionou fonte externa ou interna, o botão vira salvar
       console.log("Salvar dados escolhidos");
       return;
     }
+
     if (faseIndex < fasesOrdem.length - 1) {
       setFase(fasesOrdem[faseIndex + 1]);
     }
   };
 
   const handleCancelar = () => {
-    if (faseIndex > 0) {
+    if (faseIndex > 0 && mode !== "view") {
       setFase(fasesOrdem[faseIndex - 1]);
     } else {
       onClose();
     }
   };
 
-  // Determina se o botão principal é 'Salvar' ou 'Prosseguir'
-  const isSalvar = (fase === "resumo") || (fase === "dados" && usarFonteExterna !== null);
-  const botaoPrincipalLabel = isSalvar ? "Salvar" : "Prosseguir";
+  const isSalvar =
+    mode !== "view" &&
+    (fase === "resumo" ||
+      (fase === "dados" && usarFonteExterna !== null));
+
+  const botaoPrincipalLabel =
+    mode === "view" ? "Fechar" : isSalvar ? "Salvar" : "Prosseguir";
+
+  const tituloModal =
+    mode === "create"
+      ? "Nova Campanha"
+      : mode === "edit"
+      ? "Editar Campanha"
+      : "Visualização da Campanha";
 
   return (
     <div className="modal-overlay">
       <div className="modal-container">
         {/* Header */}
         <header className="modal-header">
-          <h3>{cargo ? "Editar Cargo" : "Novo Cargo"}</h3>
-          <button onClick={onClose}>X</button>
+          <h3>{tituloModal}</h3>
+          <button onClick={onClose}>✕</button>
         </header>
 
         {/* Navegação de fases */}
         <nav className="modal-nav">
-          {fasesOrdem.map(f => (
+          {fasesOrdem.map((f) => (
             <button
               key={f}
               className={f === fase ? "active" : ""}
-              onClick={() => setFase(f)}
+              onClick={() => mode !== "view" && setFase(f)}
+              disabled={mode === "view"}
             >
               {f}
             </button>
           ))}
         </nav>
 
-        {/* Conteúdo da fase atual */}
+        {/* Conteúdo */}
         <div className="modal-content">
-          <FaseComponente cargo={cargo} />
-          
-          {/* Apenas para simulação da escolha da fonte na fase 'dados' */}
-          {fase === "dados" && (
-            <div style={{ marginTop: "20px" }}>
+          <FaseComponente campanha={campanha} />
+
+          {mode !== "view" && fase === "dados" && (
+            <div className="fonte-dados">
               <label>
                 <input
                   type="radio"
@@ -105,7 +141,8 @@ const ModalCargo: React.FC<ModalProps> = ({ cargo, onClose }) => {
                 />
                 Criar em fonte interna
               </label>
-              <label style={{ marginLeft: "10px" }}>
+
+              <label>
                 <input
                   type="radio"
                   name="fonte"
@@ -118,14 +155,25 @@ const ModalCargo: React.FC<ModalProps> = ({ cargo, onClose }) => {
           )}
         </div>
 
-        {/* Footer com botões */}
+        {/* Footer */}
         <footer className="modal-footer">
-          <button onClick={handleCancelar}>{faseIndex === 0 ? "Cancelar" : "Voltar"}</button>
-          <button onClick={handleProsseguir}>{botaoPrincipalLabel}</button>
+          <button onClick={handleCancelar}>
+            {mode === "view"
+              ? "Fechar"
+              : faseIndex === 0
+              ? "Cancelar"
+              : "Voltar"}
+          </button>
+
+          {mode !== "view" && (
+            <button onClick={handleProsseguir}>
+              {botaoPrincipalLabel}
+            </button>
+          )}
         </footer>
       </div>
     </div>
   );
 };
 
-export default ModalCargo;
+export default ModalCampanhas;

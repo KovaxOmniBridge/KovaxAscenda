@@ -1,9 +1,12 @@
-import Settings from "./settings/settings";
-import  OperationsHub from "./AtendimentoCliente/tools/gestorTools/OperationsHub";
-import FinanceHub from "./financeiro/FincanceHub";
+//import Settings from "./settings/settings";
+import OperationsHub from "./AtendimentoCliente/gestao/gestaoGeral/OperationsHub";
+//import FinanceHub from "./financeiro/FincanceHub";
+import OperationsHubRH from "./RH/painel";
+
 
 export const tools: Record<string, React.FC> = {
-  settings: Settings,
+  //settings: Settings,
   operationsHub: OperationsHub,
-  financeHub: FinanceHub,
+  //financeHub: FinanceHub,
+  operationsHubRH: OperationsHubRH,
 };
