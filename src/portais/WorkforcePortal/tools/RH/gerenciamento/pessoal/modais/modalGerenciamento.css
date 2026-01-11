@@ -1,0 +1,170 @@
+/* =========================
+   OVERLAY / CONTAINER GERAL
+========================= */
+
+.usuario-fullscreen {
+  position: fixed;
+  inset: 0;
+  background: #f5f7fa;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.usuario-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.usuario-header-left h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.usuario-close {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #6b7280;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.usuario-close:hover {
+  color: #111827;
+  transform: scale(1.1);
+}
+
+/* =========================
+   STEPPER / DOMÍNIOS
+========================= */
+
+.usuario-steps {
+  display: flex;
+  gap: 8px;
+  padding: 14px 24px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  overflow-x: auto;
+}
+
+.usuario-steps::-webkit-scrollbar {
+  height: 6px;
+}
+
+.usuario-steps::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 999px;
+}
+
+.step {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.step:hover {
+  background: #eef2ff;
+  color: #3730a3;
+}
+
+.step.active {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+}
+
+/* =========================
+   CONTEÚDO
+========================= */
+
+.usuario-content {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+/* =========================
+   ESTADO VAZIO
+========================= */
+
+.estado-vazio {
+  background: #ffffff;
+  padding: 48px;
+  border-radius: 18px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 15px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.usuario-footer {
+  padding: 16px 24px;
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.usuario-footer button {
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #374151;
+  transition: background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.usuario-footer button:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+  color: #111827;
+}
+
+/* =========================
+   RESPONSIVIDADE
+========================= */
+
+@media (max-width: 768px) {
+  .usuario-header,
+  .usuario-footer,
+  .usuario-steps {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .usuario-content {
+    padding: 16px;
+  }
+
+  .usuario-header-left h2 {
+    font-size: 18px;
+  }
+}

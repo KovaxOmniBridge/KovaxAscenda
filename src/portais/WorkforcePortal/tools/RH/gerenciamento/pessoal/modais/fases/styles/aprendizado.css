@@ -1,0 +1,239 @@
+/* =========================
+   BASE
+========================= */
+
+* {
+  box-sizing: border-box;
+}
+
+.aprendizado-page {
+  padding: 24px;
+  background: #ebebeb;
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.aprendizado-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.aprendizado-header h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: #333;
+}
+
+.aprendizado-header input {
+  height: 36px;
+  padding: 0 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #fff;
+  width: 260px;
+}
+
+/* =========================
+   GRID
+========================= */
+
+.aprendizado-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.aprendizado-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  transition: box-shadow 0.2s ease;
+}
+
+.aprendizado-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* =========================
+   CARD HEADER
+========================= */
+
+.aprendizado-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.aprendizado-card-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.aprendizado-card-header span {
+  font-size: 13px;
+  color: #666;
+}
+
+.taxa-aprendizado {
+  text-align: right;
+}
+
+.taxa-aprendizado span {
+  font-size: 11px;
+  color: #777;
+}
+
+.taxa-aprendizado strong {
+  display: block;
+  font-size: 18px;
+  color: #3483fa;
+}
+
+/* =========================
+   KPIs
+========================= */
+
+.aprendizado-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.kpi {
+  background: #f5f5f5;
+  border-radius: 6px;
+  padding: 10px;
+  text-align: center;
+}
+
+.kpi span {
+  display: block;
+  font-size: 11px;
+  color: #777;
+}
+
+.kpi strong {
+  font-size: 16px;
+  color: #333;
+}
+
+/* =========================
+   CURSOS
+========================= */
+
+.aprendizado-cursos {
+  border-top: 1px solid #eee;
+  padding-top: 12px;
+}
+
+.aprendizado-cursos h4 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.curso-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 8px;
+}
+
+.curso-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.curso-info strong {
+  font-size: 13px;
+  color: #333;
+}
+
+.curso-info span {
+  font-size: 11px;
+  color: #777;
+}
+
+/* =========================
+   PROGRESSO
+========================= */
+
+.curso-progresso {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 120px;
+}
+
+.barra {
+  flex: 1;
+  height: 6px;
+  background: #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.barra-preenchida {
+  height: 100%;
+  background: #3483fa;
+  transition: width 0.3s ease;
+}
+
+.curso-progresso span {
+  font-size: 11px;
+  color: #555;
+}
+
+/* =========================
+   EMPTY
+========================= */
+
+.aprendizado-empty {
+  grid-column: 1 / -1;
+  background: #fff;
+  padding: 24px;
+  text-align: center;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #777;
+}
+
+/* =========================
+   RESPONSIVO
+========================= */
+
+@media (max-width: 600px) {
+  .aprendizado-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .aprendizado-header input {
+    width: 100%;
+  }
+
+  .aprendizado-kpis {
+    grid-template-columns: 1fr;
+  }
+}

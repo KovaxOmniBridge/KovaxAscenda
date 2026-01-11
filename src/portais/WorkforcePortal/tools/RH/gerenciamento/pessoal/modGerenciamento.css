@@ -1,0 +1,175 @@
+/* =========================
+   CONTAINER PRINCIPAL
+========================= */
+
+.pessoas-page {
+  padding: 24px;
+  background: #f5f7fa;
+  min-height: 100vh;
+  font-family: "Inter", system-ui, sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* =========================
+   HEADER / FILTROS
+========================= */
+
+.pessoas-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  padding: 16px 20px;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.pessoas-header input,
+.pessoas-header select {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid #d0d5dd;
+  font-size: 14px;
+  background: #ffffff;
+  min-width: 220px;
+  color: #111827;
+  transition: border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.pessoas-header input::placeholder {
+  color: #9ca3af;
+}
+
+.pessoas-header input:focus,
+.pessoas-header select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* =========================
+   GRID DE PESSOAS
+========================= */
+
+.pessoas-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(260px, 1fr)
+  );
+  gap: 20px;
+}
+
+/* =========================
+   CARD DE PESSOA
+========================= */
+
+.pessoa-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  transition: transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.pessoa-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.12);
+}
+
+/* =========================
+   AVATAR
+========================= */
+
+.pessoa-avatar {
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #e5e7eb;
+  background: #f3f4f6;
+}
+
+/* =========================
+   INFORMAÇÕES DA PESSOA
+========================= */
+
+.pessoa-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.pessoa-info h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.pessoa-info span {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* =========================
+   TAG DE SQUAD
+========================= */
+
+.pessoa-squad {
+  margin-top: 6px;
+  display: inline-block;
+  background: #eef2ff;
+  color: #3730a3;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* =========================
+   EMPTY STATE
+========================= */
+
+.pessoas-empty {
+  grid-column: 1 / -1;
+  background: #ffffff;
+  padding: 48px;
+  text-align: center;
+  border-radius: 18px;
+  color: #6b7280;
+  font-size: 15px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+/* =========================
+   RESPONSIVIDADE
+========================= */
+
+@media (max-width: 768px) {
+  .pessoas-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pessoas-header input,
+  .pessoas-header select {
+    width: 100%;
+  }
+
+  .pessoas-page {
+    padding: 16px;
+  }
+}
