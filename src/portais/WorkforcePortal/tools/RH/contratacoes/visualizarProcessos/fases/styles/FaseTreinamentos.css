@@ -1,0 +1,132 @@
+/* =========================
+   FASE TREINAMENTOS
+========================= */
+
+.fase-treinamentos {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* =========================
+   KPI SUPERIOR
+========================= */
+
+.treinamentos-kpi {
+  padding: 14px 18px;
+  background: linear-gradient(135deg, #f8fafc, #eef2f7);
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #1f2933;
+}
+
+.treinamentos-kpi strong {
+  font-size: 16px;
+  color: #0f172a;
+}
+
+/* =========================
+   LISTA DE PARTICIPANTES
+========================= */
+
+.treinamentos-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+/* =========================
+   CARD BASE
+========================= */
+
+.treinamento-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.treinamento-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* =========================
+   INFORMAÇÕES
+========================= */
+
+.treinamento-card .info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.treinamento-card .nome {
+  font-weight: 600;
+  font-size: 14px;
+  color: #111827;
+}
+
+.treinamento-card .cargo {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* =========================
+   STATUS
+========================= */
+
+.treinamento-card .status {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* =========================
+   STATUS — CONCLUÍDO
+========================= */
+
+.status-concluido {
+  border-color: #bbf7d0;
+  background-color: #f0fdf4;
+}
+
+.status-concluido .status {
+  color: #166534;
+  background-color: #dcfce7;
+}
+
+/* =========================
+   STATUS — EM ANDAMENTO
+========================= */
+
+.status-em_andamento {
+  border-color: #fde68a;
+  background-color: #fffbeb;
+}
+
+.status-em_andamento .status {
+  color: #92400e;
+  background-color: #fef3c7;
+}
+
+/* =========================
+   STATUS — NÃO INICIADO
+========================= */
+
+.status-nao_iniciado {
+  border-color: #fecaca;
+  background-color: #fef2f2;
+}
+
+.status-nao_iniciado .status {
+  color: #991b1b;
+  background-color: #fee2e2;
+}

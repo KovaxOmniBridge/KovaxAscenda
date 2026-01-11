@@ -1,0 +1,74 @@
+/* =========================
+   FASE PERÍODO DE EXPERIÊNCIA
+========================= */
+
+.fase-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.fase-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.experiencias-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.experiencia-card {
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.experiencia-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* STATUS */
+.experiencia-card.em_andamento {
+  border-color: #fde68a;
+  background-color: #fffbeb;
+}
+
+.experiencia-card.concluido {
+  border-color: #bbf7d0;
+  background-color: #f0fdf4;
+}
+
+.experiencia-card.cancelado {
+  border-color: #fecaca;
+  background-color: #fef2f2;
+}
+
+.fase-empty {
+  font-size: 14px;
+  color: #6b7280;
+  padding: 8px 0;
+  text-align: center;
+}
+
+/* MODAL PLACEHOLDER */
+.placeholder-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 18px 24px;
+  border-radius: 12px;
+  background-color: white;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  z-index: 999;
+}

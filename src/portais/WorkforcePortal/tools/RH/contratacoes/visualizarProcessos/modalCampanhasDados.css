@@ -1,142 +1,213 @@
-/* Overlay do modal */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+/* ===============================
+   RESET LOCAL
+================================ */
+* {
+  box-sizing: border-box;
 }
 
-/* Container principal do modal */
-.modal-container {
-  background-color: #ffffff;
-  width: 90%;
-  max-width: 700px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+/* ===============================
+   CONTAINER FULLSCREEN
+================================ */
+.campanha-fullscreen {
+  position: fixed;
+  inset: 0;
+
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  max-height: 90vh;
+
+  width: 100vw;
+  height: 100vh;
+
+  background-color: #f9fafb;
+  color: #1f2937;
+
+  z-index: 9999;
 }
 
-/* Header do modal */
-.modal-header {
+/* ===============================
+   HEADER FIXO
+================================ */
+.campanha-header {
+  flex-shrink: 0;
+
+  height: 64px;
+  padding: 0 24px;
+
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 16px 24px;
-  background-color: #f1f3f5;
-  border-bottom: 1px solid #e0e0e0;
+  justify-content: space-between;
+
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
 }
 
-.modal-header h3 {
-  margin: 0;
-  font-size: 1.4rem;
-  color: #333333;
-}
-
-.modal-header button {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  color: #555555;
-  transition: color 0.2s;
-}
-
-.modal-header button:hover {
-  color: #000000;
-}
-
-/* Navegação de fases */
-.modal-nav {
+.campanha-header-left {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.campanha-header-left h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 25px;
+}
+
+.campanha-header-left span {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.campanha-close {
+  width: 36px;
+  height: 36px;
+
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+
+  background: #ffffff;
+  color: #374151;
+
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.campanha-close:hover {
+  background-color: #f3f4f6;
+}
+
+/* ===============================
+   STEPPER / FASES
+================================ */
+.campanha-steps {
+  flex-shrink: 0;
+
+  display: flex;
+  gap: 12px;
+
   padding: 12px 24px;
-  background-color: #fafafa;
-  border-bottom: 1px solid #e0e0e0;
+
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
 }
 
-.modal-nav button {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  background-color: #e9ecef;
-  color: #495057;
+.campanha-steps .step {
+  padding: 8px 14px;
+
+  font-size: 13px;
   font-weight: 500;
-  transition: all 0.2s;
+
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+
+  background-color: #f9fafb;
+  color: #374151;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.modal-nav button:hover {
-  background-color: #ced4da;
+.campanha-steps .step:hover {
+  background-color: #f3f4f6;
 }
 
-.modal-nav button.active {
-  background-color: #007bff;
+.campanha-steps .step.active {
+  background-color: #6366f1;
   color: #ffffff;
+  border-color: #6366f1;
 }
 
-/* Conteúdo do modal */
-.modal-content {
-  padding: 20px 24px;
-  overflow-y: auto;
+.campanha-steps .step.done {
+  background-color: #ecfeff;
+  border-color: #22d3ee;
+  color: #155e75;
+}
+
+/* ===============================
+   CONTEÚDO SCROLLÁVEL
+================================ */
+.campanha-content {
   flex: 1;
-  color: #333333;
-  font-size: 0.95rem;
+  overflow-y: auto;
+
+  padding: 32px 32px 96px;
+
+  background-color: #f9fafb;
 }
 
-/* Footer do modal */
-.modal-footer {
+/* ESTADO VAZIO */
+.estado-vazio {
+  margin-top: 64px;
+
+  text-align: center;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* ===============================
+   FOOTER FIXO
+================================ */
+.campanha-footer {
+  flex-shrink: 0;
+
+  position: sticky;
+  bottom: 0;
+
+  height: 72px;
+  padding: 0 24px;
+
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  padding: 16px 24px;
-  background-color: #f1f3f5;
-  border-top: 1px solid #e0e0e0;
+  align-items: center;
+  justify-content: space-between;
+
+  background-color: #ffffff;
+  border-top: 1px solid #e5e7eb;
 }
 
-.modal-footer button {
-  padding: 8px 16px;
-  border-radius: 6px;
-  border: none;
+.campanha-footer button {
+  height: 40px;
+  padding: 0 18px;
+
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+
+  background-color: #ffffff;
+  color: #374151;
+
+  font-size: 14px;
   font-weight: 500;
+
   cursor: pointer;
-  transition: all 0.2s;
 }
 
-.modal-footer button:first-child {
-  background-color: #6c757d;
+.campanha-footer button:hover {
+  background-color: #f3f4f6;
+}
+
+.campanha-footer button.primary {
+  background-color: #6366f1;
+  border-color: #6366f1;
   color: #ffffff;
 }
 
-.modal-footer button:first-child:hover {
-  background-color: #5a6268;
+.campanha-footer button.primary:hover {
+  background-color: #4f46e5;
 }
 
-.modal-footer button:last-child {
-  background-color: #007bff;
-  color: #ffffff;
-}
-
-.modal-footer button:last-child:hover {
-  background-color: #0056b3;
-}
-
-/* Responsividade */
+/* ===============================
+   RESPONSIVO
+================================ */
 @media (max-width: 768px) {
-  .modal-container {
-    width: 95%;
+  .campanha-steps {
+    overflow-x: auto;
   }
 
-  .modal-nav {
-    justify-content: flex-start;
+  .campanha-content {
+    padding: 24px 16px 96px;
+  }
+
+  .campanha-header,
+  .campanha-footer {
+    padding: 0 16px;
   }
 }

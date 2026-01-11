@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
-import ModalCampanhas from "./criarCampanhas/modalCampanhas";
-import ModalCampanhasDados from "./visualizarProcessos/modalCampanhasDados";
+import ModalCampanhas from "./visualizarProcessos/modalCampanhasDados";
+import ModalCampanhasDados from "./criarCampanhas/modalCampanhas";
 import "./modCampanhas.css";
 
 // ================================
@@ -8,6 +8,7 @@ import "./modCampanhas.css";
 // ================================
 
 type CampanhaStatus = "ativo" | "paralisado" | "desativado";
+type ModalMode = "view" | "edit" | "create";
 
 interface Campanha {
   id: number;
@@ -34,18 +35,22 @@ const ModCampanhas = (): JSX.Element => {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"todos" | CampanhaStatus>("todos");
 
-  const [viewModalOpen, setViewModalOpen] = useState(false);
-  const [configModalOpen, setConfigModalOpen] = useState(false);
-  const [selectedCampanha, setSelectedCampanha] = useState<Campanha | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<ModalMode>("view");
+  const [selectedCampanha, setSelectedCampanha] =
+    useState<Campanha | null>(null);
 
   // ================================
-  // FILTROS & DERIVAÇÕES
+  // FILTROS
   // ================================
 
   const campanhasFiltradas = useMemo(() => {
     return campanhas.filter((c) => {
-      const matchSearch = c.nome.toLowerCase().includes(search.toLowerCase());
-      const matchStatus = filter === "todos" || c.status === filter;
+      const matchSearch = c.nome
+        .toLowerCase()
+        .includes(search.toLowerCase());
+      const matchStatus =
+        filter === "todos" || c.status === filter;
       return matchSearch && matchStatus;
     });
   }, [campanhas, search, filter]);
@@ -55,7 +60,7 @@ const ModCampanhas = (): JSX.Element => {
   // ================================
 
   const toggleStatus = (campanha: Campanha) => {
-    const fluxoStatus: Record<CampanhaStatus, CampanhaStatus> = {
+    const fluxo: Record<CampanhaStatus, CampanhaStatus> = {
       ativo: "paralisado",
       paralisado: "desativado",
       desativado: "ativo",
@@ -64,7 +69,7 @@ const ModCampanhas = (): JSX.Element => {
     setCampanhas((prev) =>
       prev.map((c) =>
         c.id === campanha.id
-          ? { ...c, status: fluxoStatus[c.status] }
+          ? { ...c, status: fluxo[c.status] }
           : c
       )
     );
@@ -72,12 +77,25 @@ const ModCampanhas = (): JSX.Element => {
 
   const abrirVisualizacao = (campanha: Campanha) => {
     setSelectedCampanha(campanha);
-    setViewModalOpen(true);
+    setModalMode("view");
+    setModalOpen(true);
   };
 
-  const abrirConfiguracao = (campanha?: Campanha) => {
-    setSelectedCampanha(campanha || null);
-    setConfigModalOpen(true);
+  const abrirEdicao = (campanha: Campanha) => {
+    setSelectedCampanha(campanha);
+    setModalMode("edit");
+    setModalOpen(true);
+  };
+
+  const abrirCriacao = () => {
+    setSelectedCampanha(null);
+    setModalMode("create");
+    setModalOpen(true);
+  };
+
+  const fecharModal = () => {
+    setModalOpen(false);
+    setSelectedCampanha(null);
   };
 
   // ================================
@@ -86,7 +104,7 @@ const ModCampanhas = (): JSX.Element => {
 
   return (
     <section className="campanhas-page">
-      {/* HEADER SIMPLES (LISTAGEM) */}
+      {/* HEADER */}
       <header className="campanhas-header">
         <div>
           <h1>Campanhas</h1>
@@ -95,7 +113,7 @@ const ModCampanhas = (): JSX.Element => {
 
         <button
           className="btn-primary"
-          onClick={() => abrirConfiguracao()}
+          onClick={abrirCriacao}
         >
           Criar campanha
         </button>
@@ -112,7 +130,9 @@ const ModCampanhas = (): JSX.Element => {
 
         <select
           value={filter}
-          onChange={(e) => setFilter(e.target.value as any)}
+          onChange={(e) =>
+            setFilter(e.target.value as any)
+          }
         >
           <option value="todos">Todos</option>
           <option value="ativo">Ativas</option>
@@ -121,7 +141,7 @@ const ModCampanhas = (): JSX.Element => {
         </select>
       </div>
 
-      {/* LISTAGEM DE CARDS */}
+      {/* GRID */}
       <div className="campanhas-grid">
         {campanhasFiltradas.map((campanha) => (
           <article
@@ -129,23 +149,22 @@ const ModCampanhas = (): JSX.Element => {
             className="campanha-card"
             onClick={() => abrirVisualizacao(campanha)}
           >
-            {/* TOPO */}
             <div className="campanha-card-header">
               <h3>{campanha.nome}</h3>
-
-              <span className={`status-badge ${campanha.status}`}>
+              <span
+                className={`status-badge ${campanha.status}`}
+              >
                 {campanha.status}
               </span>
             </div>
 
-            {/* DESCRIÇÃO CURTA */}
             <div className="campanha-card-body">
               <p>
-                Clique para ver detalhes ou gerenciar esta campanha.
+                Clique para acompanhar o processo de
+                contratação.
               </p>
             </div>
 
-            {/* AÇÕES */}
             <div
               className="campanha-card-actions"
               onClick={(e) => e.stopPropagation()}
@@ -159,7 +178,7 @@ const ModCampanhas = (): JSX.Element => {
 
               <button
                 className="btn-outline"
-                onClick={() => abrirConfiguracao(campanha)}
+                onClick={() => abrirEdicao(campanha)}
               >
                 Editar
               </button>
@@ -175,22 +194,23 @@ const ModCampanhas = (): JSX.Element => {
       </div>
 
       {/* MODAIS */}
-      {viewModalOpen && selectedCampanha && (
+      {modalOpen && modalMode === "view" && selectedCampanha && (
         <ModalCampanhas
           campanha={selectedCampanha}
-          onClose={() => setViewModalOpen(false)}
+          mode="view"
+          onClose={fecharModal}
         />
       )}
 
-      {configModalOpen && (
-        <ModalCampanhas
+      {modalOpen && modalMode !== "view" && (
+        <ModalCampanhasDados
           campanha={selectedCampanha}
-          onClose={() => setConfigModalOpen(false)}
+          mode={modalMode}   // ✅ FIX CRÍTICO
+          onClose={fecharModal}
         />
       )}
     </section>
   );
-
 };
 
 export default ModCampanhas;

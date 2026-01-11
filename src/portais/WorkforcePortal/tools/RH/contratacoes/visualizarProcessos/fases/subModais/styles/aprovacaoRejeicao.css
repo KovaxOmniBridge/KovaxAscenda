@@ -1,0 +1,288 @@
+/* ===============================
+   OVERLAY
+================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* ===============================
+   MODAL CONTAINER
+================================ */
+.modal-detalhado {
+  width: 92vw;
+  max-width: 1200px;
+  height: 88vh;
+
+  display: flex;
+  flex-direction: column;
+
+  background-color: #ffffff;
+  border-radius: 14px;
+  overflow: hidden;
+
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+}
+
+/* ===============================
+   HEADER
+================================ */
+.modal-detalhado-header {
+  flex-shrink: 0;
+  padding: 20px 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-detalhado-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.modal-detalhado-header span {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.modal-detalhado-header button {
+  width: 36px;
+  height: 36px;
+
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+
+  background: #ffffff;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.modal-detalhado-header button:hover {
+  background-color: #f3f4f6;
+}
+
+/* ===============================
+   BODY
+================================ */
+.modal-detalhado-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 24px;
+
+  padding: 24px;
+  overflow-y: auto;
+}
+
+/* ===============================
+   COLUNA ESQUERDA – RESUMO
+================================ */
+.candidato-resumo {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.resumo-card {
+  padding: 18px;
+  border-radius: 12px;
+
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.resumo-card span {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.resumo-card strong {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.resumo-card strong.alta {
+  color: #16a34a;
+}
+
+.resumo-card strong.media {
+  color: #ca8a04;
+}
+
+.resumo-card strong.baixa {
+  color: #dc2626;
+}
+
+.resumo-info p {
+  font-size: 14px;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+/* ===============================
+   ANEXOS
+================================ */
+.resumo-anexos {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.resumo-anexos a {
+  padding: 10px 14px;
+
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+
+  font-size: 14px;
+  text-decoration: none;
+  color: #111827;
+
+  background-color: #ffffff;
+}
+
+.resumo-anexos a:hover {
+  background-color: #f3f4f6;
+}
+
+.resumo-anexos .disabled {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+/* ===============================
+   COLUNA DIREITA – TESTES
+================================ */
+.candidato-testes h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.testes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.teste-card {
+  padding: 14px 16px;
+  border-radius: 10px;
+
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+}
+
+.teste-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.teste-bar {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background-color: #e5e7eb;
+  overflow: hidden;
+}
+
+.teste-progress {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.teste-progress.alta {
+  background-color: #22c55e;
+}
+
+.teste-progress.media {
+  background-color: #facc15;
+}
+
+.teste-progress.baixa {
+  background-color: #ef4444;
+}
+
+.teste-percentual {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* ===============================
+   FOOTER
+================================ */
+.modal-detalhado-footer {
+  flex-shrink: 0;
+  padding: 16px 24px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  border-top: 1px solid #e5e7eb;
+}
+
+.modal-detalhado-footer button {
+  height: 40px;
+  padding: 0 18px;
+
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+
+  background: #ffffff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.modal-detalhado-footer button:hover {
+  background-color: #f3f4f6;
+}
+
+.modal-detalhado-footer .acoes {
+  display: flex;
+  gap: 12px;
+}
+
+.modal-detalhado-footer .rejeitar {
+  border-color: #fecaca;
+  color: #b91c1c;
+}
+
+.modal-detalhado-footer .rejeitar:hover {
+  background-color: #fee2e2;
+}
+
+.modal-detalhado-footer .aprovar {
+  background-color: #16a34a;
+  border-color: #16a34a;
+  color: #ffffff;
+}
+
+.modal-detalhado-footer .aprovar:hover {
+  background-color: #15803d;
+}
+
+/* ===============================
+   RESPONSIVO
+================================ */
+@media (max-width: 900px) {
+  .modal-detalhado-body {
+    grid-template-columns: 1fr;
+  }
+}

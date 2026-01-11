@@ -1,0 +1,249 @@
+/* =====================================================
+   BASE
+===================================================== */
+.fase-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.fase-section {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.fase-section h4 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.fase-section h5 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.fase-description {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 12px;
+}
+
+.fase-meta {
+  display: flex;
+  gap: 24px;
+  font-size: 13px;
+  color: #374151;
+}
+
+.fase-empty {
+  text-align: center;
+  padding: 32px 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* =====================================================
+   GRID DE CANDIDATOS
+===================================================== */
+.candidatos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+/* =====================================================
+   CARD ESTILO MARKETPLACE
+===================================================== */
+.candidato-market-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 16px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.candidato-market-card:hover {
+  border-color: #6366f1;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+/* HEADER */
+.candidato-market-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.candidato-market-card .card-header strong {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.candidato-market-card .card-header span {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* BODY */
+.candidato-market-card .card-body {
+  font-size: 13px;
+  color: #374151;
+}
+
+.candidato-market-card .regiao {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* FOOTER */
+.candidato-market-card .card-footer {
+  margin-top: auto;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding-top: 10px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.candidato-market-card .compatibilidade {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* SCORE */
+.candidato-market-card strong.alta {
+  color: #16a34a;
+}
+
+.candidato-market-card strong.media {
+  color: #f59e0b;
+}
+
+.candidato-market-card strong.baixa {
+  color: #dc2626;
+}
+
+/* =====================================================
+   MODAL
+===================================================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(2px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
+}
+
+.modal-container {
+  width: 100%;
+  max-width: 520px;
+  background: #ffffff;
+  border-radius: 16px;
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* HEADER */
+.modal-header {
+  padding: 16px 20px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.modal-header button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* CONTENT */
+.modal-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  font-size: 14px;
+  color: #374151;
+}
+
+.compatibilidade-detalhe {
+  margin-top: 12px;
+  padding: 12px;
+
+  border-radius: 10px;
+  background: #f9fafb;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  font-weight: 600;
+}
+
+/* FOOTER */
+.modal-footer {
+  padding: 16px 20px;
+
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+
+  border-top: 1px solid #e5e7eb;
+}
+
+.modal-footer button {
+  height: 38px;
+  padding: 0 16px;
+
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+
+  background: #ffffff;
+  cursor: pointer;
+
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.modal-footer button.primary {
+  background: #6366f1;
+  border-color: #6366f1;
+  color: #ffffff;
+}
+
+.modal-footer button.primary:hover {
+  background: #4f46e5;
+}

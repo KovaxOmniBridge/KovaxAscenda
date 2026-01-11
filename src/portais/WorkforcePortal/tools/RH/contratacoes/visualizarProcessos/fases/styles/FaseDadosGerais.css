@@ -1,0 +1,63 @@
+/* =========================
+   CONTAINER PRINCIPAL
+========================= */
+
+.fase-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+/* =========================
+   TÍTULO
+========================= */
+
+.fase-container h5 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* =========================
+   GRID DE RESUMO
+========================= */
+
+.resumo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+/* =========================
+   CARD DE RESUMO
+========================= */
+
+.resumo-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-color: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.resumo-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.resumo-card strong {
+  font-size: 1.4rem;
+  color: #333;
+  margin-bottom: 0.3rem;
+}
+
+.resumo-card span {
+  font-size: 0.85rem;
+  color: #666;
+  text-align: center;
+}
