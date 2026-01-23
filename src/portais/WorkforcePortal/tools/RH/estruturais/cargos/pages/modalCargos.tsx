@@ -24,7 +24,7 @@ interface ModalProps {
   onClose: () => void;
 }
 
-const fasesMap: Record<Fase, React.FC<{cargo: Cargo | null}>> = {
+const fasesMap: Record<Fase, React.FC<{ cargo: Cargo | null }>> = {
   dadosGerais: DadosGerais,
   dados: Dados,
   permissoes: Permissoes,
@@ -41,7 +41,7 @@ const ModalCargo: React.FC<ModalProps> = ({ cargo, onClose }) => {
 
   const FaseComponente = fasesMap[fase];
 
-  const fasesOrdem: Fase[] = ["dadosGerais","dados","permissoes","auditoria","documentos","resumo"];
+  const fasesOrdem: Fase[] = ["dadosGerais", "dados", "permissoes", "auditoria", "documentos", "resumo"];
   const faseIndex = fasesOrdem.indexOf(fase);
 
   const handleProsseguir = () => {
@@ -68,62 +68,60 @@ const ModalCargo: React.FC<ModalProps> = ({ cargo, onClose }) => {
   const botaoPrincipalLabel = isSalvar ? "Salvar" : "Prosseguir";
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-container">
-        {/* Header */}
-        <header className="modal-header">
-          <h3>{cargo ? "Editar Cargo" : "Novo Cargo"}</h3>
-          <button onClick={onClose}>X</button>
-        </header>
+    <div className="rh-fs-modal">
+      {/* Header */}
+      <header className="rh-fs-header">
+        <h3>{cargo ? "Editar Cargo" : "Novo Cargo"}</h3>
+        <button className="rh-fs-close" onClick={onClose}>✕</button>
+      </header>
 
-        {/* Navegação de fases */}
-        <nav className="modal-nav">
-          {fasesOrdem.map(f => (
-            <button
-              key={f}
-              className={f === fase ? "active" : ""}
-              onClick={() => setFase(f)}
-            >
-              {f}
-            </button>
-          ))}
-        </nav>
+      {/* Navegação de fases */}
+      <nav className="rh-fs-steps">
+        {fasesOrdem.map(f => (
+          <button
+            key={f}
+            className={`rh-fs-step-btn ${f === fase ? "active" : ""}`}
+            onClick={() => setFase(f)}
+          >
+            {f}
+          </button>
+        ))}
+      </nav>
 
-        {/* Conteúdo da fase atual */}
-        <div className="modal-content">
-          <FaseComponente cargo={cargo} />
-          
-          {/* Apenas para simulação da escolha da fonte na fase 'dados' */}
-          {fase === "dados" && (
-            <div style={{ marginTop: "20px" }}>
-              <label>
-                <input
-                  type="radio"
-                  name="fonte"
-                  onChange={() => setUsarFonteExterna(false)}
-                  checked={usarFonteExterna === false}
-                />
-                Criar em fonte interna
-              </label>
-              <label style={{ marginLeft: "10px" }}>
-                <input
-                  type="radio"
-                  name="fonte"
-                  onChange={() => setUsarFonteExterna(true)}
-                  checked={usarFonteExterna === true}
-                />
-                Usar fonte externa
-              </label>
-            </div>
-          )}
-        </div>
+      {/* Conteúdo da fase atual */}
+      <div className="rh-fs-content">
+        <FaseComponente cargo={cargo} />
 
-        {/* Footer com botões */}
-        <footer className="modal-footer">
-          <button onClick={handleCancelar}>{faseIndex === 0 ? "Cancelar" : "Voltar"}</button>
-          <button onClick={handleProsseguir}>{botaoPrincipalLabel}</button>
-        </footer>
+        {/* Apenas para simulação da escolha da fonte na fase 'dados' */}
+        {fase === "dados" && (
+          <div style={{ marginTop: "20px" }}>
+            <label>
+              <input
+                type="radio"
+                name="fonte"
+                onChange={() => setUsarFonteExterna(false)}
+                checked={usarFonteExterna === false}
+              />
+              Criar em fonte interna
+            </label>
+            <label style={{ marginLeft: "10px" }}>
+              <input
+                type="radio"
+                name="fonte"
+                onChange={() => setUsarFonteExterna(true)}
+                checked={usarFonteExterna === true}
+              />
+              Usar fonte externa
+            </label>
+          </div>
+        )}
       </div>
+
+      {/* Footer com botões */}
+      <footer className="rh-fs-footer">
+        <button onClick={handleCancelar}>{faseIndex === 0 ? "Cancelar" : "Voltar"}</button>
+        <button className="primary" onClick={handleProsseguir}>{botaoPrincipalLabel}</button>
+      </footer>
     </div>
   );
 };

@@ -24,7 +24,7 @@ const ModSquads: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSquad, setSelectedSquad] = useState<squads | null>(null);
 
-  const filteredSquads = squads.filter(squad => 
+  const filteredSquads = squads.filter(squad =>
     squad.nome.toLowerCase().includes(search.toLowerCase()) &&
     (filter === "todos" || squad.status === filter)
   );
@@ -44,21 +44,29 @@ const ModSquads: React.FC = () => {
   };
 
   return (
-    <div className="modSquads-container">
-      <div className="modSquads-header">
-        <h2>Gestão de squads</h2>
-        <p>Configure squads, permissões e políticas de auditoria.</p>
-        <div className="modSquads-actions">
-          <button onClick={() => openModal()}>Novo Squad</button>
-          <input 
-            type="text" 
-            placeholder="Buscar squad..." 
-            value={search} 
-            onChange={e => setSearch(e.target.value)} 
+    <div className="rh-module-container">
+      <div className="rh-page-header">
+        <div className="rh-page-header-title">
+          <h2>Gestão de squads</h2>
+          <p>Configure squads, permissões e políticas de auditoria.</p>
+        </div>
+        <div className="rh-page-header-actions">
+          <button className="rh-btn-primary" onClick={() => openModal()}>Novo Squad</button>
+        </div>
+
+        <div className="rh-input-group">
+          <input
+            type="text"
+            className="rh-input"
+            placeholder="Buscar squad..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            style={{ flex: 1 }}
           />
-          <div className="filter-container">
-            <label htmlFor="filter-select">Filtrar por status:</label>
+          <div className="filter-container" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <label htmlFor="filter-select" style={{ fontSize: '14px', whiteSpace: 'nowrap' }}>Filtrar por status:</label>
             <select
+              className="rh-select"
               id="filter-select"
               value={filter}
               onChange={e => setFilter(e.target.value as any)}
@@ -72,19 +80,45 @@ const ModSquads: React.FC = () => {
         </div>
       </div>
 
-      <div className="modSquads-list">
-        {filteredSquads.map(squad => (
-          <div key={squad.id} className="modSquads-cell">
-            <span className="squad-name">{squad.nome}</span>
-            <span className="squad-name">{squad.operacao}</span>
-            <div className="button-group">
-              <button onClick={() => toggleStatus(squad)} className={`status-${squad.status}`}>
-                {squad.status}
-              </button>
-              <button onClick={() => openModal(squad)}>Configurar</button>
+      <div className="rh-module-content-area">
+        <div className="rh-cards-grid">
+          {filteredSquads.map(squad => (
+            <div key={squad.id} className="rh-card">
+              <div className="rh-card-header">
+                <h3>{squad.nome}</h3>
+                <span className={`rh-badge ${squad.status}`}>
+                  {squad.status}
+                </span>
+              </div>
+
+              <div className="rh-card-body">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <span style={{ fontSize: '12px', color: 'var(--rh-text-secondary)' }}>Operação Vinculada</span>
+                  <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--rh-text-primary)' }}>{squad.operacao}</span>
+                </div>
+              </div>
+
+              <div className="rh-card-actions">
+                <button
+                  onClick={() => toggleStatus(squad)}
+                  className="rh-btn-secondary"
+                  title="Alterar Status"
+                >
+                  {squad.status === 'ativo' ? 'Desativar' : 'Ativar'}
+                </button>
+                <button onClick={() => openModal(squad)} className="rh-btn-primary" style={{ height: '32px', padding: '0 12px', fontSize: '13px' }}>
+                  Configurar
+                </button>
+              </div>
             </div>
+          ))}
+        </div>
+
+        {filteredSquads.length === 0 && (
+          <div className="rh-card" style={{ padding: '48px', textAlign: 'center', color: 'var(--rh-text-secondary)', gridColumn: '1/-1' }}>
+            Nenhum squad encontrado.
           </div>
-        ))}
+        )}
       </div>
 
       {modalOpen && (
@@ -92,7 +126,6 @@ const ModSquads: React.FC = () => {
       )}
     </div>
   );
-
 };
 
 export default ModSquads;

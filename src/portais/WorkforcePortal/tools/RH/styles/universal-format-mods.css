@@ -1,0 +1,49 @@
+/* ==========================================================================
+   UNIVERSAL MODULE FORMAT
+   Estrutura global dos módulos: Header no topo, Cards em baixo.
+   ========================================================================== */
+
+/* Container da Página do Módulo */
+.rh-module-container {
+    padding: var(--rh-page-padding, 24px);
+    background: var(--rh-page-bg, #f9fafb);
+    min-height: 100vh;
+    font-family: var(--rh-font-family, "Inter", sans-serif);
+    display: flex;
+    flex-direction: column;
+    gap: var(--rh-page-gap, 24px);
+}
+
+/* Área de topo já definida no header.css, aqui garantimos a ordem */
+.rh-module-header-area {
+    order: 1;
+    width: 100%;
+}
+
+/* Área de conteúdo (Cards) */
+.rh-module-content-area {
+    order: 2;
+    width: 100%;
+    flex: 1;
+    /* Ocupa o restante da tela */
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Botões secundários que podem aparecer nos módulos */
+.rh-btn-secondary {
+    background: #fff;
+    border: 1px solid #d1d5db;
+    padding: 6px 12px;
+    font-size: 13px;
+    color: #374151;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.rh-btn-secondary:hover {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+}

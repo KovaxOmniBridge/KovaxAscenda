@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import "./modGerenciamento.css";
+
 
 /* =========================
    MODAL CORPORATIVO
@@ -112,84 +112,109 @@ const GerenciamentoPessoas: React.FC = () => {
   };
 
   return (
-    <div className="pessoas-page">
+    <div className="rh-module-container">
       {/* =========================
          HEADER
       ========================= */}
-      <header className="pessoas-header">
-        <input
-          type="text"
-          placeholder="Pesquisar por nome, email, cargo, operação ou squad..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+      <div className="rh-page-header">
+        <div className="rh-page-header-title">
+          <h2>Gestão de Pessoas</h2>
+          <p>Gerencie colaboradores, squads e operações.</p>
+        </div>
 
-        <select
-          value={filtroCargo}
-          onChange={(e) => setFiltroCargo(e.target.value)}
-        >
-          <option value="todos">Todos os cargos</option>
-          <option value="Analista Financeiro">
-            Analista Financeiro
-          </option>
-          <option value="Desenvolvedor Frontend">
-            Desenvolvedor Frontend
-          </option>
-          <option value="Gerente de Operações">
-            Gerente de Operações
-          </option>
-        </select>
+        <div className="rh-input-group">
+          <input
+            type="text"
+            className="rh-input"
+            placeholder="Pesquisar por nome, email, cargo..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ flex: 1 }}
+          />
 
-        <select
-          value={filtroOperacao}
-          onChange={(e) => setFiltroOperacao(e.target.value)}
-        >
-          <option value="todos">Todas as operações</option>
-          <option value="Financeiro">Financeiro</option>
-          <option value="Tecnologia">Tecnologia</option>
-          <option value="Operações">Operações</option>
-        </select>
-      </header>
+          <select
+            className="rh-select"
+            value={filtroCargo}
+            onChange={(e) => setFiltroCargo(e.target.value)}
+          >
+            <option value="todos">Todos os cargos</option>
+            <option value="Analista Financeiro">
+              Analista Financeiro
+            </option>
+            <option value="Desenvolvedor Frontend">
+              Desenvolvedor Frontend
+            </option>
+            <option value="Gerente de Operações">
+              Gerente de Operações
+            </option>
+          </select>
+
+          <select
+            className="rh-select"
+            value={filtroOperacao}
+            onChange={(e) => setFiltroOperacao(e.target.value)}
+          >
+            <option value="todos">Todas as operações</option>
+            <option value="Financeiro">Financeiro</option>
+            <option value="Tecnologia">Tecnologia</option>
+            <option value="Operações">Operações</option>
+          </select>
+        </div>
+      </div>
 
       {/* =========================
          GRID DE PESSOAS
       ========================= */}
-      <main className="pessoas-grid">
-        {pessoasFiltradas.length === 0 ? (
-          <div className="pessoas-empty">
-            Nenhuma pessoa encontrada.
-          </div>
-        ) : (
-          pessoasFiltradas.map((pessoa) => (
-            <div
-              key={pessoa.id}
-              className="pessoa-card"
-              onClick={() => abrirPerfilCompleto(pessoa)}
-            >
-              <img
-                src={
-                  pessoa.fotoUrl ||
-                  "https://via.placeholder.com/150"
-                }
-                alt={pessoa.nome}
-                className="pessoa-avatar"
-              />
-
-              <div className="pessoa-info">
-                <h3>{pessoa.nome}</h3>
-                <span>{pessoa.idade} anos</span>
-                <span>{pessoa.cargo}</span>
-                <span>{pessoa.operacao}</span>
-                {pessoa.squad && (
-                  <span className="pessoa-squad">
-                    Squad: {pessoa.squad}
-                  </span>
-                )}
-              </div>
+      <div className="rh-module-content-area">
+        <div className="rh-cards-grid">
+          {pessoasFiltradas.length === 0 ? (
+            <div className="rh-card" style={{ padding: '48px', textAlign: 'center', color: 'var(--rh-text-secondary)', gridColumn: '1/-1' }}>
+              Nenhuma pessoa encontrada.
             </div>
-          ))
-        )}
-      </main>
+          ) : (
+            pessoasFiltradas.map((pessoa) => (
+              <div
+                key={pessoa.id}
+                className="rh-card"
+                onClick={() => abrirPerfilCompleto(pessoa)}
+                style={{ alignItems: 'center', textAlign: 'center' }}
+              >
+                <div style={{ padding: '24px 0 12px 0' }}>
+                  <img
+                    src={
+                      pessoa.fotoUrl ||
+                      "https://via.placeholder.com/150"
+                    }
+                    alt={pessoa.nome}
+                    className="rh-card-avatar"
+                    style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', border: '3px solid var(--rh-border-color)' }}
+                  />
+                </div>
+
+                <div className="rh-card-body" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', width: '100%' }}>
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600 }}>{pessoa.nome}</h3>
+                    <span style={{ fontSize: '13px', color: 'var(--rh-text-target)' }}>{pessoa.cargo}</span>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <span style={{ fontSize: '12px', color: 'var(--rh-text-secondary)' }}>{pessoa.operacao}</span>
+                    {pessoa.squad && (
+                      <span className="rh-badge inativo" style={{ marginTop: '4px' }}>
+                        {pessoa.squad}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="rh-card-actions" style={{ width: '100%', marginTop: '16px', justifyContent: 'center' }}>
+                  <button className="rh-btn-secondary" style={{ width: '100%' }}>Ver Perfil</button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
 
       {/* =========================
          MODAL FULLSCREEN (PERFIL 360°)

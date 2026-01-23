@@ -43,28 +43,26 @@ const ModalOperacoes: React.FC<ModalProps> = ({ operacao, onClose }) => {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-container">
-        {/* Header */}
-        <header className="modal-header">
-          <h3>{operacao ? "Editar Operação" : "Nova Operação"}</h3>
-          <button onClick={onClose}>X</button>
-        </header>
+    <div className="rh-fs-modal">
+      {/* Header */}
+      <header className="rh-fs-header">
+        <h3>{operacao ? "Editar Operação" : "Nova Operação"}</h3>
+        <button className="rh-fs-close" onClick={onClose}>✕</button>
+      </header>
 
-        {/* Conteúdo */}
-        <div className="modal-content">
-          <DadosGerais
-            dados={dadosGerais}
-            onChange={handleChange}
-          />
-        </div>
-
-        {/* Footer */}
-        <footer className="modal-footer">
-          <button onClick={onClose}>Cancelar</button>
-          <button onClick={handleSalvar}>Salvar</button>
-        </footer>
+      {/* Conteúdo */}
+      <div className="rh-fs-content">
+        <DadosGerais
+          dados={dadosGerais}
+          onChange={handleChange}
+        />
       </div>
+
+      {/* Footer */}
+      <footer className="rh-fs-footer">
+        <button onClick={onClose}>Cancelar</button>
+        <button className="primary" onClick={handleSalvar}>Salvar</button>
+      </footer>
     </div>
   );
 };

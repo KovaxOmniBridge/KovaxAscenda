@@ -1,0 +1,138 @@
+/* ==========================================================================
+   UNIVERSAL MODAL FORMAT
+   Estrutura global dos modais: Topo com navegação, conteúdo, footer com botões à direita.
+   ========================================================================== */
+
+/* Container Fullscreen */
+.rh-fs-modal {
+    position: fixed;
+    inset: 0;
+    background: var(--rh-modal-surface, #ffffff);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--rh-font-family, "Inter", sans-serif);
+}
+
+/* Topo do Modal: Header (Título + Fechar) */
+.rh-fs-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    background: var(--rh-modal-bg, #ffffff);
+    border-bottom: 1px solid var(--rh-border-color, #e5e7eb);
+    flex-shrink: 0;
+}
+
+.rh-fs-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--rh-text-primary, #111827);
+}
+
+.rh-fs-close {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--rh-text-secondary, #6b7280);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    font-size: 16px;
+}
+
+.rh-fs-close:hover {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+/* Barra de Navegação de Fases (Abaixo do Header) */
+.rh-fs-steps {
+    display: flex;
+    gap: 8px;
+    padding: 12px 24px;
+    background: var(--rh-modal-surface, #fff);
+    border-bottom: 1px solid var(--rh-border-color, #e5e7eb);
+    overflow-x: auto;
+    flex-shrink: 0;
+}
+
+.rh-fs-step-btn {
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1px solid transparent;
+    background: transparent;
+    font-size: 13px;
+    font-weight: 500;
+    color: #6b7280;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.rh-fs-step-btn:hover {
+    background: #f9fafb;
+    color: #374151;
+}
+
+.rh-fs-step-btn.active {
+    background: var(--rh-color-primary, #2563eb);
+    color: #ffffff;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+}
+
+/* Área de Conteúdo (Renderização das Fases) */
+.rh-fs-content {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+    background-color: var(--rh-modal-bg-content, #fafafa);
+    /* Leve contraste */
+}
+
+/* Footer (Botões alinhados à direita) */
+.rh-fs-footer {
+    padding: 16px 24px;
+    background: var(--rh-modal-bg, #ffffff);
+    border-top: 1px solid var(--rh-border-color, #e5e7eb);
+    display: flex;
+    justify-content: flex-end;
+    /* Centralizados à direita conforme pedido */
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.rh-fs-footer button {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.rh-fs-footer button:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+}
+
+/* Botão de Ação Primária (Aprovar, Continuar, Salvar) */
+.rh-fs-footer button.primary {
+    background: var(--rh-color-primary, #2563eb);
+    border-color: var(--rh-color-primary, #2563eb);
+    color: #ffffff;
+}
+
+.rh-fs-footer button.primary:hover {
+    background: var(--rh-color-primary-hover, #1d4ed8);
+    border-color: var(--rh-color-primary-hover, #1d4ed8);
+}

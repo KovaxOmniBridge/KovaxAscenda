@@ -1,14 +1,12 @@
 import OperationsHub from "../../tools/AtendimentoCliente/gestao/gestaoGeral/OperationsHub";
-//import settin from "../../tools/settings/settings";
-//import FinanceHub from "../../tools/financeiro/FincanceHub";
 import OperationsHubRH from "../../tools/RH/painel";
+import NucleoContabilPanel from "../../tools/financeiro/nucleoContabil/painel";
 
 // Ferramentas disponíveis na plataforma
 export type Ferramenta =
-  | "settings"
   | "operationsHub"
-  | "financeHub"
-  | "operationsHubRH";
+  | "operationsHubRH"
+  | "nucleoContabil";
 
 
 // Contrato de permissões por cargo
@@ -23,12 +21,12 @@ export interface PermissoesUsuario {
 
 // Permissões por cargo (baseline institucional)
 export const permissoesCargo: PermissoesCargo = {
-  administrador: ["settings", "operationsHub", "operationsHub", "financeHub", "operationsHubRH"],
-  gerente: ["operationsHub", "operationsHubRH"],
+  administrador: [ "operationsHub", "operationsHub", "nucleoContabil"],
+  gerente: ["operationsHub", "operationsHubRH", "nucleoContabil"],
   colaborador: [] // sem acesso por padrão
 };
 
 // Permissões individuais (override estratégico)
 export const permissoesUsuario: PermissoesUsuario = {
-  "123": ["settings", "operationsHub", "financeHub", "operationsHubRH"], // exceção explícita
+  "123": [ "operationsHub", "operationsHubRH", "nucleoContabil"], // exceção explícita
 };

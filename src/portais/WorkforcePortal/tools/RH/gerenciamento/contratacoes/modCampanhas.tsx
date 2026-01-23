@@ -103,94 +103,110 @@ const ModCampanhas = (): JSX.Element => {
   // ================================
 
   return (
-    <section className="campanhas-page">
-      {/* HEADER */}
-      <header className="campanhas-header">
-        <div>
+    <div className="rh-module-container">
+      {/* HEADER UNIFICADO (RH UI) */}
+      <div className="rh-page-header">
+        <div className="rh-page-header-title">
           <h1>Campanhas</h1>
           <p>Gerencie suas campanhas de forma rápida</p>
         </div>
 
-        <button
-          className="btn-primary"
-          onClick={abrirCriacao}
-        >
-          Criar campanha
-        </button>
-      </header>
+        <div className="rh-page-header-actions">
+          <button
+            className="rh-btn-primary"
+            onClick={abrirCriacao}
+          >
+            Criar campanha
+          </button>
+        </div>
 
-      {/* FILTROS */}
-      <div className="campanhas-filters">
-        <input
-          type="text"
-          placeholder="Buscar campanha"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+        {/* 
+            Nota: O layout original merged filters into header bottom. 
+            O rh-page-header padrão é flex-row. 
+            Para manter o visual "merged" mas usando componentes padrão, podemos colocar os filtros abaixo ou dentro do actions se couber.
+            Vamos colocar os filtros em uma linha separada se quisermos fidelidade ao layout "unificado" anterior,
+            OU usar o padrão "Header com Actions" e filtros abaixo.
+            O modGerenciamento.css usa .pessoas-header que tem inputs dentro.
+            Vamos adaptar para usar rh-page-header e inserir os inputs no actions ou abaixo.
+            Para manter integridade com modGerenciamento (que tem filtros no header), vamos incluir os inputs no rh-page-header-actions ou criar uma row extra.
+            Aqui vou colocar os inputs direto no fluxo para simplificar, já que rh-page-header suporta flex-wrap.
+        */}
+        <div className="rh-input-group">
+          <input
+            type="text"
+            className="rh-input"
+            placeholder="Buscar campanha"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
 
-        <select
-          value={filter}
-          onChange={(e) =>
-            setFilter(e.target.value as any)
-          }
-        >
-          <option value="todos">Todos</option>
-          <option value="ativo">Ativas</option>
-          <option value="paralisado">Paralisadas</option>
-          <option value="desativado">Desativadas</option>
-        </select>
+          <select
+            className="rh-select"
+            value={filter}
+            onChange={(e) =>
+              setFilter(e.target.value as any)
+            }
+          >
+            <option value="todos">Todos</option>
+            <option value="ativo">Ativas</option>
+            <option value="paralisado">Paralisadas</option>
+            <option value="desativado">Desativadas</option>
+          </select>
+        </div>
       </div>
 
       {/* GRID */}
-      <div className="campanhas-grid">
-        {campanhasFiltradas.map((campanha) => (
-          <article
-            key={campanha.id}
-            className="campanha-card"
-            onClick={() => abrirVisualizacao(campanha)}
-          >
-            <div className="campanha-card-header">
-              <h3>{campanha.nome}</h3>
-              <span
-                className={`status-badge ${campanha.status}`}
-              >
-                {campanha.status}
-              </span>
-            </div>
-
-            <div className="campanha-card-body">
-              <p>
-                Clique para acompanhar o processo de
-                contratação.
-              </p>
-            </div>
-
-            <div
-              className="campanha-card-actions"
-              onClick={(e) => e.stopPropagation()}
+      <div className="rh-module-content-area">
+        <div className="rh-cards-grid">
+          {campanhasFiltradas.map((campanha) => (
+            <article
+              key={campanha.id}
+              className="rh-card"
+              onClick={() => abrirVisualizacao(campanha)}
             >
-              <button
-                className="btn-secondary"
-                onClick={() => toggleStatus(campanha)}
-              >
-                Mudar status
-              </button>
+              <div className="rh-card-header">
+                <h3>{campanha.nome}</h3>
+                <span
+                  className={`rh-badge ${campanha.status}`}
+                >
+                  {campanha.status}
+                </span>
+              </div>
 
-              <button
-                className="btn-outline"
-                onClick={() => abrirEdicao(campanha)}
+              <div className="rh-card-body">
+                <p style={{ margin: 0 }}>
+                  Clique para acompanhar o processo de
+                  contratação.
+                </p>
+              </div>
+
+              <div
+                className="rh-card-actions"
+                onClick={(e) => e.stopPropagation()}
               >
-                Editar
-              </button>
+                <button
+                  className="rh-btn-secondary"
+                  onClick={() => toggleStatus(campanha)}
+                >
+                  Mudar status
+                </button>
+
+                <button
+                  className="rh-btn-secondary"
+                  onClick={() => abrirEdicao(campanha)}
+                >
+                  Editar
+                </button>
+              </div>
+            </article>
+          ))}
+
+          {campanhasFiltradas.length === 0 && (
+            <div className="rh-card" style={{ padding: '48px', textAlign: 'center', color: 'var(--rh-text-secondary)' }}>
+              Nenhuma campanha encontrada
             </div>
-          </article>
-        ))}
-
-        {campanhasFiltradas.length === 0 && (
-          <div className="campanhas-empty">
-            Nenhuma campanha encontrada
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* MODAIS */}
@@ -205,11 +221,11 @@ const ModCampanhas = (): JSX.Element => {
       {modalOpen && modalMode !== "view" && (
         <ModalCampanhasDados
           campanha={selectedCampanha}
-          mode={modalMode}   // ✅ FIX CRÍTICO
+          mode={modalMode as any}
           onClose={fecharModal}
         />
       )}
-    </section>
+    </div>
   );
 };
 

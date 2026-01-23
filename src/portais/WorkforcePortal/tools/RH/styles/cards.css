@@ -1,0 +1,111 @@
+/* ==========================================================================
+   CARDS STYLES (Inspirado no Mercado Livre / modGerenciamento)
+   ========================================================================== */
+
+/* Grid Padrão para os Cards */
+.rh-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--rh-grid-min-width, 240px), 1fr));
+    gap: var(--rh-grid-gap, 24px);
+    width: 100%;
+}
+
+/* Card Individual */
+.rh-card {
+    background: var(--rh-card-bg, #ffffff);
+    border-radius: var(--rh-card-radius, 8px);
+    padding: var(--rh-card-padding, 16px);
+    box-shadow: var(--rh-card-shadow, 0 1px 3px rgba(0, 0, 0, 0.1));
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+    /* Garante que filhos ocupem largura se necessário */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid transparent;
+    /* Para borda de hover opcional */
+}
+
+/* Efeito Hover (Elevação tipo ML) */
+.rh-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--rh-card-hover-shadow, 0 10px 20px rgba(0, 0, 0, 0.12));
+}
+
+/* Header do Card (Título e Badge) */
+.rh-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--rh-border-color, #e5e7eb);
+    padding-bottom: 12px;
+}
+
+.rh-card-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--rh-text-primary, #333);
+}
+
+/* Conteúdo/Corpo do Card */
+.rh-card-body {
+    flex: 1;
+    /* Ocupa espaço disponível */
+    font-size: 14px;
+    color: var(--rh-text-secondary, #666);
+}
+
+/* Footer/Ações do Card */
+.rh-card-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: auto;
+    /* Empurra para baixo */
+    padding-top: 12px;
+}
+
+/* Elementos visuais específicos (Avatar, Status Badge) */
+.rh-card-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    align-self: center;
+    /* Centraliza se for avatar de pessoa */
+    border: 3px solid var(--rh-border-color, #f3f3f3);
+}
+
+/* Badges de Status (reaproveitados de ui structures) */
+.rh-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.rh-badge.ativo {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.rh-badge.paralisado {
+    background: #fef9c3;
+    color: #854d0e;
+}
+
+.rh-badge.desativado {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.rh-badge.inativo {
+    background: #f3f4f6;
+    color: #4b5563;
+}

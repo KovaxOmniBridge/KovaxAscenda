@@ -23,7 +23,7 @@ const ModCargos: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedCargo, setSelectedCargo] = useState<Cargo | null>(null);
 
-  const filteredCargos = cargos.filter(cargo => 
+  const filteredCargos = cargos.filter(cargo =>
     cargo.nome.toLowerCase().includes(search.toLowerCase()) &&
     (filter === "todos" || cargo.status === filter)
   );
@@ -43,21 +43,29 @@ const ModCargos: React.FC = () => {
   };
 
   return (
-    <div className="modCargos-container">
-      <div className="modCargos-header">
-        <h2>Gestão de cargos</h2>
-        <p>Configure cargos, permissões e políticas de auditoria.</p>
-        <div className="modCargos-actions">
-          <button onClick={() => openModal()}>Novo Cargo</button>
-          <input 
-            type="text" 
-            placeholder="Buscar cargo..." 
-            value={search} 
-            onChange={e => setSearch(e.target.value)} 
+    <div className="rh-module-container">
+      <div className="rh-page-header">
+        <div className="rh-page-header-title">
+          <h2>Gestão de cargos</h2>
+          <p>Configure cargos, permissões e políticas de auditoria.</p>
+        </div>
+        <div className="rh-page-header-actions">
+          <button className="rh-btn-primary" onClick={() => openModal()}>Novo Cargo</button>
+        </div>
+
+        <div className="rh-input-group">
+          <input
+            type="text"
+            className="rh-input"
+            placeholder="Buscar cargo..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            style={{ flex: 1 }}
           />
-          <div className="filter-container">
-            <label htmlFor="filter-select">Filtrar por status:</label>
+          <div className="filter-container" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <label htmlFor="filter-select" style={{ fontSize: '14px', whiteSpace: 'nowrap' }}>Filtrar por status:</label>
             <select
+              className="rh-select"
               id="filter-select"
               value={filter}
               onChange={e => setFilter(e.target.value as any)}
@@ -71,18 +79,44 @@ const ModCargos: React.FC = () => {
         </div>
       </div>
 
-      <div className="modCargos-list">
-        {filteredCargos.map(cargo => (
-          <div key={cargo.id} className="modCargos-cell">
-            <span className="cargo-name">{cargo.nome}</span>
-            <div className="button-group">
-              <button onClick={() => toggleStatus(cargo)} className={`status-${cargo.status}`}>
-                {cargo.status}
-              </button>
-              <button onClick={() => openModal(cargo)}>Configurar</button>
+      <div className="rh-module-content-area">
+        <div className="rh-cards-grid">
+          {filteredCargos.map(cargo => (
+            <div key={cargo.id} className="rh-card">
+              <div className="rh-card-header">
+                <h3>{cargo.nome}</h3>
+                <span className={`rh-badge ${cargo.status}`}>
+                  {cargo.status}
+                </span>
+              </div>
+
+              <div className="rh-card-body">
+                <p onClick={() => openModal(cargo)}>
+                  Clique em configurar para editar permissões e detalhes deste cargo.
+                </p>
+              </div>
+
+              <div className="rh-card-actions">
+                <button
+                  onClick={() => toggleStatus(cargo)}
+                  className="rh-btn-secondary"
+                  title="Alterar Status"
+                >
+                  {cargo.status === 'ativo' ? 'Desativar' : 'Ativar'}
+                </button>
+                <button onClick={() => openModal(cargo)} className="rh-btn-primary" style={{ height: '32px', padding: '0 12px', fontSize: '13px' }}>
+                  Configurar
+                </button>
+              </div>
             </div>
+          ))}
+        </div>
+
+        {filteredCargos.length === 0 && (
+          <div className="rh-card" style={{ padding: '48px', textAlign: 'center', color: 'var(--rh-text-secondary)', gridColumn: '1/-1' }}>
+            Nenhum cargo encontrado.
           </div>
-        ))}
+        )}
       </div>
 
       {modalOpen && (
@@ -90,7 +124,6 @@ const ModCargos: React.FC = () => {
       )}
     </div>
   );
-
 };
 
 export default ModCargos;

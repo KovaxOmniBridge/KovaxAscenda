@@ -1,5 +1,10 @@
 import React, { useState } from "react";
 import "./painel.css";
+/* Novos estilos padronizados */
+import "./styles/universal-format-mods.css";
+import "./styles/universal-format-modais.css";
+import "./styles/header.css";
+import "./styles/cards.css";
 
 // ================================
 // IMPORTAÇÃO DOS PAINÉIS
@@ -192,10 +197,9 @@ const OperationsHubRH = (): JSX.Element => {
                 key={panel.key}
                 className={`
                   hub-card-button
-                  ${
-                    panel.key === activePanelKey
-                      ? "active"
-                      : ""
+                  ${panel.key === activePanelKey
+                    ? "active"
+                    : ""
                   }
                 `}
                 onClick={() =>

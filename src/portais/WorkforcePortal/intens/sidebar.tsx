@@ -20,10 +20,9 @@ interface FerramentaMenu {
 }
 
 const todasFerramentas: FerramentaMenu[] = [
-  { id: "settings", label: "Configurações" },
   { id: "operationsHub", label: "Painel Operacional" },
-  { id: "financeHub", label: "Painel Financeiro" },
   { id: "operationsHubRH", label: "Recursos Humanos" },
+  { id: "nucleoContabil", label: "Núcleo Contábil" },
 ];
 
 // Regra centralizada de permissão (RBAC híbrido)

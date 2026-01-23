@@ -66,107 +66,129 @@ const GerenciamentoTerceiros: React.FC = () => {
   };
 
   return (
-    <div className="terceiros-page">
-      {/* HEADER */}
-      <header className="terceiros-header">
-        <input
-          type="text"
-          placeholder="Pesquisar acessos..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+    <div className="rh-module-container">
+      {/* HEADER DA PÁGINA */}
+      <header className="rh-page-header">
+        <div className="rh-page-header-title">
+          <h2>Gerenciamento de Terceiros</h2>
+          <p>Gerencie acessos e permissões de terceiros.</p>
+        </div>
 
-        <select
-          value={filtroStatus}
-          onChange={(e) =>
-            setFiltroStatus(e.target.value as StatusAcesso | "todos")
-          }
-        >
-          <option value="todos">Todos os status</option>
-          <option value="ativo">Ativo</option>
-          <option value="inativo">Inativo</option>
-          <option value="pendente">Pendente</option>
-        </select>
+        <div className="rh-page-header-actions">
+          <input
+            type="text"
+            className="rh-input"
+            placeholder="Pesquisar acessos..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
 
-        <button className="btn-criar-terceiro" onClick={() => setModalCriar(true)}>
-          + Novo acesso
-        </button>
+          <select
+            className="rh-select"
+            value={filtroStatus}
+            onChange={(e) =>
+              setFiltroStatus(e.target.value as StatusAcesso | "todos")
+            }
+          >
+            <option value="todos">Todos os status</option>
+            <option value="ativo">Ativo</option>
+            <option value="inativo">Inativo</option>
+            <option value="pendente">Pendente</option>
+          </select>
+
+          <button
+            className="rh-btn-primary"
+            onClick={() => setModalCriar(true)}
+          >
+            Novo Acesso
+          </button>
+        </div>
       </header>
 
-      {/* GRID DE ACESSOS */}
-      <main className="terceiros-grid">
-        {acessosFiltrados.length === 0 ? (
-          <div className="terceiros-empty">Nenhum acesso encontrado.</div>
-        ) : (
-          acessosFiltrados.map((acesso) => (
-            <div
-              key={acesso.id}
-              className="terceiro-card"
-              onClick={() => setAcessoSelecionado(acesso)}
-            >
-              <div className="terceiro-card-header">
-                <h3>{acesso.nomeAcesso}</h3>
-                <span className={`status-badge ${acesso.status}`}>
-                  {acesso.status.toUpperCase()}
-                </span>
-              </div>
-
-              <div className="terceiro-card-body">
-                <p>Profissional: {acesso.profissional}</p>
-                <p>Região: {acesso.regiao}</p>
-              </div>
-
-              <div className="terceiro-card-actions">
-                <button
-                  className="btn-secondary"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    alert(`Configurar acesso: ${acesso.nomeAcesso}`);
-                  }}
-                >
-                  Configurar
-                </button>
-
-                <select
-                  className="status-select"
-                  value={acesso.status}
-                  onChange={(e) => {
-                    e.stopPropagation();
-                    const novoStatus = e.target.value as StatusAcesso;
-                    setAcessosList((prev) =>
-                      prev.map((a) =>
-                        a.id === acesso.id ? { ...a, status: novoStatus } : a
-                      )
-                    );
-                  }}
-                >
-                  <option value="ativo">Ativo</option>
-                  <option value="inativo">Inativo</option>
-                  <option value="pendente">Pendente</option>
-                </select>
-              </div>
+      {/* ÁREA DE CONTEÚDO (GRID DE CARDS) */}
+      <main className="rh-module-content-area">
+        <div className="rh-cards-grid">
+          {acessosFiltrados.length === 0 ? (
+            <div className="terceiros-empty" style={{ gridColumn: "1/-1", textAlign: "center", padding: "40px", color: "#6b7280" }}>
+              Nenhum acesso encontrado.
             </div>
-          ))
-        )}
+          ) : (
+            acessosFiltrados.map((acesso) => (
+              <div
+                key={acesso.id}
+                className="rh-card"
+                onClick={() => setAcessoSelecionado(acesso)}
+              >
+                <div className="rh-card-header">
+                  <h3>{acesso.nomeAcesso}</h3>
+                  <span className={`rh-badge ${acesso.status}`}>
+                    {acesso.status.toUpperCase()}
+                  </span>
+                </div>
+
+                <div className="rh-card-body">
+                  <p><strong>Profissional:</strong> {acesso.profissional}</p>
+                  <p><strong>Região:</strong> {acesso.regiao}</p>
+                </div>
+
+                <div className="rh-card-actions">
+                  <button
+                    className="rh-btn-secondary"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      alert(`Configurar acesso: ${acesso.nomeAcesso}`);
+                    }}
+                  >
+                    Configurar
+                  </button>
+
+                  <select
+                    className="rh-select"
+                    style={{ height: '32px', padding: '4px 8px', fontSize: '12px' }} // Ajuste pontual para caber bonitinho no card
+                    value={acesso.status}
+                    onClick={(e) => e.stopPropagation()} // Importante para não abrir o card ao clicar no select
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      const novoStatus = e.target.value as StatusAcesso;
+                      setAcessosList((prev) =>
+                        prev.map((a) =>
+                          a.id === acesso.id ? { ...a, status: novoStatus } : a
+                        )
+                      );
+                    }}
+                  >
+                    <option value="ativo">Ativo</option>
+                    <option value="inativo">Inativo</option>
+                    <option value="pendente">Pendente</option>
+                  </select>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </main>
 
       {/* MODAL DE VISUALIZAÇÃO DE ACESSO */}
-      {acessoSelecionado && (
-        <CriarAcesso
-          onClose={() => setAcessoSelecionado(null)}
-          acesso={acessoSelecionado}
-          isViewOnly
-        />
-      )}
+      {
+        acessoSelecionado && (
+          <CriarAcesso
+            onClose={() => setAcessoSelecionado(null)}
+            acesso={acessoSelecionado}
+            isViewOnly
+          />
+        )
+      }
 
       {/* MODAL DE CRIAÇÃO */}
-      {modalCriar && (
-        <CriarAcesso
-          onClose={() => setModalCriar(false)}
-          onCreate={handleCreateAcesso}
-        />
-      )}
-    </div>
+      {
+        modalCriar && (
+          <CriarAcesso
+            onClose={() => setModalCriar(false)}
+            onCreate={handleCreateAcesso}
+          />
+        )
+      }
+    </div >
   );
 };
 

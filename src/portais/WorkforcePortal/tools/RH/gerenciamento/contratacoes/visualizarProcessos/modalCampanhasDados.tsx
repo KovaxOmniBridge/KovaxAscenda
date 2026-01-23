@@ -29,10 +29,15 @@ export interface Campanha {
   nome: string;
   status?: "ativo" | "paralisado" | "desativado";
   entrevistas?: any[];
+  resumo?: any;
+  experiencias?: any[];
+  efetivados?: any[];
+  abandonos?: any[];
 }
 
 interface ModalProps {
   campanha: Campanha | null;
+  mode: string;
   onClose: () => void;
 }
 
@@ -109,12 +114,12 @@ const ModalCampanhasDados: React.FC<ModalProps> = ({
         );
 
 
-    case "experiencia":   // ✅ nova fase
-      return <PeriodoExperiencia experiencias={campanha.experiencias ?? []} />;
+      case "experiencia":   // ✅ nova fase
+        return <PeriodoExperiencia experiencias={campanha.experiencias ?? []} />;
 
-    case "efetivados":  // ✅ nova fase
-      return <Efetivados funcionarios={campanha.efetivados ?? []} />;
-    
+      case "efetivados":  // ✅ nova fase
+        return <Efetivados funcionarios={campanha.efetivados ?? []} />;
+
       case "abandonos":  // ✅ nova fase
         return <Abandonos abandonos={campanha.abandonos ?? []} />;
 
@@ -124,14 +129,14 @@ const ModalCampanhasDados: React.FC<ModalProps> = ({
   };
 
   return (
-    <div className="campanha-fullscreen">
+    <div className="rh-fs-modal">
       {/* HEADER */}
-      <header className="campanha-header">
-        <div className="campanha-header-left">
-          {campanha && <h2>{campanha.nome}</h2>}
+      <header className="rh-fs-header">
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {campanha && <h3>{campanha.nome}</h3>}
         </div>
 
-        <button className="campanha-close" onClick={onClose}>
+        <button className="rh-fs-close" onClick={onClose}>
           ✕
         </button>
       </header>
@@ -139,11 +144,11 @@ const ModalCampanhasDados: React.FC<ModalProps> = ({
       {/* =========================
          STEPPER — MENU DE DOMÍNIOS
       ========================= */}
-      <nav className="campanha-steps">
+      <nav className="rh-fs-steps">
         {fasesOrdem.map((fase) => (
           <button
             key={fase}
-            className={`step ${fase === faseAtiva ? "active" : ""}`}
+            className={`rh-fs-step-btn ${fase === faseAtiva ? "active" : ""}`}
             onClick={() => setFaseAtiva(fase)}
           >
             {fase}
@@ -152,12 +157,12 @@ const ModalCampanhasDados: React.FC<ModalProps> = ({
       </nav>
 
       {/* CONTEÚDO */}
-      <main className="campanha-content">
+      <div className="rh-fs-content">
         {renderFase()}
-      </main>
+      </div>
 
       {/* FOOTER */}
-      <footer className="campanha-footer">
+      <footer className="rh-fs-footer">
         <button onClick={onClose}>Fechar</button>
       </footer>
     </div>

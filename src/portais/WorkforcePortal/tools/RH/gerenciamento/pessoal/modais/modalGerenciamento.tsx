@@ -141,14 +141,14 @@ const ModalGerenciamento: React.FC<ModalProps> = ({
   };
 
   return (
-    <div className="usuario-fullscreen">
+    <div className="rh-fs-modal">
       {/* HEADER */}
-      <header className="usuario-header">
-        <div className="usuario-header-left">
-          {usuario && <h2>{usuario.nome}</h2>}
+      <header className="rh-fs-header">
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {usuario && <h3>{usuario.nome}</h3>}
         </div>
 
-        <button className="usuario-close" onClick={onClose}>
+        <button className="rh-fs-close" onClick={onClose}>
           ✕
         </button>
       </header>
@@ -156,11 +156,11 @@ const ModalGerenciamento: React.FC<ModalProps> = ({
       {/* =========================
          STEPPER — DOMÍNIOS
       ========================= */}
-      <nav className="usuario-steps">
+      <nav className="rh-fs-steps">
         {fasesOrdem.map(({ id, label }) => (
           <button
             key={id}
-            className={`step ${id === faseAtiva ? "active" : ""}`}
+            className={`rh-fs-step-btn ${id === faseAtiva ? "active" : ""}`}
             onClick={() => setFaseAtiva(id)}
           >
             {label}
@@ -169,12 +169,12 @@ const ModalGerenciamento: React.FC<ModalProps> = ({
       </nav>
 
       {/* CONTEÚDO */}
-      <main className="usuario-content">
+      <div className="rh-fs-content">
         {renderFase()}
-      </main>
+      </div>
 
       {/* FOOTER */}
-      <footer className="usuario-footer">
+      <footer className="rh-fs-footer">
         <button onClick={onClose}>Fechar</button>
       </footer>
     </div>

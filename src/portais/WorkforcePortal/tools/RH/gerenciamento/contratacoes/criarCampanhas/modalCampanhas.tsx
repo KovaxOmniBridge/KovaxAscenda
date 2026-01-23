@@ -100,78 +100,76 @@ const ModalCampanhas: React.FC<ModalProps> = ({
     mode === "create"
       ? "Nova Campanha"
       : mode === "edit"
-      ? "Editar Campanha"
-      : "Visualização da Campanha";
+        ? "Editar Campanha"
+        : "Visualização da Campanha";
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-container">
-        {/* Header */}
-        <header className="modal-header">
-          <h3>{tituloModal}</h3>
-          <button onClick={onClose}>✕</button>
-        </header>
+    <div className="rh-fs-modal">
+      {/* Header */}
+      <header className="rh-fs-header">
+        <h3>{tituloModal}</h3>
+        <button className="rh-fs-close" onClick={onClose}>✕</button>
+      </header>
 
-        {/* Navegação de fases */}
-        <nav className="modal-nav">
-          {fasesOrdem.map((f) => (
-            <button
-              key={f}
-              className={f === fase ? "active" : ""}
-              onClick={() => mode !== "view" && setFase(f)}
-              disabled={mode === "view"}
-            >
-              {f}
-            </button>
-          ))}
-        </nav>
+      {/* Navegação de fases */}
+      <nav className="rh-fs-steps">
+        {fasesOrdem.map((f) => (
+          <button
+            key={f}
+            className={`rh-fs-step-btn ${f === fase ? "active" : ""}`}
+            onClick={() => mode !== "view" && setFase(f)}
+            disabled={mode === "view"}
+          >
+            {f}
+          </button>
+        ))}
+      </nav>
 
-        {/* Conteúdo */}
-        <div className="modal-content">
-          <FaseComponente campanha={campanha} />
+      {/* Conteúdo */}
+      <div className="rh-fs-content">
+        <FaseComponente campanha={campanha} />
 
-          {mode !== "view" && fase === "dados" && (
-            <div className="fonte-dados">
-              <label>
-                <input
-                  type="radio"
-                  name="fonte"
-                  onChange={() => setUsarFonteExterna(false)}
-                  checked={usarFonteExterna === false}
-                />
-                Criar em fonte interna
-              </label>
+        {mode !== "view" && fase === "dados" && (
+          <div className="fonte-dados">
+            <label>
+              <input
+                type="radio"
+                name="fonte"
+                onChange={() => setUsarFonteExterna(false)}
+                checked={usarFonteExterna === false}
+              />
+              Criar em fonte interna
+            </label>
 
-              <label>
-                <input
-                  type="radio"
-                  name="fonte"
-                  onChange={() => setUsarFonteExterna(true)}
-                  checked={usarFonteExterna === true}
-                />
-                Usar fonte externa
-              </label>
-            </div>
-          )}
-        </div>
+            <label>
+              <input
+                type="radio"
+                name="fonte"
+                onChange={() => setUsarFonteExterna(true)}
+                checked={usarFonteExterna === true}
+              />
+              Usar fonte externa
+            </label>
+          </div>
+        )}
+      </div>
 
-        {/* Footer */}
-        <footer className="modal-footer">
-          <button onClick={handleCancelar}>
-            {mode === "view"
-              ? "Fechar"
-              : faseIndex === 0
+      {/* Footer */}
+      <footer className="rh-fs-footer">
+        <button onClick={handleCancelar}>
+          {mode === "view"
+            ? "Fechar"
+            : faseIndex === 0
               ? "Cancelar"
               : "Voltar"}
-          </button>
+        </button>
 
-          {mode !== "view" && (
-            <button onClick={handleProsseguir}>
-              {botaoPrincipalLabel}
-            </button>
-          )}
-        </footer>
-      </div>
+        {mode !== "view" && (
+          <button className="primary" onClick={handleProsseguir}>
+            {botaoPrincipalLabel}
+          </button>
+        )}
+      </footer>
     </div>
   );
 };
