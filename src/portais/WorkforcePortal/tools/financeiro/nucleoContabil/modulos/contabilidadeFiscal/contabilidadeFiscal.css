@@ -1,0 +1,14 @@
+/* ==========================================================================
+   CONTABILIDADE FISCAL - MASTER STYLES
+   Importa módulos específicos de estilo (Layout, Header, Cards, Modais).
+   ========================================================================== */
+
+@import './styles/cf-layout.css';
+@import './styles/cf-header.css';
+@import './styles/cf-cards.css';
+@import './styles/cf-modal.css';
+
+/* 
+   Mantendo apenas overrides muito específicos ou temporários aqui.
+   Tudo deve ser migrado para os módulos acima.
+*/

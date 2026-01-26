@@ -1,0 +1,304 @@
+/* ============================================
+   DocumentConfiguration.css
+   Configuração de Documentos Fiscais
+   ============================================ */
+
+/* ============================================
+   LAYOUT PRINCIPAL
+   ============================================ */
+
+.dc-container {
+    max-width: 80rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+.dc-header {
+    background-color: #ffffff;
+    border-radius: 0.75rem;
+    border: 1px solid rgb(229, 231, 235);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    padding: 1.5rem;
+}
+
+.dc-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.dc-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: rgb(30, 41, 59);
+    margin-bottom: 0.5rem;
+}
+
+.dc-subtitle {
+    font-size: 0.875rem;
+    color: rgb(100, 116, 139);
+}
+
+/* Botão principal */
+.dc-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(90deg, rgb(124, 58, 237), rgb(147, 51, 234));
+    color: #ffffff;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 150ms ease;
+}
+
+.dc-btn-primary:hover {
+    box-shadow: 0 8px 16px rgba(124, 58, 237, 0.25);
+}
+
+.dc-btn-primary:active {
+    transform: scale(0.98);
+}
+
+/* ============================================
+   GRID DE DOCUMENTOS
+   ============================================ */
+
+.dc-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .dc-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .dc-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* ============================================
+   CARD DE DOCUMENTO
+   ============================================ */
+
+.dc-card {
+    background-color: #ffffff;
+    border-radius: 0.75rem;
+    border: 1px solid rgb(229, 231, 235);
+    padding: 1.5rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: box-shadow 150ms ease;
+}
+
+.dc-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.dc-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.dc-card-title-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.dc-card-icon {
+    font-size: 2.25rem;
+}
+
+.dc-card-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: rgb(30, 41, 59);
+}
+
+.dc-card-description {
+    font-size: 0.875rem;
+    color: rgb(100, 116, 139);
+}
+
+/* Status */
+.dc-status {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 0.375rem;
+    text-transform: uppercase;
+}
+
+.dc-status-active {
+    background-color: rgb(220, 252, 231);
+    color: rgb(22, 163, 74);
+}
+
+.dc-status-inactive {
+    background-color: rgb(243, 244, 246);
+    color: rgb(75, 85, 99);
+}
+
+/* ============================================
+   DADOS DO DOCUMENTO
+   ============================================ */
+
+.dc-card-body {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgb(243, 244, 246);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.dc-card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dc-card-label {
+    font-size: 0.875rem;
+    color: rgb(100, 116, 139);
+}
+
+.dc-card-value {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: rgb(30, 41, 59);
+}
+
+.dc-card-mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* ============================================
+   AÇÕES DO CARD
+   ============================================ */
+
+.dc-card-actions {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgb(243, 244, 246);
+    display: flex;
+    gap: 0.5rem;
+}
+
+.dc-btn-configure {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    background-color: rgb(124, 58, 237);
+    color: #ffffff;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background-color 150ms ease;
+}
+
+.dc-btn-configure:hover {
+    background-color: rgb(109, 40, 217);
+}
+
+.dc-btn-secondary {
+    padding: 0.5rem 0.75rem;
+    background-color: rgb(243, 244, 246);
+    color: rgb(55, 65, 81);
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+}
+
+.dc-btn-secondary:hover {
+    background-color: rgb(229, 231, 235);
+}
+
+/* ============================================
+   SEÇÃO DE TEMPLATES
+   ============================================ */
+
+.dc-templates {
+    background-color: #ffffff;
+    border-radius: 0.75rem;
+    border: 1px solid rgb(229, 231, 235);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    padding: 1.5rem;
+}
+
+.dc-templates-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: rgb(30, 41, 59);
+    margin-bottom: 1rem;
+}
+
+.dc-template-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .dc-template-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.dc-template-card {
+    border: 1px solid rgb(229, 231, 235);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    cursor: pointer;
+    transition: border-color 150ms ease;
+}
+
+.dc-template-card:hover {
+    border-color: rgb(196, 181, 253);
+}
+
+.dc-template-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: rgb(30, 41, 59);
+}
+
+.dc-template-meta {
+    font-size: 0.75rem;
+    color: rgb(100, 116, 139);
+}
+
+.dc-template-link {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: rgb(124, 58, 237);
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.dc-template-link:hover {
+    color: rgb(109, 40, 217);
+}

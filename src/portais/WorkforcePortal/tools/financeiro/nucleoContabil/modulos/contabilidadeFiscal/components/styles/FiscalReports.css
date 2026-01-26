@@ -1,0 +1,303 @@
+/* ===============================
+   TOKENS BASE
+================================= */
+:root {
+  --bg-primary: #0f172a;
+  --bg-secondary: #111827;
+  --bg-surface: #ffffff;
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+
+  --border-light: #e5e7eb;
+  --border-medium: #d1d5db;
+
+  --accent-primary: #2563eb;
+  --accent-secondary: #1e40af;
+
+  --success: #16a34a;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 6px 20px rgba(0,0,0,0.08);
+
+  --transition-fast: 0.2s ease;
+}
+
+/* ===============================
+   CONTAINER GERAL
+================================= */
+.fiscal-reports {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  background-color: #f8fafc;
+  color: var(--text-primary);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* ===============================
+   HEADER
+================================= */
+.fiscal-reports-header {
+  background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+  color: #ffffff;
+  padding: 28px 32px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.fiscal-reports-header h3 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
+.fiscal-reports-header p {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #c7d2fe;
+  max-width: 600px;
+}
+
+/* ===============================
+   FILTROS
+================================= */
+.fiscal-reports-filters {
+  background-color: var(--bg-surface);
+  padding: 20px 24px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.filters-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: flex-end;
+}
+
+.filter-period label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.period-inputs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.period-inputs input {
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-medium);
+  font-size: 13px;
+}
+
+.period-inputs span {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.filter-category select {
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-medium);
+  font-size: 13px;
+  background-color: #ffffff;
+}
+
+/* ===============================
+   GRID DE RELATÓRIOS
+================================= */
+.fiscal-reports-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+/* ===============================
+   CARD DE RELATÓRIO
+================================= */
+.fiscal-report-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.fiscal-report-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Header do card */
+.report-header {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.report-icon {
+  font-size: 22px;
+}
+
+.report-info h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.report-info p {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* Categoria */
+.report-category span {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background-color: #eff6ff;
+  color: var(--accent-primary);
+}
+
+/* Formatos */
+.report-formats p {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text-secondary);
+}
+
+.formats-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.formats-list span {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  background-color: #f1f5f9;
+  border: 1px solid var(--border-light);
+}
+
+/* Ações */
+.report-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.report-actions button {
+  flex: 1;
+  padding: 9px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-medium);
+  font-size: 13px;
+  cursor: pointer;
+  background-color: #ffffff;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.report-actions button:first-child {
+  background-color: var(--accent-primary);
+  color: #ffffff;
+  border-color: var(--accent-primary);
+}
+
+.report-actions button:first-child:hover {
+  background-color: var(--accent-secondary);
+}
+
+.report-actions button:last-child:hover {
+  background-color: #f1f5f9;
+}
+
+/* ===============================
+   RELATÓRIOS RECENTES
+================================= */
+.fiscal-reports-recent {
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.fiscal-reports-recent h4 {
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Lista */
+.recent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.recent-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+  background-color: #f9fafb;
+}
+
+.recent-info {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.recent-icon {
+  font-size: 18px;
+}
+
+.recent-info p {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.recent-info span {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.recent-item button {
+  padding: 7px 14px;
+  font-size: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-medium);
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.recent-item button:hover {
+  background-color: #f1f5f9;
+}

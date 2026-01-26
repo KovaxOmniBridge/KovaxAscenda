@@ -1,0 +1,205 @@
+/* ==========================================================================
+   FISCAL CARDS & DASHBOARD COMPONENTS
+   Estilos específicos para cards de regras, estatísticas e elementos de UI.
+   ========================================================================== */
+
+/* Premium Input Styles (Espelhando RH e Contribuição anterior) */
+.cf-input-group {
+    margin-bottom: 1rem;
+}
+
+.cf-input-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #334155;
+    margin-bottom: 0.5rem;
+}
+
+.cf-input-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    font-size: 0.925rem;
+    background: #ffffff;
+    color: #1e293b;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.cf-input-control:focus {
+    outline: none;
+    border-color: #6366f1;
+    /* Indigo 500 */
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.cf-input-control::placeholder {
+    color: #94a3b8;
+}
+
+/* Rule Cards (Lista Horizontal - Legacy) */
+.cf-rule-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Gallery Grid System (Mercado Libre Style) */
+.cf-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    width: 100%;
+}
+
+.cf-gallery-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+    height: 100%;
+}
+
+.cf-gallery-card:hover {
+    box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px);
+    border-color: #cbd5e1;
+}
+
+/* Header Funcional do Card (Price + Status) */
+.cf-card-header {
+    padding: 16px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: transparent;
+    height: auto;
+}
+
+/* Corpo do Card */
+.cf-card-body {
+    padding: 16px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.cf-card-price {
+    font-size: 1.5rem;
+    font-weight: 400;
+    /* ML style uses lighter weight for price sometimes */
+    color: #333;
+}
+
+.cf-card-title {
+    font-size: 0.875rem;
+    color: #64748b;
+    line-height: 1.4;
+    font-weight: 400;
+    margin-bottom: 8px;
+
+    /* Limit lines */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.cf-card-meta {
+    margin-top: auto;
+    font-size: 0.75rem;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Footer do Card - Opcional para ações */
+.cf-card-actions {
+    padding: 12px 16px;
+    border-top: 1px solid #f8fafc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cf-link-btn {
+    color: #3b82f6;
+    /* Blue 500 */
+    font-size: 0.875rem;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.cf-link-btn:hover {
+    text-decoration: underline;
+}
+
+/* Badges e Tags */
+.cf-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    /* More square like tags */
+    font-size: 0.7rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+}
+
+.cf-badge.primary {
+    background-color: #e0e7ff;
+    color: #4338ca;
+    border-color: #c7d2fe;
+}
+
+.cf-badge.success {
+    background-color: #dcfce7;
+    color: #15803d;
+    border-color: #bbf7d0;
+}
+
+.cf-badge.neutral {
+    background-color: #f1f5f9;
+    color: #475569;
+    border-color: #e2e8f0;
+}
+
+/* Dashboard Stat Card */
+.cf-stat-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.cf-stat-label {
+    font-size: 0.875rem;
+    color: #64748b;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.cf-stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0f172a;
+    letter-spacing: -0.05em;
+}

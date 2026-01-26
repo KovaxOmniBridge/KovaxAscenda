@@ -1,0 +1,499 @@
+/* ============================================
+   DocumentCreationModal.css
+   Estilos para o Modal de Criação Universal de Documentos Fiscais
+   ============================================ */
+
+/* Overlay */
+.dcm-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+/* Modal Container */
+.dcm-modal {
+    background: white;
+    border-radius: 1rem;
+    width: 100%;
+    max-width: 900px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Header */
+.dcm-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.dcm-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+}
+
+.dcm-subtitle {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin: 0.25rem 0 0 0;
+}
+
+.dcm-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0.5rem;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.dcm-close:hover {
+    color: #0f172a;
+}
+
+/* Step Indicator */
+.dcm-step-indicator {
+    display: flex;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    gap: 0.5rem;
+    overflow-x: auto;
+}
+
+.dcm-step {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.dcm-step.active {
+    background: linear-gradient(135deg, #7c3aed, #a78bfa);
+    color: white;
+}
+
+.dcm-step.completed {
+    background: #f1f5f9;
+    color: #22c55e;
+}
+
+.dcm-step-number {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.dcm-step.active .dcm-step-number {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Content */
+.dcm-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+}
+
+.dcm-step-content {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dcm-section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 1.5rem;
+}
+
+/* Template Selection */
+.dcm-country-selector {
+    margin-bottom: 1.5rem;
+}
+
+.dcm-country-selector label {
+    display: block;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 0.5rem;
+}
+
+.dcm-select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    background: white;
+    cursor: pointer;
+}
+
+.dcm-doc-types-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.dcm-doc-type-card {
+    padding: 1.5rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 0.75rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.dcm-doc-type-card:hover {
+    border-color: #a78bfa;
+    transform: translateY(-2px);
+}
+
+.dcm-doc-type-card.selected {
+    border-color: #7c3aed;
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(167, 139, 250, 0.05));
+}
+
+.dcm-doc-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.dcm-doc-type-card h4 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0.5rem 0;
+}
+
+.dcm-doc-type-card p {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin: 0;
+}
+
+/* Form */
+.dcm-form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 640px) {
+    .dcm-form-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.dcm-form-group label {
+    display: block;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.dcm-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+}
+
+.dcm-input:focus {
+    outline: none;
+    border-color: #7c3aed;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+
+/* Items */
+.dcm-add-item-form {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.dcm-btn-add {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #7c3aed, #a78bfa);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.dcm-items-list {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.dcm-item-row {
+    display: grid;
+    grid-template-columns: 80px 1fr 100px 120px 120px 40px;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border-bottom: 1px solid #e2e8f0;
+    align-items: center;
+    font-size: 0.875rem;
+}
+
+.dcm-item-row:last-child {
+    border-bottom: none;
+}
+
+.dcm-item-code {
+    font-family: monospace;
+    color: #64748b;
+}
+
+.dcm-item-desc {
+    color: #0f172a;
+    font-weight: 500;
+}
+
+.dcm-item-total {
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.dcm-btn-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.25rem;
+    padding: 0.25rem;
+}
+
+/* Taxes */
+.dcm-taxes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.dcm-tax-item {
+    padding: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    background: #f8fafc;
+}
+
+.dcm-tax-name {
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.5rem;
+}
+
+.dcm-tax-details {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: #64748b;
+    flex-wrap: wrap;
+}
+
+.dcm-tax-amount {
+    font-weight: 700;
+    color: #7c3aed;
+}
+
+.dcm-empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #64748b;
+}
+
+/* Review */
+.dcm-review-section {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+}
+
+.dcm-review-section h4 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 1rem;
+}
+
+.dcm-review-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+}
+
+@media (min-width: 640px) {
+    .dcm-review-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Result */
+.dcm-result-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+}
+
+.dcm-processing {
+    text-align: center;
+}
+
+.dcm-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #e2e8f0;
+    border-top-color: #7c3aed;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.dcm-result {
+    text-align: center;
+    padding: 2rem;
+}
+
+.dcm-result-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.dcm-result h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.dcm-result.success h3 {
+    color: #22c55e;
+}
+
+.dcm-result.error h3 {
+    color: #ef4444;
+}
+
+.dcm-protocol {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 0.5rem;
+    font-family: monospace;
+    font-size: 0.875rem;
+}
+
+/* Footer */
+.dcm-footer {
+    padding: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.dcm-btn-primary,
+.dcm-btn-secondary {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.dcm-btn-primary {
+    background: linear-gradient(135deg, #7c3aed, #a78bfa);
+    color: white;
+}
+
+.dcm-btn-primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+.dcm-btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.dcm-btn-secondary {
+    background: #f1f5f9;
+    color: #334155;
+}
+
+.dcm-btn-secondary:hover {
+    background: #e2e8f0;
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+    .dcm-modal {
+        max-height: 95vh;
+    }
+
+    .dcm-item-row {
+        grid-template-columns: 1fr;
+        gap: 0.25rem;
+    }
+
+    .dcm-add-item-form {
+        flex-direction: column;
+    }
+
+    .dcm-add-item-form input {
+        width: 100% !important;
+    }
+}

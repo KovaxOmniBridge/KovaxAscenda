@@ -7,7 +7,7 @@ import "../../RH/styles/universal-format-mods.css";
 // ================================
 // IMPORTS - MODULES
 // ================================
-import ModContabilidadeGeral from "./modulos/contabilidadeGeral/modContabilidadeGeral";
+// import ModContabilidadeGeral from "./modulos/contabilidadeGeral/modContabilidadeGeral";
 import ModContabilidadeFiscal from "./modulos/contabilidadeFiscal/modContabilidadeFiscal";
 import ModContabilidadeGerencial from "./modulos/contabilidadeGerencial/modContabilidadeGerencial";
 import ModContabilidadeInternacional from "./modulos/contabilidadeInternacional/modContabilidadeInternacional";
@@ -18,7 +18,7 @@ import ModLivroRazao from "./modulos/livroRazao/modLivroRazao";
 // TYPES
 // ================================
 type ModuleKey =
-    | "geral"
+    //    | "geral"
     | "fiscal"
     | "gerencial"
     | "internacional"
@@ -37,7 +37,7 @@ interface ModuleConfig {
 // ICONS
 // ================================
 const Icons = {
-    Geral: () => <span>🏛️</span>,
+    //    Geral: () => <span>🏛️</span>,
     Fiscal: () => <span>⚖️</span>,
     Gerencial: () => <span>📈</span>,
     Internacional: () => <span>🌐</span>,
@@ -49,13 +49,15 @@ const Icons = {
 // MODULE REGISTRY
 // ================================
 const MODULES: ModuleConfig[] = [
-    {
-        key: "geral",
-        label: "Contabilidade Geral",
-        subLabel: "General Accounting",
-        icon: <Icons.Geral />,
-        component: ModContabilidadeGeral
-    },
+    /*
+        {
+            key: "geral",
+            label: "Contabilidade Geral",
+            subLabel: "General Accounting",
+            icon: <Icons.Geral />,
+            component: ModContabilidadeGeral
+        },
+    */
     {
         key: "fiscal",
         label: "Contabilidade Fiscal",
@@ -97,7 +99,7 @@ const MODULES: ModuleConfig[] = [
 // MAIN COMPONENT
 // ================================
 const NucleoContabilPanel = (): JSX.Element => {
-    const [activeModuleKey, setActiveModuleKey] = useState<ModuleKey>("geral");
+    const [activeModuleKey, setActiveModuleKey] = useState<ModuleKey>("fiscal");
     const [isHeaderCollapsed, setIsHeaderCollapsed] = useState<boolean>(false);
 
     const ActiveComponent = MODULES.find(m => m.key === activeModuleKey)?.component;

@@ -1,0 +1,159 @@
+/* ==========================================================================
+   FISCAL HEADER — COLLAPSIBLE (ENTERPRISE MODE)
+   Safe-toggle refinado e alinhado ao header
+   ========================================================================== */
+
+/* Wrapper geral */
+.cf-module-header-area {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    overflow: hidden;
+    position: relative;
+}
+
+
+/* Estados */
+.cf-module-header-area.open {
+    padding: 16px 20px 12px;
+}
+
+.cf-module-header-area.closed {
+    height: 40px;
+    padding: 0 16px;
+}
+
+/* Barra persistente */
+.cf-header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 40px;
+    position: relative;
+    z-index: 2;
+}
+
+/* Conteúdo colapsável */
+.cf-header-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* Conteúdo some quando fechado */
+.cf-module-header-area.closed .cf-header-wrapper {
+    opacity: 0;
+    pointer-events: none;
+}
+
+
+/* Título */
+.cf-header-title h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin: 0;
+    line-height: 1.15;
+}
+
+.cf-header-title p {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin: 0;
+}
+
+/* =========================================================
+   BOTÃO DE CONTROLE — ALINHADO AO HEADER
+   ========================================================= */
+.cf-header-toggle-fixed {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 6px 12px;
+    height: 28px;
+
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+
+    font-size: 12px;
+    font-weight: 600;
+    color: #334155;
+
+    cursor: pointer;
+    white-space: nowrap;
+
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+
+    z-index: 5;
+}
+
+
+.cf-header-toggle-fixed:hover {
+    background: #e2e8f0;
+    border-color: #cbd5f5;
+    color: #1e293b;
+}
+
+/* Estado ativo (header aberto) */
+.cf-module-header-area.open .cf-header-toggle-fixed {
+    background: #eef2ff;
+    border-color: #c7d2fe;
+    color: #4338ca;
+}
+
+/* =========================================================
+   Tabs
+   ========================================================= */
+.cf-tabs-container {
+    display: inline-flex;
+    gap: 6px;
+    padding: 4px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+/* Tabs individuais */
+.cf-tab-button {
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.cf-tab-button:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+.cf-tab-button.active {
+    background: #eef2ff;
+    color: #4f46e5;
+    font-weight: 600;
+}
+
+/* Scroll discreto */
+.cf-tabs-container::-webkit-scrollbar {
+    height: 3px;
+}
+
+.cf-tabs-container::-webkit-scrollbar-thumb {
+    background: #c7d2fe;
+    border-radius: 2px;
+}

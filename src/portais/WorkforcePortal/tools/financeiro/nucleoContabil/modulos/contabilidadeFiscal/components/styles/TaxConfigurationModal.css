@@ -1,0 +1,839 @@
+/* ============================================
+   TaxConfigurationModal.css
+   Estilos para o Modal de Configuração de Impostos
+   ============================================ */
+
+/* ============================================
+   CONTEXTO E BADGES
+   ============================================ */
+
+
+
+
+/* Badge genérico */
+.tcm-badge {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    border: 1px solid transparent;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.tcm-badge-label {
+    opacity: 0.7;
+    margin-right: 0.25rem;
+}
+
+/* ============================================
+   CONTEÚDO DAS ABAS
+   ============================================ */
+
+/* Container do conteúdo */
+.tcm-content-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Títulos das seções */
+.tcm-section-title {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    font-weight: 700;
+    color: rgb(30, 41, 59);
+    margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+    .tcm-section-title {
+        font-size: 1.125rem;
+        line-height: 1.75rem;
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* Grid de formulário */
+.tcm-form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 640px) {
+    .tcm-form-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+}
+
+.tcm-form-col-full {
+    grid-column: span 1;
+}
+
+@media (min-width: 640px) {
+    .tcm-form-col-full {
+        grid-column: span 2;
+    }
+}
+
+/* ============================================
+   ALERTAS E DICAS
+   ============================================ */
+
+/* Alerta informativo */
+.tcm-alert-info {
+    background-color: rgb(239, 246, 255);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: rgb(30, 64, 175);
+    margin-bottom: 1.5rem;
+    border: 1px solid rgb(191, 219, 254);
+}
+
+.tcm-alert-warning {
+    background-color: rgb(254, 252, 232);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: rgb(146, 64, 14);
+    margin-bottom: 1.5rem;
+    border: 1px solid rgb(254, 243, 199);
+    display: flex;
+    gap: 0.75rem;
+}
+
+.tcm-alert-icon {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+}
+
+/* ============================================
+   CHECKBOXES E GRUPOS
+   ============================================ */
+
+/* Container de checkboxes */
+.tcm-checkbox-group {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+}
+
+@media (min-width: 640px) {
+    .tcm-checkbox-group {
+        gap: 1rem;
+    }
+}
+
+/* Label de checkbox */
+.tcm-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: rgb(51, 65, 85);
+    background-color: rgb(255, 255, 255);
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    border: 1px solid rgb(226, 232, 240);
+    transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tcm-checkbox-label:hover {
+    border-color: rgb(196, 181, 253);
+}
+
+.tcm-checkbox-input {
+    accent-color: rgb(124, 58, 237);
+}
+
+/* ============================================
+   SEÇÃO DE ALÍQUOTA
+   ============================================ */
+
+/* Container da alíquota */
+.tcm-rate-container {
+    padding: 1.5rem;
+    background-color: rgb(255, 255, 255);
+    border: 1px solid rgb(226, 232, 240);
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.tcm-rate-label {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+@media (min-width: 768px) {
+    .tcm-rate-label {
+        font-size: 1.125rem;
+        line-height: 1.75rem;
+    }
+}
+
+.tcm-rate-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-direction: column;
+}
+
+@media (min-width: 640px) {
+    .tcm-rate-input-wrapper {
+        flex-direction: row;
+    }
+}
+
+.tcm-rate-input-container {
+    position: relative;
+    flex: 1 1 0%;
+    max-width: 100%;
+}
+
+@media (min-width: 640px) {
+    .tcm-rate-input-container {
+        max-width: 20rem;
+    }
+}
+
+.tcm-rate-input {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: 700;
+    color: rgb(15, 23, 42);
+    padding-right: 2.5rem;
+}
+
+@media (min-width: 768px) {
+    .tcm-rate-input {
+        font-size: 1.875rem;
+        line-height: 2.25rem;
+    }
+}
+
+.tcm-rate-symbol {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgb(148, 163, 184);
+    font-weight: 700;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+}
+
+.tcm-rate-hint {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: rgb(100, 116, 139);
+}
+
+/* ============================================
+   LISTA DE DEPENDÊNCIAS
+   ============================================ */
+
+/* Container de dependências */
+.tcm-dependencies-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* Item de dependência */
+.tcm-dependency-item {
+    padding: 1rem;
+    border: 1px solid rgb(226, 232, 240);
+    border-radius: 0.5rem;
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+    .tcm-dependency-item {
+        flex-direction: row;
+        gap: 0;
+    }
+}
+
+.tcm-dependency-item:hover {
+    border-color: rgb(196, 181, 253);
+}
+
+.tcm-dependency-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+@media (min-width: 640px) {
+    .tcm-dependency-content {
+        width: auto;
+    }
+}
+
+.tcm-dependency-icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.25rem;
+    background-color: rgb(255, 247, 237);
+    color: rgb(234, 88, 12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    flex-shrink: 0;
+}
+
+.tcm-dependency-text-title {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    color: rgb(30, 41, 59);
+}
+
+.tcm-dependency-text-desc {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    color: rgb(100, 116, 139);
+}
+
+.tcm-dependency-code {
+    font-family: monospace;
+    background-color: rgb(241, 245, 249);
+    padding: 0 0.25rem;
+    border-radius: 0.125rem;
+}
+
+.tcm-dependency-edit {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 600;
+    color: rgb(148, 163, 184);
+    transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tcm-dependency-item:hover .tcm-dependency-edit {
+    color: rgb(124, 58, 237);
+}
+
+/* Botão de adicionar dependência */
+.tcm-add-dependency {
+    padding: 1rem;
+    border: 2px dashed rgb(203, 213, 225);
+    border-radius: 0.5rem;
+    background-color: rgb(248, 250, 252);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgb(100, 116, 139);
+    transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+.tcm-add-dependency:hover {
+    background-color: rgb(241, 245, 249);
+}
+
+.tcm-add-dependency-text {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+}
+
+.tcm-add-dependency-icon {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+}
+
+/* ============================================
+   TEXTAREA
+   ============================================ */
+
+.tcm-textarea {
+    height: 8rem;
+    resize: none;
+}
+
+@media (min-width: 768px) {
+    .tcm-textarea {
+        height: 10rem;
+    }
+}
+
+/* ============================================
+   INPUTS ESPECIAIS
+   ============================================ */
+
+.tcm-input-mono {
+    font-family: monospace;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+/* ============================================
+   SIMULAÇÃO DE IMPOSTOS
+   ============================================ */
+
+/* Badge de simulação no tab */
+.tcm-simulation-badge {
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 0.125rem 0.5rem;
+    background-color: rgb(254, 243, 199);
+    color: rgb(146, 64, 14);
+    border-radius: 0.25rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.tcm-simulation-badge.complete {
+    background-color: rgb(220, 252, 231);
+    color: rgb(22, 163, 74);
+}
+
+/* Indicador de progresso */
+.tcm-progress-indicator {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: rgb(248, 250, 252);
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.tcm-progress-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: rgb(51, 65, 85);
+    white-space: nowrap;
+}
+
+.tcm-progress-bar {
+    flex: 1 1 0%;
+    min-width: 150px;
+    height: 0.5rem;
+    background-color: rgb(226, 232, 240);
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.tcm-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, rgb(124, 58, 237), rgb(167, 139, 250));
+    transition: width 0.3s ease-out;
+    border-radius: 9999px;
+}
+
+.tcm-progress-text {
+    font-size: 0.875rem;
+    color: rgb(100, 116, 139);
+    white-space: nowrap;
+}
+
+/* Container de cenários */
+.tcm-simulation-scenarios {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Card de cenário individual */
+.tcm-simulation-scenario {
+    border: 1px solid rgb(226, 232, 240);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s ease-out;
+}
+
+.tcm-simulation-scenario:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+@media (min-width: 768px) {
+    .tcm-simulation-scenario {
+        padding: 2rem;
+    }
+}
+
+/* Header do cenário */
+.tcm-scenario-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tcm-scenario-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: rgb(30, 41, 59);
+    margin: 0;
+}
+
+@media (min-width: 768px) {
+    .tcm-scenario-title {
+        font-size: 1.125rem;
+    }
+}
+
+.tcm-scenario-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.tcm-scenario-badge.success {
+    background-color: rgb(220, 252, 231);
+    color: rgb(22, 163, 74);
+    border: 1px solid rgb(187, 247, 208);
+}
+
+.tcm-scenario-badge.pending {
+    background-color: rgb(254, 243, 199);
+    color: rgb(146, 64, 14);
+    border: 1px solid rgb(253, 230, 138);
+}
+
+/* Grupo de input de simulação */
+.tcm-simulation-input-group {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+    flex-direction: column;
+}
+
+@media (min-width: 640px) {
+    .tcm-simulation-input-group {
+        flex-direction: row;
+    }
+}
+
+.tcm-input-wrapper {
+    flex: 1 1 0%;
+    width: 100%;
+}
+
+@media (min-width: 640px) {
+    .tcm-input-wrapper {
+        width: auto;
+    }
+}
+
+/* Botão de simular */
+.tcm-simulate-btn {
+    background: linear-gradient(135deg, rgb(124, 58, 237), rgb(167, 139, 250));
+    color: rgb(255, 255, 255);
+    padding: 0.625rem 1.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease-out;
+    box-shadow: 0 2px 4px rgba(124, 58, 237, 0.2);
+    white-space: nowrap;
+    width: 100%;
+}
+
+@media (min-width: 640px) {
+    .tcm-simulate-btn {
+        width: auto;
+    }
+}
+
+.tcm-simulate-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(124, 58, 237, 0.3);
+}
+
+.tcm-simulate-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.tcm-simulate-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Card de resultado */
+.tcm-simulation-result {
+    margin-top: 1.5rem;
+    border-top: 2px solid rgb(226, 232, 240);
+    padding-top: 1.5rem;
+}
+
+.tcm-result-header {
+    margin-bottom: 1rem;
+}
+
+.tcm-result-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: rgb(30, 41, 59);
+}
+
+/* Seção de breakdown */
+.tcm-breakdown-section {
+    margin-bottom: 1.5rem;
+}
+
+.tcm-breakdown-title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: rgb(51, 65, 85);
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.tcm-breakdown-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0.75rem;
+    background-color: rgb(248, 250, 252);
+    border-radius: 0.375rem;
+    margin-bottom: 0.5rem;
+    gap: 1rem;
+    flex-direction: column;
+}
+
+@media (min-width: 640px) {
+    .tcm-breakdown-item {
+        flex-direction: row;
+        align-items: center;
+    }
+}
+
+.tcm-breakdown-step {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1 1 0%;
+}
+
+.tcm-step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    background-color: rgb(124, 58, 237);
+    color: rgb(255, 255, 255);
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.tcm-step-desc {
+    font-size: 0.875rem;
+    color: rgb(51, 65, 85);
+}
+
+.tcm-breakdown-value {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+}
+
+.tcm-value-amount {
+    font-size: 1rem;
+    font-weight: 700;
+    color: rgb(15, 23, 42);
+}
+
+.tcm-value-note {
+    font-size: 0.75rem;
+    color: rgb(100, 116, 139);
+    font-style: italic;
+}
+
+/* Seção de impostos */
+.tcm-taxes-section {
+    margin-bottom: 1.5rem;
+}
+
+.tcm-tax-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    border-radius: 0.375rem;
+    margin-bottom: 0.5rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.tcm-tax-item.included {
+    background-color: rgb(240, 253, 244);
+    border: 1px solid rgb(220, 252, 231);
+}
+
+.tcm-tax-item.excluded {
+    background-color: rgb(254, 242, 242);
+    border: 1px solid rgb(254, 226, 226);
+}
+
+.tcm-tax-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: rgb(30, 41, 59);
+}
+
+.tcm-tax-item.included .tcm-tax-name {
+    color: rgb(22, 163, 74);
+}
+
+.tcm-tax-item.excluded .tcm-tax-name {
+    color: rgb(220, 38, 38);
+}
+
+.tcm-tax-details {
+    font-size: 0.875rem;
+    color: rgb(100, 116, 139);
+    font-weight: 500;
+}
+
+/* Seção de total */
+.tcm-total-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgb(124, 58, 237), rgb(167, 139, 250));
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tcm-total-label {
+    font-size: 1rem;
+    font-weight: 700;
+    color: rgb(255, 255, 255);
+}
+
+.tcm-total-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: rgb(255, 255, 255);
+}
+
+@media (min-width: 768px) {
+    .tcm-total-value {
+        font-size: 1.875rem;
+    }
+}
+
+/* ============================================
+   ANIMAÇÕES
+   ============================================ */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tcm-animate-fade {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* ============================================
+   MELHORIAS PARA MOBILE
+   ============================================ */
+
+/* Ajustes gerais para mobile */
+@media (max-width: 767px) {
+
+    .tcm-section-title {
+        font-size: 0.95rem;
+    }
+
+    .tcm-rate-container {
+        padding: 1rem;
+    }
+
+    .tcm-simulation-scenario {
+        padding: 1rem;
+    }
+
+    .tcm-scenario-title {
+        font-size: 0.95rem;
+    }
+
+    .tcm-total-value {
+        font-size: 1.25rem;
+    }
+
+    /* Aumentar área de toque */
+    .tcm-checkbox-label,
+    .tcm-dependency-item,
+    .tcm-add-dependency,
+    .tcm-simulate-btn {
+        min-height: 44px;
+    }
+
+    /* Prevenir zoom em inputs no iOS */
+    input,
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+}
+
+/* Touch feedback */
+.tcm-dependency-item:active,
+.tcm-add-dependency:active,
+.tcm-checkbox-label:active,
+.tcm-simulate-btn:active {
+    transform: scale(0.98);
+}
+
+/* Remover tap highlight */
+.tcm-dependency-item,
+.tcm-add-dependency,
+.tcm-checkbox-label,
+.tcm-simulate-btn {
+    -webkit-tap-highlight-color: transparent;
+}
